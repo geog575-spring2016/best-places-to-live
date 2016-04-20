@@ -1,4 +1,4 @@
-(function(){
+// (function(){
 console.log("working");
 window.onload = setPage();
           //pseudo-global variables
@@ -20,7 +20,7 @@ console.log("setpage");
         console.log(citiesData);
         console.log(attData);
         //convert topojsons into geojson objects
-        var states = topojson.feature(statesData, statesData.objects.states).features;
+        var states = topojson.feature(statesData, statesData.objects.US).features;
         // cities = ;
 
         createMap(states);
@@ -36,4 +36,4 @@ function createMap(states) {
 
 
 
-});
+// });
