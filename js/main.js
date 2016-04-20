@@ -1,4 +1,4 @@
-(function(){
+// (function(){
 console.log("working");
 window.onload = setPage();
           //pseudo-global variables
@@ -20,7 +20,7 @@ console.log("setpage");
         console.log(citiesData);
         console.log(attData);
         //convert topojsons into geojson objects
-        var states = topojson.feature(statesData, statesData.objects.states).features;
+        var states = topojson.feature(statesData, statesData.objects.US).features;
         // cities = ;
 
         createMap(states);
@@ -29,6 +29,30 @@ console.log("setpage");
 
 function createMap(states) {
 
+    var mapWidth = 0.75;
+    var width = window.innerWidth * mapWidth;
+    var height = window.innerHeight;
+    
+    var map = d3.selectAll("body")
+        .append("svg")
+        .attr("class", "map")
+        .attr("width", width)
+        .attr("height", height);
+
+    var projection = d3.geo.mercator()
+        .scale((width ) / Math.PI)
+        .translate([width, height / 2])
+        .precision(.1);
+
+    var path = d3.geo.path()
+        .projection(projection);
+
+    var us_states = map.selectAll(".states")
+            .data(states)
+            .enter()
+            .append("path")
+            .attr("class", "us_states")
+            .attr("d", path);
 }
 
 
@@ -36,4 +60,4 @@ function createMap(states) {
 
 
 
-});
+// });
