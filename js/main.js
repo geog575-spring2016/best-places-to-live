@@ -29,6 +29,30 @@ console.log("setpage");
 
 function createMap(states) {
 
+    var mapWidth = 0.75;
+    var width = window.innerWidth * mapWidth;
+    var height = window.innerHeight;
+    
+    var map = d3.selectAll("body")
+        .append("svg")
+        .attr("class", "map")
+        .attr("width", width)
+        .attr("height", height);
+
+    var projection = d3.geo.mercator()
+        .scale((width ) / Math.PI)
+        .translate([width, height / 2])
+        .precision(.1);
+
+    var path = d3.geo.path()
+        .projection(projection);
+
+    var us_states = map.selectAll(".states")
+            .data(states)
+            .enter()
+            .append("path")
+            .attr("class", "us_states")
+            .attr("d", path);
 }
 
 
