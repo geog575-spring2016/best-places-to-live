@@ -33,7 +33,7 @@ function createMap(states) {
 function createAttPanel(attData) {
 
     //set measurements for panel
-    var attMargin = {top: 50, right: 25, bottom: 20, left: 25},
+    var attMargin = {top: 20, right: 10, bottom: 20, left: 10},
     attHeight = window.innerHeight, //set height to entire window
     attHeight = attHeight - attMargin.top,
     attWidth = window.innerWidth * 0.25,//width of attSvg
@@ -72,7 +72,7 @@ function createAttPanel(attData) {
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
         .attr("x", attWidth / 5)
-        .attr("y", 0)
+        .attr("y", attMargin.top)
         .text("Attributes")
 
     //creates a group for each rectangle and offsets each by same amount
@@ -93,10 +93,20 @@ function createAttPanel(attData) {
       var attText = attributes.append('text')
           .attr("class", "attText")
           .attr("x", attWidth / 3.75)
-          .attr("y", attHeight - 40)
+          .attr("y", attHeight - 80)
           .text(function(d ) { return d });
 
+      //used to place checkbox relative to attText labels
+      var textX = d3.select(".attText").attr("x")
 
+      var checkboxes = attributes.append("foreignObject")
+          .attr('x', textX - 30)
+          .attr('y', attHeight - 95)
+          // function (d,i) { return d[1]; })
+          .attr('width', "50px")
+          .attr('height', "20px")
+          .append("xhtml:body")
+          .html("<form><input type=checkbox id='check'</input></form>")
 
 }
 
