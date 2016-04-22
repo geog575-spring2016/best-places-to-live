@@ -38,7 +38,13 @@ function createAttPanel(attData) {
     attHeight = attHeight - attMargin.top,
     attWidth = window.innerWidth * 0.25,//width of attSvg
     attWidth = attWidth - attMargin.left - attMargin.right, //width with margins for padding
-    attSpacing = attHeight / 75; //vertical spacing for each attribute
+    attSpacing = attHeight / 75 + 2, //vertical spacing for each attribute
+    rectWidth = 4,
+    rectHeight1 = 6,
+    rectHeight2 = 11,
+    rectHeight3 = 16,
+    rectSpacing = 3;
+
     // labelWidth = ;
 
     //empty array to hold attribute labels
@@ -83,7 +89,7 @@ function createAttPanel(attData) {
         .attr("class", "attributes")
         .attr("transform", function(d, i) {
             var height = labelWidth / 2 + attSpacing;
-            var offset =  height * attLabels.length;
+            var offset =  height * attLabels.length * 1.05;
             var horz = -2 * labelWidth; //x value for g translate
             var vert = i * height - offset; //y value for g translate
             return 'translate(' + horz + ',' + vert + ')';
@@ -93,7 +99,7 @@ function createAttPanel(attData) {
       var attText = attributes.append('text')
           .attr("class", "attText")
           .attr("x", attWidth / 3.75)
-          .attr("y", attHeight - 80)
+          .attr("y", attHeight - 10)
           .text(function(d ) { return d });
 
       //used to place checkbox relative to attText labels
@@ -101,15 +107,38 @@ function createAttPanel(attData) {
 
       var checkboxes = attributes.append("foreignObject")
           .attr('x', textX - 30)
-          .attr('y', attHeight - 95)
-          // function (d,i) { return d[1]; })
+          .attr('y', attHeight - 25)
           .attr('width', "50px")
           .attr('height', "20px")
           .append("xhtml:body")
           .html("<form><input type=checkbox id='check'</input></form>")
 
-}
+      //define x,y property values for first rectangle
+      var x1 = (textX + labelWidth)*3.4
+      var y1 = attHeight - 15
 
+      //creates rect elements for weighting attribute
+      var attRect1 = attributes.append('rect')
+          .attr("class", "attRect1")
+          .attr('width', rectWidth)
+          .attr('height', rectHeight1)
+          .attr("x", x1)
+          .attr('y', y1)
+      //creates rect elements for weighting attribute
+      var attRect2 = attributes.append('rect')
+          .attr("class", "attRect2")
+          .attr('width', rectWidth)
+          .attr('height', rectHeight2)
+          .attr("x", x1 + rectSpacing*2)
+          .attr('y', y1 - rectHeight1 + 1)
+      //creates rect elements for weighting attribute
+      var attRect3 = attributes.append('rect')
+          .attr("class", "attRect3")
+          .attr('width', rectWidth)
+          .attr('height', rectHeight3)
+          .attr("x", x1 + rectSpacing*4)
+          .attr('y', y1 - rectHeight2 + 1)
+}
 
 
 
