@@ -38,21 +38,25 @@ function createAttPanel(attData) {
     attHeight = attHeight - attMargin.top,
     attWidth = window.innerWidth * 0.25,//width of attSvg
     attWidth = attWidth - attMargin.left - attMargin.right, //width with margins for padding
-    pcpWidth = attWidth, pcpHeight = attHeight,
+    pcpWidth = attHeight, pcpHeight = attWidth,
     attSpacing = attHeight / 75 + 2, //vertical spacing for each attribute
     rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
     rectHeight3 = 16, rectSpacing = 3;
 
     // labelWidth = ;
 
+
     //empty array to hold attribute labels
     var attLabels = [];
+
     //push properties from attData into attLabels array
     for (var keys in attData[0]){
+        keys = keys.split("_").join(" ") //converts underscores in csv to spaces for display purposes
         attLabels.push(keys);
     };
-    //remove properties that are not attributes
-    attLabels.splice(0, 3);
+
+    //remove data identifiers we don't want displayed in panel
+    attLabels.splice(0,3)
 
     //empty array to hold length of each label
     var labelLength = [];
@@ -138,58 +142,285 @@ function createAttPanel(attData) {
           .attr('y', y1 - rectHeight2 + 1)
 
 
+//pcp code from former lab2 instructions
 
-      var coordinates = d3.scale.ordinal()
-          .domain(attributes)
-          .rangePoints([pcpHeight, 0])
+      // var coordinates = d3.scale.ordinal()
+      //     .domain(attLabels)
+      //     .rangePoints([pcpHeight, 0])
+      //
+      // var axis = d3.svg.axis()
+      //     .orient("top");
+      //
+      // scales = {};
+      // attLabels.forEach(function(att){
+      //     scales[att] = d3.scale.linear()
+      //         .domain(d3.extent(attData, function(data) {
+      //               return +data[att];
+      //               console.log(data[att]);
+      //         }))
+      //         .range([0, pcpWidth])
+      // });
+      //
+      //
+      // var line = d3.svg.line();
+      //
+      // var pcpSvg = d3.select("body")
+      //     .append("svg")
+      //     .attr("width", pcpWidth)
+      //     .attr("height", pcpHeight)
+      //     .attr("class", "pcpSvg")
+      //   .append("g")
+      //     .attr("transform", d3.transform(
+      //         "scale(0.8, 0.6)," + "translate(96, 50)"
+      //     ));
+      //
+      // var pcpBackground = pcpSvg.append("rect")
+      //     .attr("x", "-30")
+      //     .attr("y", "-35")
+      //     .attr("width", pcpWidth + 60)
+      //     .attr("height", pcpHeight + 60)
+      //     .attr("rx", "15")
+      //     .attr("ry", "15")
+      //     .attr("class", "pcpBackground");
+      //
+      // // var pcpLines = pcpSvg.append("g")
+      // //     .attr("class", "pcpLines")
+      // //     .selectAll("path")
+      // //     .data(attData)
+      // //     .enter()
+      // //     .append("path")
+      // //     .attr("id", function(d) {
+      // //         return "city" + d.ID
+      // //     })
+      // //     .attr("d", function(d){
+      // //         return line(attLabels.map(function(att){
+      // //               return[coordinates(att), scales[att](d[att])];
+      // //         }));
+      // //     });
+      //
+      //     var axis = pcpSvg.selectAll(".attribute")
+      //         .data(attLabels)
+      //         .enter()
+      //       .append("g")
+      //         .attr("class", "axis")
+      //         .attr("transform", function(d){
+      //             return "translate(" + coordinates(d) +")";
+      //         })
+      //         .each(function(d){
+      //             d3.select(this)
+      //                 .call(axis.scale(scales[d])
+      //                     .ticks(0)
+      //                     .tickSize(0)
+      //               )
+      //             .attr("id", d)
+      //             .style("stroke-width", "2px")
+      //         })
 
-      var axis = d3.svg.axis()
-          .orient("top");
 
-      scales = {};
-      attLabels.forEach(function(att){
-          scales[att] = d3.scale.linear()
-              .domain(d3.extent(attData, function(data) {
-                    return +data[att];
-              }))
-              .range([0, pcpWidth])
+
+// //code trying to add pcp to att panel groups
+//
+//       scales = {};
+//       attLabels.forEach(function(att){
+//           scales[att] = d3.scale.linear()
+//               .domain(d3.extent(attData, function(data) {
+//                     return +data[att];
+//                     console.log(data[att]);
+//               }))
+//               .range([0, pcpWidth])
+//       });
+//
+//       var attg = attributes.append("g")
+//           .attr("class", "attg")
+//           .attr("transform", function(d, i){
+//                 var height = labelWidth / 2 + attSpacing;
+//                 var offset =  height * attLabels.length * 1.05;
+//                 var horz = -2 * labelWidth; //x value for g translate
+//                 var vert = i * height - offset; //y value for g translate
+//                 return 'translate(' + horz + ',' + vert + ')';
+//           })
+//
+//       var axis = attg.append("g")
+//           .attr("class", "axis")
+//           .attr("x", x1 + rectSpacing*6)
+//           .attr("y", y1 - rectHeight2 + 1)
+//           .each(function(d){
+//               d3.select(this)
+//                   .call(axis.scale(scales[d])
+//                       .ticks(0)
+//                       .tickSize(0)
+//                 )
+//               .attr("id", d)
+//               .style("stroke-width", "2px")
+//           })
+
+
+// pcp code from my lab2
+
+      //filters out properties from each line segment in csvFullData I don't want to display in PCP
+      var filteredData = attData.map(function(d) {
+
+          return {
+              Bars: d.Bars,
+              Bike: d.Bike,
+              Farmers_Markets: d.Farmers_Markets,
+              Fitness: d.Fitness,
+              Food: d.Food,
+              LGBTQ_Friendly: d.LGBTQ_Friendly,
+              MedianEarningsMonth: d.MedianEarningsMonth,
+              MedianRent: d.MedianRent,
+              Median_Earnings: d.Median_Earnings,
+              Museums: d.Museums,
+              Music: d.Music,
+              Parks: d.Parks,
+              Pet_Friendly: d.Pet_Friendly,
+              Price_of_Weed: d.Price_of_Weed,
+              Ratio_of_Males_to_Females: d.Ratio_of_Males_to_Females,
+              Safety: d.Safety,
+              Sports: d.Sports,
+              Transit: d.Transit,
+              Walk: d.Walk
+          }
       });
 
-      var line = d3.svg.line();
 
-      var axes = attributes.append("g")
-          .attr("height", 10)
-          .attr("class", "axes")
-          .attr("x", x1 + rectSpacing*6)
-          .attr("y", y1 - rectHeight2 + 1)
-          .each(function(d){
-              d3.select(this)
-                  .call(axis.scale(scales[d])
-                      .ticks(0)
-                      .tickSize(0)
-                )
-              .attr("id", d)
-              .style("stroke-width", "2px")
+      //create an SVG container for the PCP
+      var pcpSvg = d3.select("body").append("svg")
+          .attr("class", "pcpSvg")
+          .attr("width", pcpWidth + attMargin.left + attMargin.right)
+          .attr("height", pcpHeight + attMargin.top + attMargin.bottom)
+        .append("g")
+           .attr("transform", "translate(" + attMargin.left + "," + attMargin.top + ")" + "rotate(90, "+ pcpWidth/2 + "," + pcpHeight/2 + ")");// adds padding to group element in SVG
+
+
+
+      //construct an ordinal scale for x with rangeoutput of [0, width] as min and max values of output range; 1 is for padding
+        var x = d3.scale.ordinal().rangePoints([0, pcpWidth], 1),
+            y = {},
+            dragging = {};
+
+        var line = d3.svg.line(), //new line generator
+            axis = d3.svg.axis().ticks(0).tickSize(0).orient("left") //new axis generator with left orientation
+
+      // Extract the list of dimensions and create a scale for each to set as domain of x.
+      x.domain(dimensions = d3.keys(filteredData[0]).filter(function(d) { //.keys returns array of property names for a given object
+          //.filter creates new array based on this function
+          //i don't understand what this is doing
+          return d != "name" && (y[d] = d3.scale.linear()
+              //can't figure out what this does either
+              .domain(d3.extent(attData, function(p) { return +p[d]; }))//.extent returns min/max of array
+              .range([pcpHeight, 0]));
+      }));
+      // Add grey background lines; these will be displayed when user selects foreground lines
+      pcpBackground = pcpSvg.append("g")
+          .attr("class", "pcpBackground")
+          .selectAll("path")
+          .data(attData)
+          .enter()
+        .append("path")
+          .attr("d", path)
+
+      // Add blue foreground lines for focus
+      pcpForeground = pcpSvg.append("g")
+          .attr("class", "pcpForeground")
+        .selectAll("path")
+          .data(attData)
+          .enter()
+        .append("path")
+          .attr("id", function(d){
+              return "line" + d.ID;
           })
+          .attr("d", path)
+      // Add a group element for each dimension (i.e., each axis)
+      var pcpg = pcpSvg.selectAll(".dimension")
+          .data(dimensions)
+          .enter()
+        .append("g")
+          .attr("class", "dimension")
+          .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
+          .call(d3.behavior.drag() //add ability to reorder axes
+              .origin(function(d) { return {x: x(d)}; })
+              .on("dragstart", function(d) {
+                  dragging[d] = x(d);
+                  pcpBackground.attr("visibility", "hidden");
+              })
+              .on("drag", function(d) {
+                  dragging[d] = Math.min(pcpWidth, Math.max(0, d3.event.x));
+                  pcpForeground.attr("d", path)
+                  dimensions.sort(function(a, b) { return position(a) - position(b); });
+                  x.domain(dimensions);
+                  pcpg.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
+              })
+            .on("dragend", function(d) {
+                delete dragging[d];
+                transition(d3.select(this)).attr("transform", "translate(" + x(d) + ")");
+                transition(pcpForeground).attr("d", path);
+                //removes background gray lines and lets blue foreground lines show
+                pcpBackground
+                    .attr("d", path)
+                  .transition()
+                    .delay(800)
+                    .duration(0)
+                    .attr("visibility", null);
+            })
+        );
 
-      // //construct an ordinal scale for x with rangeoutput of [0, width] as min and max values of output range; 1 is for padding
-      //   var y = d3.scale.ordinal().rangePoints([0, attWidth], 1),
-      //       x = {},
-      //       dragging = {};
-      //
-      //   var line = d3.svg.line(), //new line generator
-      //       axis = d3.svg.axis().orient("top") //new axis generator with left orientation
-      //
-      //   // Extract the list of dimensions and create a scale for each to set as domain of x.
-      //   y.domain(dimensions = d3.keys(attData[3]).filter(function(d) { //.keys returns array of property names for a given object
-      //       //.filter creates new array based on this function
-      //       //i don't understand what this is doing
-      //       return d != "name" && (x[d] = d3.scale.linear()
-      //           //can't figure out what this does either
-      //           .domain(d3.extent(attData, function(p) { return +p[d]; }))//.extent returns min/max of array
-      //           .range([attWidth, 0]));
-      //   }));
-//
+      // Add an axis and title.
+      pcpg.append("g")
+          .attr("class", "axis")
+          .attr("id", function(d){ return d;})
+          .each(function(d) { d3.select(this).call(axis.scale(y[d])); })
+
+      // Add and store a brush for each axis.
+      pcpg.append("g")
+          .attr("class", "brush")
+          .each(function(d) {
+              d3.select(this)
+              .call(y[d].brush = d3.svg.brush().y(y[d])
+                  .on("brushstart", brushstart)
+                  .on("brush", brush));
+          })
+        .selectAll("rect")
+          .attr("x", -8)
+          .attr("width", 16);
+
+      //position generator for axis dragging
+      function position(d) {
+          var v = dragging[d];
+          return v == null ? x(d) : v;
+      };
+
+      //transition generator for pcp
+      function transition(g) {
+          return pcpg.transition().duration(1500);
+      };
+
+      // Returns the path for a given datum
+      function path(d) {
+          return line(dimensions.map(function(p) { return [position(p), y[p](d[p])]; }));
+      }
+
+      //stops other events when brushing begins
+      function brushstart() {
+          d3.event.sourceEvent.stopPropagation();
+      }
+
+      // Handles a brush event, toggling the display of foreground lines.
+      function brush() {
+          //determines extent of brush to determine which pcp lines are active
+          var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
+              extents = actives.map(function(p) { return y[p].brush.extent(); });
+          pcpForeground.attr("class", function(d) {
+              return actives.every(function(p, i) {
+                  return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+              }) ? null: "hidden";
+          });
+
+      };
+
+
+
+
       // // Add an axis and title.
       // var filterAxis = d3.selectAll(".attributes").append("g")
       //     .attr("class", "axis")
@@ -199,165 +430,8 @@ function createAttPanel(attData) {
 
 }
 
-function drawFilters (attData, attWidth){
 
-    // console.log(attData);
 
-    //filters out properties from each line segment in csvFullData I don't want to display in PCP
-    // var filterData = attData.map(function(d) {
-    //     //remove ID, state, etc. properties from data
-    //     return {
-    //         CVIRISK:  d.CVIRISK,
-    //         ERR_M_YR: d.ERR_M_YR,
-    //         SLOPE_PCT: d.SLOPE_PCT,
-    //         SL_MM_YR_: d.SL_MM_YR_,
-    //         TIDE_M: d.TIDE_M,
-    //         GEOM: d.GEOM,
-    //         WAVES_M: d.WAVES_M
-    //     };
-    // });
-
-    // // Extract the list of dimensions and create a scale for each to set as domain of x.
-    // y.domain(dimensions = d3.keys(attData[3]).filter(function(d) { //.keys returns array of property names for a given object
-    //     //.filter creates new array based on this function
-    //     //i don't understand what this is doing
-    //     return d != "name" && (x[d] = d3.scale.linear()
-    //         //can't figure out what this does either
-    //         .domain(d3.extent(attData, function(p) { return +p[d]; }))//.extent returns min/max of array
-    //         .range([attWidth, 0]));
-    // }));
-    // // // Add grey background lines; these will be displayed when user selects foreground lines
-    // // pcpBackground = pcpSvg.append("g")
-    // //     .attr("class", "pcpBackground")
-    // //     .selectAll("path")
-    // //     .data(csvFullData)
-    // //     .enter()
-    // //   .append("path")
-    // //     .attr("d", path);
-    // // // Add blue foreground lines for focus
-    // // pcpForeground = pcpSvg.append("g")
-    // //     .attr("class", "pcpForeground")
-    // //   .selectAll("path")
-    // //     .data(csvFullData)
-    // //     .enter()
-    // //   .append("path")
-    // //     .attr("id", function(d){
-    // //         return "line" + d.NEWID;
-    // //     })
-    // //     .style("stroke", function(d){
-    // //         return choropleth(d, colorScale);
-    // //     })
-    // //     .attr("d", path)
-    // //     .on("mouseover", function(d){
-    // //         highlightLine(d, expressed);
-    // //     })
-    // //     .on("mouseout", function(d){
-    // //         dehighlightLine(d, colorScale);
-    // //     });
-    // // // Add a group element for each dimension (i.e., each axis)
-    // // var pcpg = pcpSvg.selectAll(".dimension")
-    // //     .data(dimensions)
-    // //     .enter()
-    // //   .append("g")
-    // //     .attr("class", "dimension")
-    // //     .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
-    // //     .call(d3.behavior.drag() //add ability to reorder axes
-    // //         .origin(function(d) { return {x: x(d)}; })
-    // //         .on("dragstart", function(d) {
-    // //             dragging[d] = x(d);
-    // //             pcpBackground.attr("visibility", "hidden");
-    // //         })
-    // //         .on("drag", function(d) {
-    // //             dragging[d] = Math.min(pcpWidth, Math.max(0, d3.event.x));
-    // //             pcpForeground.attr("d", path)
-    // //             dimensions.sort(function(a, b) { return position(a) - position(b); });
-    // //             x.domain(dimensions);
-    // //             pcpg.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
-    // //         })
-    // //       .on("dragend", function(d) {
-    // //           delete dragging[d];
-    // //           transition(d3.select(this)).attr("transform", "translate(" + x(d) + ")");
-    // //           transition(pcpForeground).attr("d", path);
-    // //           //removes background gray lines and lets blue foreground lines show
-    // //           pcpBackground
-    // //               .attr("d", path)
-    // //             .transition()
-    // //               .delay(800)
-    // //               .duration(0)
-    // //               .attr("visibility", null);
-    // //       })
-    // //   );
-    // //
-    // // // Add an axis and title.
-    // // pcpg.append("g")
-    // //     .attr("class", "axis")
-    // //     .attr("id", function(d){ return d;})
-    // //     .each(function(d) { d3.select(this).call(axis.scale(y[d])); })
-    // //   .append("text")
-    // //     .style("text-anchor", "middle")
-    // //     .attr("y", -9)
-    // //     .text(function(d, i) { return [pcpText[i]]; })
-    // //     .on("mouseover", tip.show)
-    // //     .on("mouseout", tip.hide);
-    // //
-    // // // Add and store a brush for each axis.
-    // // pcpg.append("g")
-    // //     .attr("class", "brush")
-    // //     .each(function(d) {
-    // //         d3.select(this)
-    // //         .call(y[d].brush = d3.svg.brush().y(y[d])
-    // //             .on("brushstart", brushstart)
-    // //             .on("brush", brush));
-    // //     })
-    // //   .selectAll("rect")
-    // //     .attr("x", -8)
-    // //     .attr("width", 16);
-    // //
-    // // //highlights initial variable axis
-    // // highlightAxis(expressed);
-    // //
-    // // //creates labels to express with hover/retrieve of data
-    // // createInfoLabels(pcpSvg);
-    // //
-    // // //position generator for axis dragging
-    // // function position(d) {
-    // //     var v = dragging[d];
-    // //     return v == null ? x(d) : v;
-    // // };
-    // //
-    // // //transition generator for pcp
-    // // function transition(g) {
-    // //     return pcpg.transition().duration(1500);
-    // // };
-    // //
-    // // // Returns the path for a given datum
-    // // function path(d) {
-    // //     return line(dimensions.map(function(p) { return [position(p), y[p](d[p])]; }));
-    // // }
-    // //
-    // // //stops other events when brushing begins
-    // // function brushstart() {
-    // //     d3.event.sourceEvent.stopPropagation();
-    // // }
-    // //
-    // // // Handles a brush event, toggling the display of foreground lines.
-    // // function brush() {
-    // //     //determines extent of brush to determine which pcp lines are active
-    // //     var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
-    // //         extents = actives.map(function(p) { return y[p].brush.extent(); });
-    // //     pcpForeground.attr("class", function(d) {
-    // //         return actives.every(function(p, i) {
-    // //             return extents[i][0] <= d[p] && d[p] <= extents[i][1];
-    // //         }) ? null: "hidden";
-    // //     });
-    // //     //same thing but with coastal line segments
-    // //     activeCoast.attr("class", function(d) {
-    // //         return actives.every(function(p, i) {
-    // //             return extents[i][0] <= d.properties[p] && d.properties[p] <= extents[i][1];
-    // //         }) ? null: "hidden";
-    //     });
-    // };
-};
 
 
 // });
