@@ -414,14 +414,4 @@ function createAttPanel(attData) {
 
       };
 
-
-
-
-      // // Add an axis and title.
-      // var filterAxis = d3.selectAll(".attributes").append("g")
-      //     .attr("class", "axis")
-      //     .attr("id", function(d){ return d; })
-      //     .each(function(d) { d3.select(this).call(axis.scale(x[d])); })
-
-
 }
