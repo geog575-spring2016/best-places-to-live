@@ -8,7 +8,7 @@ function setPage() {
     //use queue to retrieve data from all files
     q
         .defer(d3.json, "data/US.topojson")//load states
-        .defer(d3.json, "data/Cities.geojson")
+        .defer(d3.json, "data/Cities.topojson")
         .defer(d3.csv, "data/Attributes.csv")
         .await(callback);
 
@@ -21,14 +21,10 @@ function setPage() {
         var states = topojson.feature(statesData, statesData.objects.US).features;
 
 
-        createMap(states);
         createAttPanel(attData);
+
     }
 };
-
-function createMap(states) {
-
-}
 
 function createAttPanel(attData) {
 
@@ -429,9 +425,3 @@ function createAttPanel(attData) {
 
 
 }
-
-
-
-
-
-// });
