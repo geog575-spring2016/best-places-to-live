@@ -43,3 +43,23 @@
   cursor: move;
   font-family: trebuchet ms;
 }
+
+#buttonText {
+  text-anchor: middle;
+  fill: #ffffff;
+  stroke: none;
+  font-family: "trebuchet ms", Helvetica, Arial, sans-serif;
+  color: black;
+}
+
+#buttonClick{
+  opacity: 0;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.attSelect {
+    position: absolute;
+    bottom: 0;
+    right: 157;
+}
