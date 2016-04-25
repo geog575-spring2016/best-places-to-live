@@ -1,4 +1,4 @@
-ID,METRO AREA,Cities Included,Ratio_of_Males_to_Females,Median_Age,Bars,Museums,Sports,Median_Earnings,MedianEarningsMonth,MedianRent,Earningsto_Rent_Ratio,Price_Of_Weed,Farmers_Markets,Pet_Friendly,LGBTQ_Friendly,Food,Music,Safety,Shopping,Fitness,Parks,Transit,Bike,Walk
+ID,METRO AREA,Cities Included,Male_Female_Ratio,Median_Age,Bars,Museums,Sports,Median_Earnings,Monthly_Earnings,Monthly_Rent,Earnings_Rent_Ratio,Price_Of_Weed,Farmers_Markets,Pet_Friendly,LGBTQ_Friendly,Food,Music,Safety,Shopping,Fitness,Parks,Transit,Bike,Walk
 50,"Salt Lake City, UT Metro Area",Salt Lake City,101,31.4,41,0,0,30129,2510.75,919,2.732045702,286.4,0,0,0,0,0,0,0,0,0,0,0,0
 49,"Birmingham-Hoover, AL Metro Area",Birmingham,92.9,38.1,47,0,0,30978,2581.5,797,3.23902133,369.1,0,0,0,0,0,0,0,21,0,69,94,82
 48,"Buffalo-Cheektowaga-Niagara Falls, NY Metro Area",Buffalo,93.7,40.9,3,0,0,31094,2591.166667,725,3.574022989,368.21,0,0,34,0,0,0,0,23,40,19,39,17
