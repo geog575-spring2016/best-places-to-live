@@ -1,5 +1,9 @@
 /* 575 boilerplate style.css */
-
+.map {
+	float: right;
+	border: 2px solid black;
+	margin: 5px;
+}
 .us_states {
 	fill: #fff;
 	stroke: #000;
