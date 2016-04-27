@@ -81,10 +81,10 @@ function createAttPanel(attData) {
     //identify which label is the longest so we can use that as the width in the transform for creating text elements
     var labelWidth = Math.max.apply(Math, labelLength);
 
-    var sliderDiv = d3.select("body").append("div")
-        .attr("id", "slider-range")
-        .attr("width", "50%")
-        .attr("height", "10%")
+    // var sliderDiv = d3.select("body").append("div")
+    //     .attr("id", "slider-range")
+    //     .attr("width", "50%")
+    //     .attr("height", "10%")
 
 
     //div container that holds SVG
@@ -144,7 +144,7 @@ function createAttPanel(attData) {
       var checkboxes = variables.append("foreignObject")
           .attr('x', textX - 25)
           .attr('y', attHeight - 26)
-          .attr('width', "50px")
+          .attr('width', "20px")
           .attr('height', "20px")
         .append("xhtml:body")
           .html("<form><input type=checkbox id='check'</input></form>")
@@ -179,39 +179,56 @@ function createAttPanel(attData) {
       var rectX = +d3.select(".attRect3").attr("x") + 40
 
       var sliderValues = variables.append("foreignObject")
-                .attr("class", "sliderValues")
-                .attr("x", rectX)
-                .attr("y", attHeight - 41)
-                .attr("width", "150px")
-                .attr("height", "10px")
-              .append("xhtml:div")
-                .html("<input type='text' id='rankVal' width='40px' height='8px'</input>")
+          .attr("class", "sliderValues")
+          .attr("width", "150px")
+          .attr("height", "10px")
+          .attr("x", rectX)
+          .attr("y", attHeight - 40)
+        .append("xhtml:body")
+          .html(function(d){
+            //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+            var attribute = createAttID(d, rankData);
+            return "<input type='text' id='" + attribute +"_rankVal' width='40px' height='8px'></input>"})
 
 
       var sliderRange = variables.append("foreignObject")
-          .attr("id", "slider-range")
-          .attr("x", rectX-13)
-          .attr("y", attHeight - 22)
+          .attr("class", "sliderRangeFO")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+              return attribute + "_FO";
+          })
           .attr('width', "150px")
           .attr('height', "20px")
-          .append("xhtml:div")
-        // .append("xhtml:div")
-          // .attr("class", "slider")
+          .attr("x", rectX - 20)
+          // .style("y", 500)
+        .append("xhtml:div")
+          .attr("class", "sliderRange")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "-slider-range";
+          })
+          // .style("height", "20px")
           .each(function(d){
-            //put d in array because addUnderscores only takes an array
-            var arrayD = [d]
-            //add underscores back to labels so they match with object properties
-            d = addUnderscores(arrayD);
-            //returns attribute label followed by _Rank; this way we can access each attribute by its object property
-            var attribute = searchStringInArray(d, rankData);
-            // var label = d[0][i].__data__;
-            // console.log(d[0].parentNode);
-            // addString();
-            //return attribute to a string from an array
-            attribute = attribute[0];
-            createSlider(attData, rankData, attribute)
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+              createSlider(attData, rankData, attribute)
           } )
-}
+
+      //for loop to set 'y' attr for each slider because d3 is dumb and won't set it like it should
+      for (i=0; i<rankData.length; i++){
+          d3.select("#"+rankData[i]+"_FO")
+              .attr("y", function(){
+                  var yVal = 110;
+                  yVal = yVal + (35*i);
+
+                  return yVal;
+              });
+      };
+
+};
 
 function calcMinMax(attData, attribute){
     //start with min at highest possible and max at lowest possible values
@@ -240,20 +257,36 @@ function calcMinMax(attData, attribute){
     return [min, max]
 };
 
+function createAttID(d, rankData) {
+    //put d in array because addUnderscores only takes an array
+    var arrayD = [d]
+    //add underscores back to labels so they match with object properties
+    d = addUnderscores(arrayD);
+    //returns attribute label followed by _Rank; this way we can access each attribute by its object property
+    var attribute = searchStringInArray(d, rankData);
+    //return attribute to a string from an array
+    attribute = attribute[0];
+
+    return attribute
+
+}
 
 function createSlider(attData, rankData, attribute) {
     //return array of min max values for specfied attribute
     var minMax = calcMinMax(attData, attribute);
     var min = minMax[0];
     var max = minMax [1];
-    $("#slider-range").slider({
+    var sliderID = "#" + attribute + "-slider-range"
+    console.log(sliderID);
+    var labelID = "#"+ attribute + "_rankVal"
+    $(sliderID).slider({
         range: true,
         min: min,
         max: max,
         values: minMax,
         slide: function (event, ui) {
-            $("#rankVal").val($("#slider-range").slider("values", 0) +
-          " - " + $("#slider-range").slider("values", 1));
+            $(labelID).val($(sliderID).slider("values", 0) +
+          " - " + $(sliderID).slider("values", 1));
         }
     });
 }
