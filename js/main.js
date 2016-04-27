@@ -76,28 +76,6 @@ function createMap(states, cities) {
         .call(zoom)
         .call(zoom.event);
 
-
-
-    //for now the prop symbols use the ID to scale the symbol to the correct size. 
-    // once we have our overall ranks worked out we'll swap that value in instead
-    g.selectAll(".circles")
-        //sort the data so that smaller values go on top (so the small circles appear on top of the big circles)
-        .data(cities.sort(function(a, b) { return b.properties.ID - a.properties.ID; }))
-        .enter()
-        .append("path")
-        //set the radius
-        .attr('d', path.pointRadius(function(d) { return radius(d.properties.ID)}))
-        //assign the id
-        .attr("class", function(d) {return d.properties.ID})
-        //assign the location of the city according to coordinates
-        .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
-        .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
-        .attr("fill", "blue")
-        .attr("stroke", "white")
-        .attr("stroke-width", "2px");
-
-
-
     //function to control when the user zooms
     function zoomed() {
         // var t = d3.event.translate,
@@ -117,4 +95,23 @@ function createMap(states, cities) {
                 .attr('d', path.pointRadius(function(d) {  return radius(d.properties.ID); }))
                 .attr("stroke-width", (1/d3.event.scale)*2+"px");
     }
+
+    //for now the prop symbols use the ID to scale the symbol to the correct size. 
+    // once we have our overall ranks worked out we'll swap that value in instead
+    g.selectAll(".circles")
+        //sort the data so that smaller values go on top (so the small circles appear on top of the big circles)
+        .data(cities.sort(function(a, b) { return b.properties.ID - a.properties.ID; }))
+        .enter()
+        .append("path")
+        //set the radius
+        .attr('d', path.pointRadius(function(d) { return radius(d.properties.ID)}))
+        //assign the id
+        .attr("class", function(d) {return d.properties.ID})
+        //assign the location of the city according to coordinates
+        .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
+        .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
+        .attr("fill", "blue")
+        .attr("stroke", "white")
+        .attr("stroke-width", "2px");
+
 }
