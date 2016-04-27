@@ -1,4 +1,11 @@
 /* 575 boilerplate style.css */
+
+.map {
+	float: right;
+	border: 2px solid black;
+	margin: 5px;
+}
+
 #attContainer {
     height: 500px;
     width: 400px;
@@ -7,6 +14,7 @@
     position: fixed;
     bottom: 0;
 }
+
 
 .us_states {
 	fill: #fff;
