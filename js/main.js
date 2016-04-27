@@ -266,10 +266,11 @@ function createMap(states, cities) {
     var width = window.innerWidth * mapWidth;
     var height = window.innerHeight *0.95;
     
+    //div container that holds SVG
+    var mapContainer = d3.select("body").append("div")
+        .attr("id", "mapContainer")
 
-
->>>>>>> master
-    var map = d3.selectAll("body")
+    var map = d3.select("#mapContainer")
         .append("svg")
         .attr("class", "map")
         .attr("width", width)
