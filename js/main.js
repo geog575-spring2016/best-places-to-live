@@ -264,11 +264,9 @@ function createMap(states, cities) {
 
     var mapWidth = 0.75;
     var width = window.innerWidth * mapWidth;
-<<<<<<< HEAD
     var height = window.innerHeight *0.95;
     
-=======
-    var height = window.innerHeight;
+
 
 >>>>>>> master
     var map = d3.selectAll("body")
