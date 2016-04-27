@@ -46,7 +46,7 @@ function createAttPanel(attData) {
     var attMargin = {top: 20, right: 10, bottom: 30, left: 10},
     attHeight = 800, //set height to entire window
     attHeight = attHeight - attMargin.top,
-    attWidth = 230,//width of attSvg
+    attWidth = 300,//width of attSvg
     attWidth = attWidth - attMargin.left - attMargin.right, //width with margins for padding
     pcpWidth = attHeight, pcpHeight = attWidth,
     attSpacing = attHeight / 40, //vertical spacing for each attribute
@@ -81,6 +81,12 @@ function createAttPanel(attData) {
     //identify which label is the longest so we can use that as the width in the transform for creating text elements
     var labelWidth = Math.max.apply(Math, labelLength);
 
+    var sliderDiv = d3.select("body").append("div")
+        .attr("id", "slider-range")
+        .attr("width", "50%")
+        .attr("height", "10%")
+
+
     //div container that holds SVG
     var attContainer = d3.select("body").append("div")
         .attr("id", "attContainer")
@@ -88,7 +94,7 @@ function createAttPanel(attData) {
     //create svg for attpanel
     var attSvg = d3.select("#attContainer").append("svg")
         .attr("class", "attSvg")
-        .attr("width", attWidth)
+        .attr("width", "100%")
         .attr("height", attHeight)
       .append("g")
         .attr("transform", "translate(" + attMargin.left + "," + attMargin.top + ")");// adds padding to group element in SVG
@@ -122,7 +128,15 @@ function createAttPanel(attData) {
           .attr("class", "attText")
           .attr("x", attWidth / 5.8)
           .attr("y", attHeight - 10)
-          .text(function(d ) { return d });
+          .text(function(d ) { return d })
+          .attr("id", function(d) {
+              //put d in array because addUnderscores only takes an array
+              var arrayD = [d]
+              //add underscores back to labels so they match with object properties
+              d = addUnderscores(arrayD);
+              //returns attribute label followed by _Rank; this way we can access each attribute by its object property
+              return searchStringInArray(d, rankData);
+          });
 
       //used to place checkbox relative to attText labels
       var textX = d3.select(".attText").attr("x")
@@ -132,16 +146,16 @@ function createAttPanel(attData) {
           .attr('y', attHeight - 26)
           .attr('width', "50px")
           .attr('height', "20px")
-          .append("xhtml:body")
+        .append("xhtml:body")
           .html("<form><input type=checkbox id='check'</input></form>")
 
       //define x,y property values for first rectangle
-      var x1 = (textX + labelWidth)*5
+      var x1 = (textX + labelWidth)*3.9
       var y1 = attHeight - 15
 
       //creates rect elements for weighting attribute
       var attRect1 = variables.append('rect')
-          .attr("class", "attRect1")
+          .attr("class", "attRect")
           .attr('width', rectWidth)
           .attr('height', rectHeight1)
           .attr("x", x1)
@@ -161,29 +175,87 @@ function createAttPanel(attData) {
           .attr("x", x1 + rectSpacing*4)
           .attr('y', y1 - rectHeight2 + 1)
 
-      // //array to hold attributes so i can difference two arrays later
-      // var allAttributes = [];
-      //
-      // //push properties from attData into attLabels array
-      // for (var keys in attData[0]){
-      //     keys = keys.split("_").join(" ") //converts underscores in csv to spaces for display purposes
-      //     allAttributes.push(keys);
-      // };
-      //
-      // //remove data identifiers we don't want displayed in panel
-      // allAttributes.splice(0,3)
-      //
-      // var notSelected = [];
-      //
-      // for (i=0; i<allAttributes.length; i++){
-      //     var notFound = $.inArray(allAttributes[i], attLabels)
-      //     if (notFound == -1){
-      //         notSelected.push(allAttributes[i])
-      //     };
-      // };
+      //used to place checkbox relative to attText labels
+      var rectX = +d3.select(".attRect3").attr("x") + 40
 
-      // createAddButton(attSvg, notSelected);
+      var sliderValues = variables.append("foreignObject")
+                .attr("class", "sliderValues")
+                .attr("x", rectX)
+                .attr("y", attHeight - 41)
+                .attr("width", "150px")
+                .attr("height", "10px")
+              .append("xhtml:div")
+                .html("<input type='text' id='rankVal' width='40px' height='8px'</input>")
 
+
+      var sliderRange = variables.append("foreignObject")
+          .attr("id", "slider-range")
+          .attr("x", rectX-13)
+          .attr("y", attHeight - 22)
+          .attr('width', "150px")
+          .attr('height', "20px")
+          .append("xhtml:div")
+        // .append("xhtml:div")
+          // .attr("class", "slider")
+          .each(function(d){
+            //put d in array because addUnderscores only takes an array
+            var arrayD = [d]
+            //add underscores back to labels so they match with object properties
+            d = addUnderscores(arrayD);
+            //returns attribute label followed by _Rank; this way we can access each attribute by its object property
+            var attribute = searchStringInArray(d, rankData);
+            // var label = d[0][i].__data__;
+            // console.log(d[0].parentNode);
+            // addString();
+            //return attribute to a string from an array
+            attribute = attribute[0];
+            createSlider(attData, rankData, attribute)
+          } )
+}
+
+function calcMinMax(attData, attribute){
+    //start with min at highest possible and max at lowest possible values
+    var min = Infinity,
+        max = -Infinity;
+    //loops through each object(i.e., city) in array of object
+    attData.forEach(function(city){
+
+            //doesn't count 0 as min value
+            if (city[attribute] != 0){
+                var attValue = +city[attribute];
+
+                //test for min
+                if (attValue < min){
+                    min = attValue;
+                };
+
+                //test for max
+                if (attValue > max){
+                    max = attValue;
+                };
+            };
+    });
+
+    //return values as an array
+    return [min, max]
+};
+
+
+function createSlider(attData, rankData, attribute) {
+    //return array of min max values for specfied attribute
+    var minMax = calcMinMax(attData, attribute);
+    var min = minMax[0];
+    var max = minMax [1];
+    $("#slider-range").slider({
+        range: true,
+        min: min,
+        max: max,
+        values: minMax,
+        slide: function (event, ui) {
+            $("#rankVal").val($("#slider-range").slider("values", 0) +
+          " - " + $("#slider-range").slider("values", 1));
+        }
+    });
 }
 
 //function to parse properties based on a string
@@ -224,7 +296,7 @@ function removeStringFromEnd(searchStr, array){
     //new array to return
     var newArray = [];
     //length of input string
-    var strLength =  searchStr.length - 1;
+    var strLength =  searchStr.length;
     //loop through all array elements
     for (i=0; i<array.length; i++) {
             var string = array[i]
