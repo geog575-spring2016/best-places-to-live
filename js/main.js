@@ -145,12 +145,8 @@ function createAttPanel(attData) {
           .attr("y", attHeight - 10)
           .text(function(d ) { return d })
           .attr("id", function(d) {
-              //put d in array because addUnderscores only takes an array
-              var arrayD = [d]
-              //add underscores back to labels so they match with object properties
-              d = addUnderscores(arrayD);
-              //returns attribute label followed by _Rank; this way we can access each attribute by its object property
-              return searchStringInArray(d, rankData);
+              var attribute = createAttID(d, rankData);
+              return attribute;
           });
 
       //used to place checkbox relative to attText labels
@@ -276,9 +272,13 @@ function createMap(states, cities) {
 
     var mapWidth = 0.75;
     var width = window.innerWidth * mapWidth;
-    var height = window.innerHeight;
+    var height = window.innerHeight *0.95;
 
-    var map = d3.selectAll("body")
+    //div container that holds SVG
+    var mapContainer = d3.select("body").append("div")
+        .attr("id", "mapContainer")
+
+    var map = d3.select("#mapContainer")
         .append("svg")
         .attr("class", "map")
         .attr("width", width)
@@ -290,15 +290,24 @@ function createMap(states, cities) {
     //will probably need to change it once we decide how big
     //"mapWidth" is actually going to be
     var projection = d3.geo.mercator()
-        .scale((width - 1)/2)
-        .translate([width*1.3, height]);
+        // .scale((width - 1)/2)
+        .scale((width*(3/4)))
+        .translate([width*2, height]);
 
+   // define what happens on zoom
     var zoom = d3.behavior.zoom()
-        .scaleExtent([1, 8])
+        .scaleExtent([1, 2])
         .on("zoom", zoomed);
 
+    //set the projection
     var path = d3.geo.path()
         .projection(projection);
+
+        //define the radius of the prop symbols.
+        // the domain should be the max and min values of the data set
+    var radius = d3.scale.sqrt()
+            .domain([1, 50])
+            .range([2, 30]);
 
     //add the states to the map
     g.selectAll(".states")
@@ -314,27 +323,42 @@ function createMap(states, cities) {
 
     //function to control when the user zooms
     function zoomed() {
-      g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-      g.selectAll("circle")
-            .attr("d", path.projection(projection));
+        // var t = d3.event.translate,
+        //     s = d3.event.scale;
+        //     t[0] = Math.min(width / 2 * (s - 1), Math.max(width / 2 * (1 - s), t[0]));
+        //     t[1] = Math.min(height / 2 * (s - 1) + 230 * s, Math.max(height / 2 * (1 - s) - 230 * s, t[1]));
+        //     zoom.translate(t);
+
+          g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+
+          //redefine the radius' range to be scaled by the scale
+          radius.range([2/d3.event.scale, 30/d3.event.scale]);
+
+          //select all the circles and change the radius and stroke width as the scale changes
+          g.selectAll("path")
+
+                .attr('d', path.pointRadius(function(d) {  return radius(d.properties.ID); }))
+                .attr("stroke-width", (1/d3.event.scale)*2+"px");
     }
 
-    //array to store coordinates for every city
-    //there might be a better/more efficient way than to iterate through it like
-    //this but for now it works and thats good enough
-    var allCoordinates = [];
-
+    //for now the prop symbols use the ID to scale the symbol to the correct size.
+    // once we have our overall ranks worked out we'll swap that value in instead
     g.selectAll(".circles")
-            .data(cities)
-            .enter()
-            .append("circle")
-            .attr("class", function(d) {return d.properties.ID})
-            .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
-            .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
-            .attr("r", "6px")
-            .attr("fill", "white")
-            .attr("stroke", "black")
-            .attr("stroke-width", "2px");
+        //sort the data so that smaller values go on top (so the small circles appear on top of the big circles)
+        .data(cities.sort(function(a, b) { return b.properties.ID - a.properties.ID; }))
+        .enter()
+        .append("path")
+        //set the radius
+        .attr('d', path.pointRadius(function(d) { return radius(d.properties.ID)}))
+        //assign the id
+        .attr("class", function(d) {return d.properties.ID})
+        //assign the location of the city according to coordinates
+        .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
+        .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
+        .attr("fill", "blue")
+        .attr("stroke", "white")
+        .attr("stroke-width", "2px");
+
 }
 
 
@@ -394,7 +418,7 @@ function createCitiesPanel(citiesArray){
       .append("g")
         .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")");// adds padding to group element in SVG
 
-    var rectHeight = cityHeight / 9;
+    var rectHeight = cityHeight / 25;
     //sets att title
     var cityTitleRect = citySvg.append("rect")
         .attr("id", "cityTitleRect")
@@ -422,13 +446,21 @@ function createCitiesPanel(citiesArray){
       .append("g")
         .attr("class", "cities")
         .attr("transform", function(d, i) {
-            var height = 35;
-            // console.log(height);
-            var offset =  30;
+            // var height = titleWidth + citySpacing/1.5;
+            // // console.log(height);
+            // var offset =  height * 20;
+            // // console.log(offset);
+            // var horz = titleWidth - 5; //x value for g translate
+            // // var vert = i * height - offset; //y value for g translate
+            // var vert = i * height - offset; //y value for g translate
+
+            // var height = 25;
+            // // console.log(height);
+            // var offset =  35;
             // console.log(offset);
             var horz = 10; //x value for g translate
             // var vert = i * height - offset; //y value for g translate
-            var vert = i * height - offset; //y value for g translate
+            var vert = i * 15; //y value for g translate
             return 'translate(' + horz + ',' + vert + ')';
       });
 
