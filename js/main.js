@@ -25,9 +25,25 @@ function callback(error, statesData, citiesData, attData){
 
     createMap(states, cities);
 
+    var citiesArray = createCityIDObject(attData);
+
+    createCitiesPanel(citiesArray);
+
 }
+//function that returns array of objects containing city name and ID; mostly for testing reordering of cities panel until we implement calculation
+function createCityIDObject(attData) {
 
-
+    var citiesArray = [];
+    //creates object with city name and ID and pushes them into an array
+    attData.map(function(d) { //d is each city object
+        var cityObj = {
+            City: d.Cities_Included,
+            ID: d.ID
+        };
+        citiesArray.push(cityObj)
+    });
+    return citiesArray;
+};
 // function createDefaultAtts(attData) {
 //       //empty array to hold attribute labels
 //       var attLabels = [];
@@ -84,11 +100,6 @@ function createAttPanel(attData) {
     //identify which label is the longest so we can use that as the width in the transform for creating text elements
     var labelWidth = Math.max.apply(Math, labelLength);
 
-    // var sliderDiv = d3.select("body").append("div")
-    //     .attr("id", "slider-range")
-    //     .attr("width", "50%")
-    //     .attr("height", "10%")
-
 
     //div container that holds SVG
     var attContainer = d3.select("body").append("div")
@@ -125,6 +136,7 @@ function createAttPanel(attData) {
             var vert = i * height - offset; //y value for g translate
             return 'translate(' + horz + ',' + vert + ')';
       });
+
 
       //adds text to attribute g
       var attText = variables.append('text')
@@ -317,7 +329,7 @@ function createMap(states, cities) {
             .enter()
             .append("circle")
             .attr("class", function(d) {return d.properties.ID})
-            .attr("cx", function (d) { console.log(d); return projection(d.geometry.coordinates)[0]; })
+            .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
             .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
             .attr("r", "6px")
             .attr("fill", "white")
@@ -326,17 +338,126 @@ function createMap(states, cities) {
 }
 
 
-function createAttID(d, rankData) {
-    //put d in array because addUnderscores only takes an array
-    var arrayD = [d]
-    //add underscores back to labels so they match with object properties
-    d = addUnderscores(arrayD);
-    //returns attribute label followed by _Rank; this way we can access each attribute by its object property
-    var attribute = searchStringInArray(d, rankData);
-    //return attribute to a string from an array
-    attribute = attribute[0];
+function createCitiesPanel(citiesArray){
+    //citiesArray is an array of objects
 
-    return attribute
+    //sort array of object based on specified property
+    citiesArray.sort(function(a, b) { return a.ID - b.ID })
+
+    //set measurements for panel
+    var cityMargin = 5,
+    cityHeight = 800,
+    cityHeight = cityHeight - cityMargin * 2,
+    cityWidth = 400,
+    cityWidth = cityWidth - cityMargin * 2,
+    citySpacing = cityHeight / 40;
+    // rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
+    // rectHeight3 = 16, rectSpacing = 3;
+
+    // //array to hold all property names
+    // var allAttributes = [];
+    // console.log(attData[0]);
+    // //push property names from attData into allAttributes array
+    // for (var keys in attData[0]){
+    //     allAttributes.push(keys);
+    // };
+    // //create an array with only properties with Raw values; for PCP display
+    // var rawData = searchStringInArray("Raw", allAttributes);
+    //
+    // //create an array with only properties with Rank values; for calculation
+    // var rankData = searchStringInArray("Rank", allAttributes);
+    //
+    // var attLabels = removeStringFromEnd("_Rank", rankData)
+    //
+    // attLabels = removeUnderscores(attLabels);
+
+    // //empty array to hold length of each label
+    // var labelLength = [];
+    // //for loop to push all label lengths into array
+    // for (i=0; i<rankData.length; i++) {
+    //     var attLength = rankData[i].length;
+    //     labelLength.push(attLength)
+    // }
+
+    // //identify which label is the longest so we can use that as the width in the transform for creating text elements
+    // var labelWidth = Math.max.apply(Math, labelLength);
+
+    //div container that holds SVG
+    var cityContainer = d3.select("body").append("div")
+        .attr("id", "cityContainer")
+
+    //create svg for attpanel
+    var citySvg = d3.select("#cityContainer").append("svg")
+        .attr("class", "citySvg")
+        .attr("width", "100%")
+        .attr("height", cityHeight)
+      .append("g")
+        .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")");// adds padding to group element in SVG
+
+    var rectHeight = cityHeight / 9;
+    //sets att title
+    var cityTitleRect = citySvg.append("rect")
+        .attr("id", "cityTitleRect")
+        .attr("y", cityMargin)
+        .attr("height", rectHeight)
+
+
+    //used to place checkbox relative to attText labels
+    var titleHeight = +d3.select("#cityTitleRect").attr("height") / 2,
+    titleWidth = (+d3.select(".citySvg").node().getBBox().width) / 9,
+    fontSize = 1.5 * titleHeight    // font fills rect
+
+    var cityTitle = citySvg.append("text")
+        .attr("id", "cityTitle")
+        .attr("x", titleWidth)
+        .attr("y", titleHeight*1.55)
+        .text("Top Ranked Cities")
+        .style("font-size", fontSize + "px")
+
+
+    // creates a group for each rectangle and offsets each by same amount
+    var cities = citySvg.selectAll('.cities')
+        .data(citiesArray)
+        .enter()
+      .append("g")
+        .attr("class", "cities")
+        .attr("transform", function(d, i) {
+            var height = 35;
+            // console.log(height);
+            var offset =  30;
+            // console.log(offset);
+            var horz = 10; //x value for g translate
+            // var vert = i * height - offset; //y value for g translate
+            var vert = i * height - offset; //y value for g translate
+            return 'translate(' + horz + ',' + vert + ')';
+      });
+
+      //adds text to attribute g
+      var cityText = cities.append('text')
+          .attr("class", "attText")
+          // .attr("x", attWidth / 5.8)
+          // .attr("y", attHeight - 10)
+          .text(function(d ) { return d.City })
+          // .attr("id", function(d) {
+          //     var attribute = createAttID(d, rankData)
+          //
+          //     return attribute;
+          // });
+
+  }
+
+
+  function createAttID(d, rankData) {
+      //put d in array because addUnderscores only takes an array
+      var arrayD = [d]
+      //add underscores back to labels so they match with object properties
+      d = addUnderscores(arrayD);
+      //returns attribute label followed by _Rank; this way we can access each attribute by its object property
+      var attribute = searchStringInArray(d, rankData);
+      //return attribute to a string from an array
+      attribute = attribute[0];
+
+      return attribute
 
 }
 
@@ -346,7 +467,6 @@ function createSlider(attData, rankData, attribute) {
     var min = minMax[0];
     var max = minMax [1];
     var sliderID = "#" + attribute + "-slider-range"
-    console.log(sliderID);
     var labelID = "#"+ attribute + "_rankVal"
     $(sliderID).slider({
         range: true,

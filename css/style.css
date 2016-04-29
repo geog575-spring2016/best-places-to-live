@@ -8,6 +8,24 @@
     bottom: 0;
 }
 
+#cityContainer {
+    height: 350px;
+    width: 300px;
+    border: 1px solid #ccc;
+    overlow-y: scroll;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin-right: 5px;
+}
+
+#cityTitleRect {
+    width: 100%;
+    fill: #eee;
+    color: red;
+
+}
+
 .us_states {
 	fill: #fff;
 	stroke: #000;
