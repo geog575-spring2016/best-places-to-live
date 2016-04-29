@@ -19,7 +19,7 @@
     height: 350px;
     width: 300px;
     border: 1px solid #ccc;
-    overlow-y: scroll;
+    overflow-y: scroll;
     position: fixed;
     bottom: 0;
     right: 0;

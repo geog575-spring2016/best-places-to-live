@@ -370,7 +370,7 @@ function createCitiesPanel(citiesArray){
 
     //set measurements for panel
     var cityMargin = 5,
-    cityHeight = 800,
+    cityHeight = 1600,
     cityHeight = cityHeight - cityMargin * 2,
     cityWidth = 400,
     cityWidth = cityWidth - cityMargin * 2,
@@ -418,7 +418,8 @@ function createCitiesPanel(citiesArray){
       .append("g")
         .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")");// adds padding to group element in SVG
 
-    var rectHeight = cityHeight / 25;
+    var rectHeight = 31;
+
     //sets att title
     var cityTitleRect = citySvg.append("rect")
         .attr("id", "cityTitleRect")
@@ -445,38 +446,60 @@ function createCitiesPanel(citiesArray){
         .enter()
       .append("g")
         .attr("class", "cities")
-        .attr("transform", function(d, i) {
-            // var height = titleWidth + citySpacing/1.5;
-            // // console.log(height);
-            // var offset =  height * 20;
-            // // console.log(offset);
-            // var horz = titleWidth - 5; //x value for g translate
-            // // var vert = i * height - offset; //y value for g translate
-            // var vert = i * height - offset; //y value for g translate
-
-            // var height = 25;
-            // // console.log(height);
-            // var offset =  35;
-            // console.log(offset);
+        .attr("id", function(d){
+            return d.City + "_group"
+        })
+        .attr("transform", function(d, i) {            // console.log(offset);
             var horz = 10; //x value for g translate
-            // var vert = i * height - offset; //y value for g translate
-            var vert = i * 15; //y value for g translate
+            var vert = i * 28; //y value for g translate
             return 'translate(' + horz + ',' + vert + ')';
       });
 
-      //adds text to attribute g
-      var cityText = cities.append('text')
-          .attr("class", "attText")
-          // .attr("x", attWidth / 5.8)
-          // .attr("y", attHeight - 10)
-          .text(function(d ) { return d.City })
-          // .attr("id", function(d) {
-          //     var attribute = createAttID(d, rankData)
-          //
-          //     return attribute;
-          // });
 
-  }
+    var cityRect = cities.append("rect")
+        .attr("class", "cityRect")
+        .attr("id", function(d){
+            return d.City + "_rect"
+        })
+        // .attr("x", cityMargin)
+        .attr("width", "100%")
+        .attr("height", (rectHeight / 3) * 2)
+        .attr("y", 40)
+        .attr("x", -10)
+        .style("fill", "gray")
+
+    //used to place checkbox relative to attText labels
+    var rectY = +d3.select(".cityRect").attr("y") + 15
+
+    //adds text to attribute g
+    var cityRank = cities.append('text')
+        .attr("class", "cityRank")
+        // .attr("x", attWidth / 5.8)
+        .attr("x", -4)
+        .attr("y", rectY)
+        .text(function(d ) { return d.ID + "." })
+        // .attr("id", function(d) {
+        //     var attribute = createAttID(d, rankData)
+        //
+        //     return attribute;
+        // });
+
+
+
+    //adds text to attribute g
+    var cityText = cities.append('text')
+        .attr("class", "cityText")
+        // .attr("x", attWidth / 5.8)
+        .attr("x", 20)
+        .attr("y", rectY)
+        .text(function(d ) { return d.City })
+        // .attr("id", function(d) {
+        //     var attribute = createAttID(d, rankData)
+        //
+        //     return attribute;
+        // });
+
+}
 
 
   function createAttID(d, rankData) {
