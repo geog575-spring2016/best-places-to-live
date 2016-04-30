@@ -164,33 +164,130 @@ function createAttPanel(attData) {
           .attr('width', "20px")
           .attr('height', "20px")
         .append("xhtml:body")
-          .html("<form><input type=checkbox id='check'</input></form>")
+          .html(function(d) {
+              //get unique attribute for every variable
+              var attribute = createAttID(d, rankData)
+              //create ID for checkboxes
+              var attID = attribute + "_check";
+              return "<form><input type=checkbox class='checkbox' id='" + attID + "'</input></form>"
+        })
+          .on("change", function(){
+              var checked = d3.selectAll(".checkbox")
+              for (i=0; i<checked[0].length; i++) {
+                  // console.log(checked[i]);
+                  // console.log(checked[0]);
+                  if (checked[0][i].checked == true) {
+                    var getID = this.id;
+                    //trim "_rect1" from end of string
+                    var att = getID.slice(0, -7);
 
+                    //set checked property to 1 in city object
+
+
+                  }
+              }
+          })
       //define x,y property values for first rectangle
       var x1 = (textX + labelWidth)*3.9
       var y1 = attHeight - 15
 
       //creates rect elements for weighting attribute
       var attRect1 = variables.append('rect')
-          .attr("class", "attRect")
+          .attr("class", "attRect1")
+          // .attr("class", "activeRect")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_rect1";
+          })
           .attr('width', rectWidth)
           .attr('height', rectHeight1)
           .attr("x", x1)
           .attr('y', y1)
+          .on("click", function(){
+              // weight for this attribute to use for calculating score (weight is 1)
+              var weight = +this.getBBox().height / 12;
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //trim "_rect1" from end of string
+              var att = attID.slice(0, -6);
+
+              var attID2 = attID.replace("1", "2")
+              var attID3 = attID.replace("1", "3")
+              d3.select("#"+ attID).style("fill", "#aaa")
+              d3.select("#"+ attID2).style("fill", "#eee")
+              d3.select("#"+ attID3).style("fill", "#eee")
+
+              //set weight property for specified attribute to
+
+            // calcWeight(this)
+          })
       //creates rect elements for weighting attribute
       var attRect2 = variables.append('rect')
           .attr("class", "attRect2")
           .attr('width', rectWidth)
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_rect2";
+          })
           .attr('height', rectHeight2)
           .attr("x", x1 + rectSpacing*2)
           .attr('y', y1 - rectHeight1 + 1)
+          .on("click", function(){
+              // weight for this attribute to use for calculating score (weight is 1)
+              var weight = +this.getBBox().height / 11;
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //trim "_rect1" from end of string
+              var att = attID.slice(0, -6);
+
+              var attID1 = attID.replace("2", "1")
+              var attID3 = attID.replace("2", "3")
+              d3.select("#"+ attID1).style("fill", "#aaa")
+              d3.select("#"+ attID).style("fill", "#999")
+              d3.select("#"+ attID3).style("fill", "#eee")
+
+
+          })
+
       //creates rect elements for weighting attribute
       var attRect3 = variables.append('rect')
           .attr("class", "attRect3")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_rect3";
+          })
           .attr('width', rectWidth)
           .attr('height', rectHeight3)
           .attr("x", x1 + rectSpacing*4)
           .attr('y', y1 - rectHeight2 + 1)
+          .on("click", function(){
+              // weight for this attribute to use for calculating score (weight is 1)
+              var weight = +this.getBBox().height / 8;
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //trim "_rect1" from end of string
+              var att = attID.slice(0, -6);
+
+              var attID1 = attID.replace("3", "1")
+              var attID2 = attID.replace("3", "2")
+              d3.select("#"+ attID1).style("fill", "#aaa")
+              d3.select("#"+ attID2).style("fill", "#999")
+              d3.select("#"+ attID).style("fill", "#888")
+
+
+
+          })
+
+
+      // function calcWeight(this) {
+      // }
+
 
       //used to place checkbox relative to attText labels
       var rectX = +d3.select(".attRect3").attr("x") + 40
@@ -205,7 +302,8 @@ function createAttPanel(attData) {
           .html(function(d){
             //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
             var attribute = createAttID(d, rankData);
-            return "<input type='text' id='" + attribute +"_rankVal' width='40px' height='8px'></input>"})
+            return "<input type='text' id='" + attribute +"_rankVal' width='40px' height='8px'></input>";
+          });
 
 
       var sliderRange = variables.append("foreignObject")
@@ -246,6 +344,7 @@ function createAttPanel(attData) {
       };
 
 };
+
 
 function calcMinMax(attData, attribute){
     //start with min at highest possible and max at lowest possible values
