@@ -416,6 +416,23 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
     var cityContainer = d3.select("body").append("div")
         .attr("id", "cityContainer")
 
+
+    var searchDiv = cityContainer.append("div")
+        .attr("class", "ui-widget")
+        .attr("id", "searchDiv")
+        .attr("width", "100%")
+        .attr("height", titleHeight)
+        .html("<label for='tags'>City: </label><input id='tags'>")
+
+    $("#tags").autocomplete({
+        source: citySearch,
+        messages: {
+            noResults: 'City not found',
+            results: function(){}
+        }
+    });
+
+
     //create svg for attpanel
     var citySvg = d3.select("#cityContainer").append("svg")
         .attr("class", "citySvg")
@@ -505,20 +522,6 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
         //     return attribute;
         // });
 
-    var searchDiv = cityContainer.append("div")
-        .attr("class", "ui-widget")
-        .attr("id", "searchDiv")
-        .attr("width", "100%")
-        .attr("height", titleHeight)
-        .html("<label for='tags'>City: </label><input id='tags'>")
-
-    $("#tags").autocomplete({
-        source: citySearch,
-        messages: {
-            noResults: 'City not found',
-            results: function(){}
-        }
-    });
 
 }
 

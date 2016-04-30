@@ -15,6 +15,9 @@
     bottom: 0;
 }
 
+#searchDiv {
+		padding-left: 5px;
+}
 #cityContainer {
     height: 350px;
     width: 300px;
