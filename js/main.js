@@ -69,6 +69,7 @@ function createAttPanel(attData) {
     rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
     rectHeight3 = 16, rectSpacing = 3;
 
+
     //array to hold all property names
     var allAttributes = [];
 
@@ -76,6 +77,7 @@ function createAttPanel(attData) {
     for (var keys in attData[0]){
         allAttributes.push(keys);
     };
+
     //create an array with only properties with Raw values; for PCP display
     var rawData = searchStringInArray("Raw", allAttributes);
 
@@ -83,7 +85,6 @@ function createAttPanel(attData) {
     var rankData = searchStringInArray("Rank", allAttributes);
 
     var attLabels = removeStringFromEnd("_Rank", rankData)
-
     attLabels = removeUnderscores(attLabels);
 
     //create array containing only city names to use in search bar in citiesPanel
@@ -91,6 +92,10 @@ function createAttPanel(attData) {
 
     //creates array of city objects for now just for testing
     var citiesArray = createCityIDObject(attData);
+
+    //creates array of objects with an object for each attribute that also holds weight and checked properties
+    var attObjArray = createAttObjArray(rankData);
+
     //creates cities panel; add here so we can pass rankData for now
     createCitiesPanel(citiesArray, rankData, citySearch);
 
@@ -170,23 +175,41 @@ function createAttPanel(attData) {
               //create ID for checkboxes
               var attID = attribute + "_check";
               return "<form><input type=checkbox class='checkbox' id='" + attID + "'</input></form>"
-        })
-          .on("change", function(){
-              var checked = d3.selectAll(".checkbox")
-              for (i=0; i<checked[0].length; i++) {
-                  // console.log(checked[i]);
-                  // console.log(checked[0]);
-                  if (checked[0][i].checked == true) {
-                    var getID = this.id;
-                    //trim "_rect1" from end of string
-                    var att = getID.slice(0, -7);
-
-                    //set checked property to 1 in city object
-
-
-                  }
-              }
           })
+          .on("change", function(){
+              attObjArray = setCheckedProp(attObjArray);
+              console.log(attObjArray);
+              // //select all of the checkboxes
+              // var checked = d3.selectAll(".checkbox");
+              // //loop through array of checkbox elements
+              // for (i=0; i<checked[0].length; i++) {
+              //     //if the checkbox is checked, do this
+              //     if (checked[0][i].checked == true) {
+              //         //gets ID, which contains attribute name
+              //         var getID = checked[0][i].id;
+              //         //trim "_check" from end of ID string
+              //         var att = getID.slice(0, -6);
+              //         // loop through array of att objects and sets checked property to 1
+              //         for (i=0; i<attObjArray.length; i++){
+              //             if (attObjArray[i].Attribute == att) {
+              //                 attObjArray[i].Checked = 1;
+              //             };
+              //         };
+              //     } else { //if the checkbox isn't checked, do this
+              //         var getID = checked[0][i].id;
+              //         //trim "_check" from end of ID string
+              //         var att = getID.slice(0, -6);
+              //         // loop through array of att objects and sets checked property to 0
+              //         for (i=0; i<attObjArray.length; i++){
+              //             if (attObjArray[i].Attribute == att) {
+              //                 attObjArray[i].Checked = 0;
+              //             };
+              //
+              //         }
+              //     };
+              // }
+          });
+
       //define x,y property values for first rectangle
       var x1 = (textX + labelWidth)*3.9
       var y1 = attHeight - 15
@@ -206,6 +229,7 @@ function createAttPanel(attData) {
           .attr("x", x1)
           .attr('y', y1)
           .on("click", function(){
+              console.log(attObjArray);
               // weight for this attribute to use for calculating score (weight is 1)
               var weight = +this.getBBox().height / 12;
               //extract ID of whichever rectangle is clicked
@@ -712,6 +736,22 @@ function removeStringFromEnd(searchStr, array){
     return newArray;
 };
 
+function createAttObjArray(rankData){
+    var attObjArray = [];
+    for (i=0; i<rankData.length; i++){
+
+        var attObj = {
+            Attribute: rankData[i],
+            Weight: 1,
+            Checked: 0
+        }
+        attObjArray.push(attObj)
+    };
+
+    return attObjArray;
+};
+
+
 function createSearchArray(attData, rankData) {
 
       var cityArray = [];
@@ -724,4 +764,40 @@ function createSearchArray(attData, rankData) {
 
       return cityArray
 
+}
+
+//function to update the "checked" property on the attribute array every time one is checked
+function setCheckedProp(attObjArray) {
+    //select all of the checkboxes
+    var checked = d3.selectAll(".checkbox");
+    //loop through array of checkbox elements
+    checked.forEach(function(d) { //d is array of all checkbox elements
+        // loop through each checkbox element in array
+        for (j=0; j<19; j++) {
+            //if the checkbox is checked, do this
+            if (d[j].checked == true) {
+                //gets ID, which contains attribute name
+                var getID = d[j].id;
+                //trim "_check" from end of ID string
+                var att = getID.slice(0, -6);
+                // loop through array of att objects and sets checked property to 1
+                for (i=0; i<attObjArray.length; i++){
+                    if (attObjArray[i].Attribute == att) {
+                        attObjArray[i].Checked = 1;
+                    };
+                };
+            } else { //if the checkbox isn't checked, do this
+                var getID = d[j].id;
+                //trim "_check" from end of ID string
+                var att = getID.slice(0, -6);
+                // loop through array of att objects and sets checked property to 0
+                for (i=0; i<attObjArray.length; i++){
+                    if (attObjArray[i].Attribute == att) {
+                        attObjArray[i].Checked = 0;
+                    };
+                };
+            };
+        };
+    });
+    return attObjArray;
 }
