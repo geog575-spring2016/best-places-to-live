@@ -25,9 +25,6 @@ function callback(error, statesData, citiesData, attData){
 
     createMap(states, cities);
 
-    var citiesArray = createCityIDObject(attData);
-
-    createCitiesPanel(citiesArray);
 
 }
 //function that returns array of objects containing city name and ID; mostly for testing reordering of cities panel until we implement calculation
@@ -88,6 +85,15 @@ function createAttPanel(attData) {
     var attLabels = removeStringFromEnd("_Rank", rankData)
 
     attLabels = removeUnderscores(attLabels);
+
+    //create array containing only city names to use in search bar in citiesPanel
+    var citySearch = createSearchArray(attData, rankData);
+
+    //creates array of city objects for now just for testing
+    var citiesArray = createCityIDObject(attData);
+    //creates cities panel; add here so we can pass rankData for now
+    createCitiesPanel(citiesArray, rankData, citySearch);
+
 
     //empty array to hold length of each label
     var labelLength = [];
@@ -362,7 +368,7 @@ function createMap(states, cities) {
 }
 
 
-function createCitiesPanel(citiesArray){
+function createCitiesPanel(citiesArray, rankData, citySearch){
     //citiesArray is an array of objects
 
     //sort array of object based on specified property
@@ -409,6 +415,23 @@ function createCitiesPanel(citiesArray){
     //div container that holds SVG
     var cityContainer = d3.select("body").append("div")
         .attr("id", "cityContainer")
+
+
+    var searchDiv = cityContainer.append("div")
+        .attr("class", "ui-widget")
+        .attr("id", "searchDiv")
+        .attr("width", "100%")
+        .attr("height", titleHeight)
+        .html("<label for='tags'>City: </label><input id='tags'>")
+
+    $("#tags").autocomplete({
+        source: citySearch,
+        messages: {
+            noResults: 'City not found',
+            results: function(){}
+        }
+    });
+
 
     //create svg for attpanel
     var citySvg = d3.select("#cityContainer").append("svg")
@@ -499,6 +522,7 @@ function createCitiesPanel(citiesArray){
         //     return attribute;
         // });
 
+
 }
 
 
@@ -588,3 +612,17 @@ function removeStringFromEnd(searchStr, array){
         };
     return newArray;
 };
+
+function createSearchArray(attData, rankData) {
+
+      var cityArray = [];
+      //creates object with city name and ID and pushes them into an array
+      attData.map(function(d) { //d is each city object
+          var city = d.Cities_Included
+
+          cityArray.push(city)
+      });
+
+      return cityArray
+
+}
