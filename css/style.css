@@ -36,6 +36,15 @@
 
 }
 
+.attRect1,
+.attRect2,
+.attRect3 {
+	cursor: pointer;
+	stroke: black;
+	fill:#eee
+}
+
+
 .us_states {
 	fill: #fff;
 	stroke: #000;
