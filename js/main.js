@@ -352,12 +352,25 @@ function calcScore(attData, attObjArray, checkedAtts, citiesArray) {
     //     console.log(d);
     // })
     attData.map(function(d){ //d is each city with all of it's rankings
-        var cityRank = {};
+        var cityRanks = {
+            City: d.Cities_Included
+        };
         for (i=0; i<checkedAtts.length; i++) {
-          //checkedAtts[i] is the attribute rank
-          console.log(d[checkedAtts[i]]);
+          var property = checkedAtts[i]
+          cityRanks[property] = d[property]//checkedAtts[i] is the attribute rank
+
+          // console.log(d[checkedAtts[i]]);
         }
+        cityRankArray.push(cityRanks)
     })
+    // console.log(cityRankArray);
+    var rank =[];
+    for (j=1; j<51; j++){
+        rank.push(j)
+    }
+
+    rank.reverse;
+    console.log(rank);
 }
 
 function checkedAttributes(attData, attObjArray){
