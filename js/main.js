@@ -292,17 +292,17 @@ function createAttPanel(attData) {
       //used to place checkbox relative to attText labels
       var rectX = +d3.select(".attRect3").attr("x") + 40
 
-      var sliderValues = variables.append("foreignObject")
-          .attr("class", "sliderValues")
-          .attr("width", "150px")
+      var sliderMinValue = variables.append("foreignObject")
+          .attr("class", "sliderMinValue")
+          .attr("width", "15px")
           .attr("height", "10px")
           .attr("x", rectX)
           .attr("y", attHeight - 40)
-        .append("xhtml:body")
+        .append("xhtml:div")
           .html(function(d){
             //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
             var attribute = createAttID(d, rankData);
-            return "<input type='text' id='" + attribute +"_rankVal' width='40px' height='8px'></input>";
+            return "<input type='text' id='" + attribute +"_rankValMin' width='15px' height='10px'></input>";
           });
 
 
@@ -336,7 +336,7 @@ function createAttPanel(attData) {
       for (i=0; i<rankData.length; i++){
           d3.select("#"+rankData[i]+"_FO")
               .attr("y", function(){
-                  var yVal = 110;
+                  var yVal = 117;
                   yVal = yVal + (35*i);
 
                   return yVal;
@@ -513,7 +513,11 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
 
     //div container that holds SVG
     var cityContainer = d3.select("body").append("div")
-        .attr("id", "cityContainer")
+        .attr("class", "cityContainer")
+        .attr("id", "draggable")
+        .call(function(d){ //makes city div draggable
+            $("#draggable").draggable()
+        })
 
 
     var searchDiv = cityContainer.append("div")
@@ -533,7 +537,7 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
 
 
     //create svg for attpanel
-    var citySvg = d3.select("#cityContainer").append("svg")
+    var citySvg = d3.select(".cityContainer").append("svg")
         .attr("class", "citySvg")
         .attr("width", "100%")
         .attr("height", cityHeight)
@@ -583,6 +587,7 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
         .attr("id", function(d){
             return d.City + "_rect"
         })
+        .attr("id", "selectable")
         // .attr("x", cityMargin)
         .attr("width", "100%")
         .attr("height", (rectHeight / 3) * 2)
@@ -645,12 +650,18 @@ function createSlider(attData, rankData, attribute) {
     var min = minMax[0];
     var max = minMax [1];
     var sliderID = "#" + attribute + "-slider-range"
-    var labelID = "#"+ attribute + "_rankVal"
+    var labelID = "#"+ attribute + "_rankValMin"
+    // d3.select(sliderID)
+    //     .call(d3.slider().axis(true).min(min).max(max).value(minMax))
+    //     .on("slide", function(evt,value){
+    //         console.log(value);
+    //     })
     $(sliderID).slider({
         range: true,
         min: min,
         max: max,
         values: minMax,
+        // step: Math.round((max - min)/5),
         slide: function (event, ui) {
             $(labelID).val($(sliderID).slider("values", 0) +
           " - " + $(sliderID).slider("values", 1));
