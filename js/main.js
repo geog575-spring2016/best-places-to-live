@@ -327,7 +327,6 @@ function createAttPanel(attData) {
               // // console.log(citiesArray);
           })
 
-// console.log(citiesArray);
       //used to place checkbox relative to attText labels
       var rectX = +d3.select(".attRect3").attr("x") + 40
 
@@ -618,10 +617,8 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
 
         } else {
             var cityContainer = d3.select(".cityContainer");
-        }
-
-
-
+        };
+    console.log(citiesArray);
         //create svg for attpanel
         var citySvg = d3.select(".cityContainer").append("svg")
             .attr("class", "citySvg")
@@ -926,7 +923,6 @@ function calcScore (attObjArray, checkedAtts, citiesArray){
   // console.log(citiesArray);
   return citiesArray
 }
-
 
 //disables slider
 function disableSlider(d){
