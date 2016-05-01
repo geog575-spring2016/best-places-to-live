@@ -30,6 +30,10 @@
 		cursor: move;
 }
 
+.checkbox {
+		cursor: pointer;
+}
+
 #cityTitleRect {
     width: 100%;
     fill: #eee;

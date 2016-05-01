@@ -28,15 +28,15 @@ function callback(error, statesData, citiesData, attData){
 
 }
 //function that returns array of objects containing city name and ID; mostly for testing reordering of cities panel until we implement calculation
-function createCityIDObject(attData) {
+function createCitiesArray(attData) {
 
     var citiesArray = [];
     //creates object with city name and ID and pushes them into an array
     attData.map(function(d) { //d is each city object
         var cityObj = {
-            City: d.Cities_Included,
-            ID: d.ID
-        };
+            City: d.Cities_Included
+            // ID: d.ID
+          };
         citiesArray.push(cityObj)
     });
     return citiesArray;
@@ -69,6 +69,7 @@ function createAttPanel(attData) {
     rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
     rectHeight3 = 16, rectSpacing = 3;
 
+
     //array to hold all property names
     var allAttributes = [];
 
@@ -76,6 +77,7 @@ function createAttPanel(attData) {
     for (var keys in attData[0]){
         allAttributes.push(keys);
     };
+
     //create an array with only properties with Raw values; for PCP display
     var rawData = searchStringInArray("Raw", allAttributes);
 
@@ -83,17 +85,19 @@ function createAttPanel(attData) {
     var rankData = searchStringInArray("Rank", allAttributes);
 
     var attLabels = removeStringFromEnd("_Rank", rankData)
-
     attLabels = removeUnderscores(attLabels);
 
     //create array containing only city names to use in search bar in citiesPanel
     var citySearch = createSearchArray(attData, rankData);
 
     //creates array of city objects for now just for testing
-    var citiesArray = createCityIDObject(attData);
-    //creates cities panel; add here so we can pass rankData for now
-    createCitiesPanel(citiesArray, rankData, citySearch);
+    var citiesArray = createCitiesArray(attData);
 
+    //creates array of objects with an object for each attribute that also holds weight and checked properties
+    var attObjArray = createAttObjArray(rankData);
+
+    // define empty array so other functions within this one can use it
+    var filteredCities = [];
 
     //empty array to hold length of each label
     var labelLength = [];
@@ -170,23 +174,20 @@ function createAttPanel(attData) {
               //create ID for checkboxes
               var attID = attribute + "_check";
               return "<form><input type=checkbox class='checkbox' id='" + attID + "'</input></form>"
-        })
-          .on("change", function(){
-              var checked = d3.selectAll(".checkbox")
-              for (i=0; i<checked[0].length; i++) {
-                  // console.log(checked[i]);
-                  // console.log(checked[0]);
-                  if (checked[0][i].checked == true) {
-                    var getID = this.id;
-                    //trim "_rect1" from end of string
-                    var att = getID.slice(0, -7);
-
-                    //set checked property to 1 in city object
-
-
-                  }
-              }
           })
+          .on("change", function(){
+              //function updates "checked" property for every attribute
+              attObjArray = setCheckedProp(attObjArray);
+              //toggles range sliders; buggy right now
+              attObjArray.map(function(d){
+                  if (d.Checked == 0) {
+                      disableSlider(d);
+                  } else if (d.Checked ==1) {
+                      enableSlider(d);
+                  }
+              })
+          });
+
       //define x,y property values for first rectangle
       var x1 = (textX + labelWidth)*3.9
       var y1 = attHeight - 15
@@ -206,8 +207,6 @@ function createAttPanel(attData) {
           .attr("x", x1)
           .attr('y', y1)
           .on("click", function(){
-              // weight for this attribute to use for calculating score (weight is 1)
-              var weight = +this.getBBox().height / 12;
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
               //trim "_rect1" from end of string
@@ -219,9 +218,12 @@ function createAttPanel(attData) {
               d3.select("#"+ attID2).style("fill", "#eee")
               d3.select("#"+ attID3).style("fill", "#eee")
 
-              //set weight property for specified attribute to
-
-            // calcWeight(this)
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 0.5;
+                  };
+              };
           })
       //creates rect elements for weighting attribute
       var attRect2 = variables.append('rect')
@@ -237,8 +239,6 @@ function createAttPanel(attData) {
           .attr("x", x1 + rectSpacing*2)
           .attr('y', y1 - rectHeight1 + 1)
           .on("click", function(){
-              // weight for this attribute to use for calculating score (weight is 1)
-              var weight = +this.getBBox().height / 11;
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
               //trim "_rect1" from end of string
@@ -250,7 +250,12 @@ function createAttPanel(attData) {
               d3.select("#"+ attID).style("fill", "#999")
               d3.select("#"+ attID3).style("fill", "#eee")
 
-
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 1;
+                  };
+              };
           })
 
       //creates rect elements for weighting attribute
@@ -267,8 +272,6 @@ function createAttPanel(attData) {
           .attr("x", x1 + rectSpacing*4)
           .attr('y', y1 - rectHeight2 + 1)
           .on("click", function(){
-              // weight for this attribute to use for calculating score (weight is 1)
-              var weight = +this.getBBox().height / 8;
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
               //trim "_rect1" from end of string
@@ -280,15 +283,51 @@ function createAttPanel(attData) {
               d3.select("#"+ attID2).style("fill", "#999")
               d3.select("#"+ attID).style("fill", "#888")
 
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 2;
+                  };
+              };
+              var checkedAtts = checkedAttributes(attData, attObjArray);
+              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              // console.log(citiesArray);
+              createCitiesPanel(citiesArray, rankData, citySearch)
 
-
+              // citiesArray = citiesArray.map(function(city){
+              //     //array to hold individual scores calculated by multiplying the rank score by the weight
+              //     var scoreArray = [];
+              //
+              //     console.log(city);
+              //     // console.log(checkedAtts);
+              //     // console.log(attObjArray);
+              //     // console.log(citiesArray);
+              //     //loop through all attributes that are checked
+              //     for (i=0; i<checkedAtts.length; i++){
+              //         var att = checkedAtts[i];
+              //         //loops through array containing weight of all attributes
+              //         attObjArray.map(function(d){
+              //             // retrieves proper object in attObjArray based on the attribute in checkedAtts
+              //             if (d.Attribute == att){
+              //                 //calcs an attScore by multiplying the attribute weight by the rank of the city
+              //                 var attScore = d.Weight * city[att]
+              //                 //pushes the attScore into an array of numbers so an average can be calculated
+              //                 scoreArray.push(attScore)
+              //             }
+              //         })
+              //     }
+              //     //sets score equal to the mean of the array
+              //     //probably need to change this because it
+              //     var score = d3.sum(scoreArray) / scoreArray.length
+              //     city["Score"] = score;
+              //     // console.log(city);
+              // })
+              // // console.log(citiesArray);
           })
 
-
-      // function calcWeight(this) {
-      // }
-
-
+// console.log(citiesArray);
       //used to place checkbox relative to attText labels
       var rectX = +d3.select(".attRect3").attr("x") + 40
 
@@ -329,9 +368,9 @@ function createAttPanel(attData) {
           .each(function(d){
               //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
               var attribute = createAttID(d, rankData);
-              createSlider(attData, rankData, attribute)
+              filteredCities = createSlider(attData, rankData, attribute);
           } )
-
+      console.log(filteredCities);
       //for loop to set 'y' attr for each slider because d3 is dumb and won't set it like it should
       for (i=0; i<rankData.length; i++){
           d3.select("#"+rankData[i]+"_FO")
@@ -343,7 +382,45 @@ function createAttPanel(attData) {
               });
       };
 
+      //creates cities panel; add here so we can pass rankData for now
+      createCitiesPanel(citiesArray, rankData, citySearch);
+
 };
+
+function addAttRanks(attData, attObjArray, checkedAtts, citiesArray) {
+    // console.log(checkedAtts);
+    // console.log(attObjArray);
+    // array to hold objects of city's ranks
+    var cityRankArray = [];
+    attData.map(function(d){ //d is each city with all of it's rankings
+        var cityRanks = {
+            City: d.Cities_Included
+        };
+        for (i=0; i<checkedAtts.length; i++) {
+          var property = checkedAtts[i]
+          cityRanks[property] = d[property]//checkedAtts[i] is the attribute rank
+
+          // console.log(d[checkedAtts[i]]);
+        }
+        cityRankArray.push(cityRanks)
+    })
+
+    //this is an array of objects containing city name and the rank for each attribute that is checked
+    return cityRankArray
+}
+
+function checkedAttributes(attData, attObjArray){
+    //create array to hold attributes that are checked
+    var checkedAtts = [];
+    //loop through each attribute object and add all that are checked to checkedAtts array
+    attObjArray.forEach(function(d, i){
+        //if attribute is checked, push it's "Attribute" property to array
+        if (d.Checked == 1){
+            checkedAtts.push(d.Attribute);
+        };
+    });
+    return checkedAtts;
+}
 
 
 function calcMinMax(attData, attribute){
@@ -470,162 +547,170 @@ function createMap(states, cities) {
 function createCitiesPanel(citiesArray, rankData, citySearch){
     //citiesArray is an array of objects
 
-    //sort array of object based on specified property
-    citiesArray.sort(function(a, b) { return a.ID - b.ID })
+        //removes SVG each time function is called
+        d3.select(".citySvg").remove()
 
-    //set measurements for panel
-    var cityMargin = 5,
-    cityHeight = 1600,
-    cityHeight = cityHeight - cityMargin * 2,
-    cityWidth = 400,
-    cityWidth = cityWidth - cityMargin * 2,
-    citySpacing = cityHeight / 40;
-    // rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
-    // rectHeight3 = 16, rectSpacing = 3;
+        //sort array of objects in descencing order based on specified property
+        citiesArray.sort(function(a, b) { return b.Score - a.Score })
 
-    // //array to hold all property names
-    // var allAttributes = [];
-    // console.log(attData[0]);
-    // //push property names from attData into allAttributes array
-    // for (var keys in attData[0]){
-    //     allAttributes.push(keys);
-    // };
-    // //create an array with only properties with Raw values; for PCP display
-    // var rawData = searchStringInArray("Raw", allAttributes);
-    //
-    // //create an array with only properties with Rank values; for calculation
-    // var rankData = searchStringInArray("Rank", allAttributes);
-    //
-    // var attLabels = removeStringFromEnd("_Rank", rankData)
-    //
-    // attLabels = removeUnderscores(attLabels);
+        //set measurements for panel
+        var cityMargin = 5,
+        cityHeight = 1600,
+        cityHeight = cityHeight - cityMargin * 2,
+        cityWidth = 400,
+        cityWidth = cityWidth - cityMargin * 2,
+        citySpacing = cityHeight / 40;
+        // rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
+        // rectHeight3 = 16, rectSpacing = 3;
 
-    // //empty array to hold length of each label
-    // var labelLength = [];
-    // //for loop to push all label lengths into array
-    // for (i=0; i<rankData.length; i++) {
-    //     var attLength = rankData[i].length;
-    //     labelLength.push(attLength)
-    // }
+        // //array to hold all property names
+        // var allAttributes = [];
+        // console.log(attData[0]);
+        // //push property names from attData into allAttributes array
+        // for (var keys in attData[0]){
+        //     allAttributes.push(keys);
+        // };
+        // //create an array with only properties with Raw values; for PCP display
+        // var rawData = searchStringInArray("Raw", allAttributes);
+        //
+        // //create an array with only properties with Rank values; for calculation
+        // var rankData = searchStringInArray("Rank", allAttributes);
+        //
+        // var attLabels = removeStringFromEnd("_Rank", rankData)
+        //
+        // attLabels = removeUnderscores(attLabels);
 
-    // //identify which label is the longest so we can use that as the width in the transform for creating text elements
-    // var labelWidth = Math.max.apply(Math, labelLength);
+        // //empty array to hold length of each label
+        // var labelLength = [];
+        // //for loop to push all label lengths into array
+        // for (i=0; i<rankData.length; i++) {
+        //     var attLength = rankData[i].length;
+        //     labelLength.push(attLength)
+        // }
 
-    //div container that holds SVG
-    var cityContainer = d3.select("body").append("div")
-        .attr("class", "cityContainer")
-        .attr("id", "draggable")
-        .call(function(d){ //makes city div draggable
-            $("#draggable").draggable()
-        })
+        // //identify which label is the longest so we can use that as the width in the transform for creating text elements
+        // var labelWidth = Math.max.apply(Math, labelLength);
+        //prevents creation of multiple divs
+        if(d3.select(".cityContainer").empty() == true){
 
+            //div container that holds SVG
+            var cityContainer = d3.select("body").append("div")
+                .attr("class", "cityContainer")
+                .attr("id", "draggable")
+                .call(function(d){ //makes city div draggable
+                    $("#draggable").draggable()
+                })
 
-    var searchDiv = cityContainer.append("div")
-        .attr("class", "ui-widget")
-        .attr("id", "searchDiv")
-        .attr("width", "100%")
-        .attr("height", titleHeight)
-        .html("<label for='tags'>City: </label><input id='tags'>")
+            var searchDiv = cityContainer.append("div")
+                .attr("class", "ui-widget")
+                .attr("id", "searchDiv")
+                .attr("width", "100%")
+                .attr("height", titleHeight)
+                .html("<label for='tags'>City: </label><input id='tags'>")
 
-    $("#tags").autocomplete({
-        source: citySearch,
-        messages: {
-            noResults: 'City not found',
-            results: function(){}
+            $("#tags").autocomplete({
+                source: citySearch,
+                messages: {
+                    noResults: 'City not found',
+                    results: function(){}
+                }
+            });
+
+        } else {
+            var cityContainer = d3.select(".cityContainer");
         }
-    });
-
-
-    //create svg for attpanel
-    var citySvg = d3.select(".cityContainer").append("svg")
-        .attr("class", "citySvg")
-        .attr("width", "100%")
-        .attr("height", cityHeight)
-      .append("g")
-        .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")");// adds padding to group element in SVG
-
-    var rectHeight = 31;
-
-    //sets att title
-    var cityTitleRect = citySvg.append("rect")
-        .attr("id", "cityTitleRect")
-        .attr("y", cityMargin)
-        .attr("height", rectHeight)
-
-
-    //used to place checkbox relative to attText labels
-    var titleHeight = +d3.select("#cityTitleRect").attr("height") / 2,
-    titleWidth = (+d3.select(".citySvg").node().getBBox().width) / 9,
-    fontSize = 1.5 * titleHeight    // font fills rect
-
-    var cityTitle = citySvg.append("text")
-        .attr("id", "cityTitle")
-        .attr("x", titleWidth)
-        .attr("y", titleHeight*1.55)
-        .text("Top Ranked Cities")
-        .style("font-size", fontSize + "px")
-
-
-    // creates a group for each rectangle and offsets each by same amount
-    var cities = citySvg.selectAll('.cities')
-        .data(citiesArray)
-        .enter()
-      .append("g")
-        .attr("class", "cities")
-        .attr("id", function(d){
-            return d.City + "_group"
-        })
-        .attr("transform", function(d, i) {            // console.log(offset);
-            var horz = 10; //x value for g translate
-            var vert = i * 28; //y value for g translate
-            return 'translate(' + horz + ',' + vert + ')';
-      });
-
-
-    var cityRect = cities.append("rect")
-        .attr("class", "cityRect")
-        .attr("id", function(d){
-            return d.City + "_rect"
-        })
-        .attr("id", "selectable")
-        // .attr("x", cityMargin)
-        .attr("width", "100%")
-        .attr("height", (rectHeight / 3) * 2)
-        .attr("y", 40)
-        .attr("x", -10)
-        .style("fill", "gray")
-
-    //used to place checkbox relative to attText labels
-    var rectY = +d3.select(".cityRect").attr("y") + 15
-
-    //adds text to attribute g
-    var cityRank = cities.append('text')
-        .attr("class", "cityRank")
-        // .attr("x", attWidth / 5.8)
-        .attr("x", -4)
-        .attr("y", rectY)
-        .text(function(d ) { return d.ID + "." })
-        // .attr("id", function(d) {
-        //     var attribute = createAttID(d, rankData)
-        //
-        //     return attribute;
-        // });
 
 
 
-    //adds text to attribute g
-    var cityText = cities.append('text')
-        .attr("class", "cityText")
-        // .attr("x", attWidth / 5.8)
-        .attr("x", 20)
-        .attr("y", rectY)
-        .text(function(d ) { return d.City })
-        // .attr("id", function(d) {
-        //     var attribute = createAttID(d, rankData)
-        //
-        //     return attribute;
-        // });
+        //create svg for attpanel
+        var citySvg = d3.select(".cityContainer").append("svg")
+            .attr("class", "citySvg")
+            .attr("width", "100%")
+            .attr("height", cityHeight)
+          .append("g")
+            .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")");// adds padding to group element in SVG
 
+        var rectHeight = 31;
+
+        //sets att title
+        var cityTitleRect = citySvg.append("rect")
+            .attr("id", "cityTitleRect")
+            .attr("y", cityMargin)
+            .attr("height", rectHeight)
+
+
+        //used to place checkbox relative to attText labels
+        var titleHeight = +d3.select("#cityTitleRect").attr("height") / 2,
+        titleWidth = (+d3.select(".citySvg").node().getBBox().width) / 9,
+        fontSize = 1.5 * titleHeight    // font fills rect
+
+        var cityTitle = citySvg.append("text")
+            .attr("id", "cityTitle")
+            .attr("x", titleWidth)
+            .attr("y", titleHeight*1.55)
+            .text("Top Ranked Cities")
+            .style("font-size", fontSize + "px")
+
+
+        // creates a group for each rectangle and offsets each by same amount
+        var cities = citySvg.selectAll('.cities')
+            .data(citiesArray)
+            .enter()
+          .append("g")
+            .attr("class", "cities")
+            .attr("id", function(d){
+                return d.City + "_group"
+            })
+            .attr("transform", function(d, i) {            // console.log(offset);
+                var horz = 10; //x value for g translate
+                var vert = i * 28; //y value for g translate
+                return 'translate(' + horz + ',' + vert + ')';
+          });
+
+
+        var cityRect = cities.append("rect")
+            .attr("class", "cityRect")
+            .attr("id", function(d){
+                return d.City + "_rect"
+            })
+            .attr("id", "selectable")
+            // .attr("x", cityMargin)
+            .attr("width", "100%")
+            .attr("height", (rectHeight / 3) * 2)
+            .attr("y", 40)
+            .attr("x", -10)
+            .style("fill", "gray")
+
+        //used to place checkbox relative to attText labels
+        var rectY = +d3.select(".cityRect").attr("y") + 15
+
+        //adds text to attribute g
+        var cityRank = cities.append('text')
+            .attr("class", "cityRank")
+            // .attr("x", attWidth / 5.8)
+            .attr("x", -4)
+            .attr("y", rectY)
+            .text(function(d) {return String(d.Score)})
+            // .attr("id", function(d) {
+            //     var attribute = createAttID(d, rankData)
+            //
+            //     return attribute;
+            // });
+
+
+
+        //adds text to attribute g
+        var cityText = cities.append('text')
+            .attr("class", "cityText")
+            // .attr("x", attWidth / 5.8)
+            .attr("x", 20)
+            .attr("y", rectY)
+            .text(function(d ) { return d.City })
+            // .attr("id", function(d) {
+            //     var attribute = createAttID(d, rankData)
+            //
+            //     return attribute;
+            // });
 
 }
 
@@ -645,6 +730,7 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
 }
 
 function createSlider(attData, rankData, attribute) {
+    var filteredCities = [];
     //return array of min max values for specfied attribute
     var minMax = calcMinMax(attData, attribute);
     var min = minMax[0];
@@ -664,9 +750,27 @@ function createSlider(attData, rankData, attribute) {
         // step: Math.round((max - min)/5),
         slide: function (event, ui) {
             $(labelID).val($(sliderID).slider("values", 0) +
-          " - " + $(sliderID).slider("values", 1));
+            " - " + $(sliderID).slider("values", 1));
+
+            var rank1 = $(sliderID).slider("values",0)
+            var rank2 = $(sliderID).slider("values",1)
+            // console.log(rank1);
+            // console.log(rank2);
+            attData.map(function(d){
+                var attRank = +d[attribute];
+                var city = d.Cities_Included
+                // console.log(attRank);
+                // console.log(rank2);
+                if (attRank >= rank1 && attRank <= rank2){
+                    filteredCities.push(city)
+                }
+            })
         }
+
     });
+    console.log(filteredCities);
+    return filteredCities;
+
 }
 
 //function to parse properties based on a string
@@ -723,6 +827,23 @@ function removeStringFromEnd(searchStr, array){
     return newArray;
 };
 
+//creates default array for attributes and sets initial values
+function createAttObjArray(rankData){
+    var attObjArray = [];
+    for (i=0; i<rankData.length; i++){
+
+        var attObj = {
+            Attribute: rankData[i],
+            Weight: 1,
+            Checked: 0
+        }
+        attObjArray.push(attObj)
+    };
+
+    return attObjArray;
+};
+
+
 function createSearchArray(attData, rankData) {
 
       var cityArray = [];
@@ -735,4 +856,89 @@ function createSearchArray(attData, rankData) {
 
       return cityArray
 
+}
+
+//function to update the "checked" property on the attribute array every time one is checked
+function setCheckedProp(attObjArray) {
+    //select all of the checkboxes
+    var checked = d3.selectAll(".checkbox");
+    //loop through array of checkbox elements
+    checked.forEach(function(d) { //d is array of all checkbox elements
+        // loop through each checkbox element in array
+        for (j=0; j<19; j++) {
+            //if the checkbox is checked, do this
+            if (d[j].checked == true) {
+                //gets ID, which contains attribute name
+                var getID = d[j].id;
+                //trim "_check" from end of ID string
+                var att = getID.slice(0, -6);
+                // loop through array of att objects and sets checked property to 1
+                for (i=0; i<attObjArray.length; i++){
+                    if (attObjArray[i].Attribute == att) {
+                        attObjArray[i].Checked = 1;
+                    };
+                };
+            } else { //if the checkbox isn't checked, do this
+                var getID = d[j].id;
+                //trim "_check" from end of ID string
+                var att = getID.slice(0, -6);
+                // loop through array of att objects and sets checked property to 0
+                for (i=0; i<attObjArray.length; i++){
+                    if (attObjArray[i].Attribute == att) {
+                        attObjArray[i].Checked = 0;
+                    };
+                };
+            };
+        };
+    });
+    return attObjArray;
+}
+
+function calcScore (attObjArray, checkedAtts, citiesArray){
+  citiesArray.map(function(city){
+      //array to hold individual scores calculated by multiplying the rank score by the weight
+      var scoreArray = [];
+
+      // console.log(city);
+      // console.log(checkedAtts);
+      // console.log(attObjArray);
+      // console.log(citiesArray);
+      //loop through all attributes that are checked
+      for (i=0; i<checkedAtts.length; i++){
+          var att = checkedAtts[i];
+          //loops through array containing weight of all attributes
+          attObjArray.map(function(d){
+              // retrieves proper object in attObjArray based on the attribute in checkedAtts
+              if (d.Attribute == att){
+                  //calcs an attScore by multiplying the attribute weight by the rank of the city
+                  var attScore = d.Weight * city[att]
+                  //pushes the attScore into an array of numbers so an average can be calculated
+                  scoreArray.push(attScore)
+              }
+          })
+      }
+      //sets score equal to the mean of the array
+      //probably need to change this because it
+      var score = +(d3.sum(scoreArray) / scoreArray.length).toFixed(2)
+      city["Score"] = score;
+      // console.log(city);
+  })
+  // console.log(citiesArray);
+  return citiesArray
+}
+
+
+//disables slider
+function disableSlider(d){
+      //puts sliderID into string for selection
+      var sliderID = "#" + d.Attribute + "-slider-range"
+      //disables selected slider
+      $(sliderID).slider( "disable");
+}
+// enables slider
+function enableSlider(d){
+      //puts sliderID into string for selection
+      var sliderID = "#" + d.Attribute + "-slider-range"
+      //disables selected slider
+      $(sliderID).slider("enable");
 }
