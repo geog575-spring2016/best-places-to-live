@@ -28,15 +28,15 @@ function callback(error, statesData, citiesData, attData){
 
 }
 //function that returns array of objects containing city name and ID; mostly for testing reordering of cities panel until we implement calculation
-function createCityIDObject(attData) {
+function createCitiesArray(attData) {
 
     var citiesArray = [];
     //creates object with city name and ID and pushes them into an array
     attData.map(function(d) { //d is each city object
         var cityObj = {
-            City: d.Cities_Included,
-            ID: d.ID
-        };
+            City: d.Cities_Included
+            // ID: d.ID
+          };
         citiesArray.push(cityObj)
     });
     return citiesArray;
@@ -69,6 +69,7 @@ function createAttPanel(attData) {
     rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
     rectHeight3 = 16, rectSpacing = 3;
 
+
     //array to hold all property names
     var allAttributes = [];
 
@@ -76,6 +77,7 @@ function createAttPanel(attData) {
     for (var keys in attData[0]){
         allAttributes.push(keys);
     };
+
     //create an array with only properties with Raw values; for PCP display
     var rawData = searchStringInArray("Raw", allAttributes);
 
@@ -83,16 +85,16 @@ function createAttPanel(attData) {
     var rankData = searchStringInArray("Rank", allAttributes);
 
     var attLabels = removeStringFromEnd("_Rank", rankData)
-
     attLabels = removeUnderscores(attLabels);
 
     //create array containing only city names to use in search bar in citiesPanel
     var citySearch = createSearchArray(attData, rankData);
 
     //creates array of city objects for now just for testing
-    var citiesArray = createCityIDObject(attData);
-    //creates cities panel; add here so we can pass rankData for now
-    createCitiesPanel(citiesArray, rankData, citySearch);
+    var citiesArray = createCitiesArray(attData);
+
+    //creates array of objects with an object for each attribute that also holds weight and checked properties
+    var attObjArray = createAttObjArray(rankData);
 
 
     //empty array to hold length of each label
@@ -170,23 +172,20 @@ function createAttPanel(attData) {
               //create ID for checkboxes
               var attID = attribute + "_check";
               return "<form><input type=checkbox class='checkbox' id='" + attID + "'</input></form>"
-        })
-          .on("change", function(){
-              var checked = d3.selectAll(".checkbox")
-              for (i=0; i<checked[0].length; i++) {
-                  // console.log(checked[i]);
-                  // console.log(checked[0]);
-                  if (checked[0][i].checked == true) {
-                    var getID = this.id;
-                    //trim "_rect1" from end of string
-                    var att = getID.slice(0, -7);
-
-                    //set checked property to 1 in city object
-
-
-                  }
-              }
           })
+          .on("change", function(){
+              //function updates "checked" property for every attribute
+              attObjArray = setCheckedProp(attObjArray);
+              //toggles range sliders; buggy right now
+              attObjArray.map(function(d){
+                  if (d.Checked == 0) {
+                      disableSlider(d);
+                  } else if (d.Checked ==1) {
+                      enableSlider(d);
+                  }
+              })
+          });
+
       //define x,y property values for first rectangle
       var x1 = (textX + labelWidth)*3.9
       var y1 = attHeight - 15
@@ -206,8 +205,6 @@ function createAttPanel(attData) {
           .attr("x", x1)
           .attr('y', y1)
           .on("click", function(){
-              // weight for this attribute to use for calculating score (weight is 1)
-              var weight = +this.getBBox().height / 12;
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
               //trim "_rect1" from end of string
@@ -219,9 +216,12 @@ function createAttPanel(attData) {
               d3.select("#"+ attID2).style("fill", "#eee")
               d3.select("#"+ attID3).style("fill", "#eee")
 
-              //set weight property for specified attribute to
-
-            // calcWeight(this)
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 0.5;
+                  };
+              };
           })
       //creates rect elements for weighting attribute
       var attRect2 = variables.append('rect')
@@ -237,8 +237,6 @@ function createAttPanel(attData) {
           .attr("x", x1 + rectSpacing*2)
           .attr('y', y1 - rectHeight1 + 1)
           .on("click", function(){
-              // weight for this attribute to use for calculating score (weight is 1)
-              var weight = +this.getBBox().height / 11;
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
               //trim "_rect1" from end of string
@@ -250,7 +248,12 @@ function createAttPanel(attData) {
               d3.select("#"+ attID).style("fill", "#999")
               d3.select("#"+ attID3).style("fill", "#eee")
 
-
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 1;
+                  };
+              };
           })
 
       //creates rect elements for weighting attribute
@@ -267,8 +270,6 @@ function createAttPanel(attData) {
           .attr("x", x1 + rectSpacing*4)
           .attr('y', y1 - rectHeight2 + 1)
           .on("click", function(){
-              // weight for this attribute to use for calculating score (weight is 1)
-              var weight = +this.getBBox().height / 8;
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
               //trim "_rect1" from end of string
@@ -280,15 +281,83 @@ function createAttPanel(attData) {
               d3.select("#"+ attID2).style("fill", "#999")
               d3.select("#"+ attID).style("fill", "#888")
 
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 2;
+                  };
+              };
+              var checkedAtts = checkedAttributes(attData, attObjArray);
+              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              // console.log(citiesArray);
+              createCitiesPanel(citiesArray, rankData, citySearch)
 
-
+              // citiesArray = citiesArray.map(function(city){
+              //     //array to hold individual scores calculated by multiplying the rank score by the weight
+              //     var scoreArray = [];
+              //
+              //     console.log(city);
+              //     // console.log(checkedAtts);
+              //     // console.log(attObjArray);
+              //     // console.log(citiesArray);
+              //     //loop through all attributes that are checked
+              //     for (i=0; i<checkedAtts.length; i++){
+              //         var att = checkedAtts[i];
+              //         //loops through array containing weight of all attributes
+              //         attObjArray.map(function(d){
+              //             // retrieves proper object in attObjArray based on the attribute in checkedAtts
+              //             if (d.Attribute == att){
+              //                 //calcs an attScore by multiplying the attribute weight by the rank of the city
+              //                 var attScore = d.Weight * city[att]
+              //                 //pushes the attScore into an array of numbers so an average can be calculated
+              //                 scoreArray.push(attScore)
+              //             }
+              //         })
+              //     }
+              //     //sets score equal to the mean of the array
+              //     //probably need to change this because it
+              //     var score = d3.sum(scoreArray) / scoreArray.length
+              //     city["Score"] = score;
+              //     // console.log(city);
+              // })
+              // // console.log(citiesArray);
           })
 
+function calcScore (attObjArray, checkedAtts, citiesArray){
+  citiesArray.map(function(city){
+      //array to hold individual scores calculated by multiplying the rank score by the weight
+      var scoreArray = [];
 
-      // function calcWeight(this) {
-      // }
-
-
+      // console.log(city);
+      // console.log(checkedAtts);
+      // console.log(attObjArray);
+      // console.log(citiesArray);
+      //loop through all attributes that are checked
+      for (i=0; i<checkedAtts.length; i++){
+          var att = checkedAtts[i];
+          //loops through array containing weight of all attributes
+          attObjArray.map(function(d){
+              // retrieves proper object in attObjArray based on the attribute in checkedAtts
+              if (d.Attribute == att){
+                  //calcs an attScore by multiplying the attribute weight by the rank of the city
+                  var attScore = d.Weight * city[att]
+                  //pushes the attScore into an array of numbers so an average can be calculated
+                  scoreArray.push(attScore)
+              }
+          })
+      }
+      //sets score equal to the mean of the array
+      //probably need to change this because it
+      var score = d3.sum(scoreArray) / scoreArray.length
+      city["Score"] = score;
+      // console.log(city);
+  })
+  // console.log(citiesArray);
+  return citiesArray
+}
+// console.log(citiesArray);
       //used to place checkbox relative to attText labels
       var rectX = +d3.select(".attRect3").attr("x") + 40
 
@@ -343,7 +412,45 @@ function createAttPanel(attData) {
               });
       };
 
+      //creates cities panel; add here so we can pass rankData for now
+      createCitiesPanel(citiesArray, rankData, citySearch);
+
 };
+
+function addAttRanks(attData, attObjArray, checkedAtts, citiesArray) {
+    // console.log(checkedAtts);
+    // console.log(attObjArray);
+    // array to hold objects of city's ranks
+    var cityRankArray = [];
+    attData.map(function(d){ //d is each city with all of it's rankings
+        var cityRanks = {
+            City: d.Cities_Included
+        };
+        for (i=0; i<checkedAtts.length; i++) {
+          var property = checkedAtts[i]
+          cityRanks[property] = d[property]//checkedAtts[i] is the attribute rank
+
+          // console.log(d[checkedAtts[i]]);
+        }
+        cityRankArray.push(cityRanks)
+    })
+
+    //this is an array of objects containing city name and the rank for each attribute that is checked
+    return cityRankArray
+}
+
+function checkedAttributes(attData, attObjArray){
+    //create array to hold attributes that are checked
+    var checkedAtts = [];
+    //loop through each attribute object and add all that are checked to checkedAtts array
+    attObjArray.forEach(function(d, i){
+        //if attribute is checked, push it's "Attribute" property to array
+        if (d.Checked == 1){
+            checkedAtts.push(d.Attribute);
+        };
+    });
+    return checkedAtts;
+}
 
 
 function calcMinMax(attData, attribute){
@@ -468,10 +575,12 @@ function createMap(states, cities) {
 
 
 function createCitiesPanel(citiesArray, rankData, citySearch){
+    //figure out some way to either refresh ore remove div upon calling this funciton again
+    d3.select("#cityContainer").remove()
     //citiesArray is an array of objects
-
+    console.log(citiesArray);
     //sort array of object based on specified property
-    citiesArray.sort(function(a, b) { return a.ID - b.ID })
+    // citiesArray.sort(function(a, b) { return b.Score - a.Score })
 
     //set measurements for panel
     var cityMargin = 5,
@@ -599,7 +708,7 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
         // .attr("x", attWidth / 5.8)
         .attr("x", -4)
         .attr("y", rectY)
-        .text(function(d ) { return d.ID + "." })
+        .text(function(d) {console.log(d.Score);return String(d.Score)})
         // .attr("id", function(d) {
         //     var attribute = createAttID(d, rankData)
         //
@@ -712,6 +821,23 @@ function removeStringFromEnd(searchStr, array){
     return newArray;
 };
 
+//creates default array for attributes and sets initial values
+function createAttObjArray(rankData){
+    var attObjArray = [];
+    for (i=0; i<rankData.length; i++){
+
+        var attObj = {
+            Attribute: rankData[i],
+            Weight: 1,
+            Checked: 0
+        }
+        attObjArray.push(attObj)
+    };
+
+    return attObjArray;
+};
+
+
 function createSearchArray(attData, rankData) {
 
       var cityArray = [];
@@ -724,4 +850,54 @@ function createSearchArray(attData, rankData) {
 
       return cityArray
 
+}
+
+//function to update the "checked" property on the attribute array every time one is checked
+function setCheckedProp(attObjArray) {
+    //select all of the checkboxes
+    var checked = d3.selectAll(".checkbox");
+    //loop through array of checkbox elements
+    checked.forEach(function(d) { //d is array of all checkbox elements
+        // loop through each checkbox element in array
+        for (j=0; j<19; j++) {
+            //if the checkbox is checked, do this
+            if (d[j].checked == true) {
+                //gets ID, which contains attribute name
+                var getID = d[j].id;
+                //trim "_check" from end of ID string
+                var att = getID.slice(0, -6);
+                // loop through array of att objects and sets checked property to 1
+                for (i=0; i<attObjArray.length; i++){
+                    if (attObjArray[i].Attribute == att) {
+                        attObjArray[i].Checked = 1;
+                    };
+                };
+            } else { //if the checkbox isn't checked, do this
+                var getID = d[j].id;
+                //trim "_check" from end of ID string
+                var att = getID.slice(0, -6);
+                // loop through array of att objects and sets checked property to 0
+                for (i=0; i<attObjArray.length; i++){
+                    if (attObjArray[i].Attribute == att) {
+                        attObjArray[i].Checked = 0;
+                    };
+                };
+            };
+        };
+    });
+    return attObjArray;
+}
+//disables slider
+function disableSlider(d){
+      //puts sliderID into string for selection
+      var sliderID = "#" + d.Attribute + "-slider-range"
+      //disables selected slider
+      $(sliderID).slider( "disable");
+}
+// enables slider
+function enableSlider(d){
+      //puts sliderID into string for selection
+      var sliderID = "#" + d.Attribute + "-slider-range"
+      //disables selected slider
+      $(sliderID).slider("enable");
 }
