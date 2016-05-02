@@ -20,7 +20,6 @@ function callback(error, statesData, citiesData, attData){
     var states = topojson.feature(statesData, statesData.objects.US).features;
     var cities = topojson.feature(citiesData, citiesData.objects.collection).features;
 
-    // createDefaultAtts(attData);
     createAttPanel(attData);
 
     createMap(states, cities);
@@ -30,31 +29,70 @@ function callback(error, statesData, citiesData, attData){
 //function that returns array of objects containing city name and ID; mostly for testing reordering of cities panel until we implement calculation
 function createCitiesArray(attData) {
 
+    // var colors = d3.scale.category20();
+    // console.log(colors);
+
     var citiesArray = [];
     //creates object with city name and ID and pushes them into an array
     attData.map(function(d) { //d is each city object
         var cityObj = {
             City: d.Cities_Included
-            // ID: d.ID
+            // Colors: function(){ return d3.scale.category20();}
           };
         citiesArray.push(cityObj)
     });
     return citiesArray;
 };
-// function createDefaultAtts(attData) {
-//       //empty array to hold attribute labels
-//       var attLabels = [];
-//
-//       //push properties from attData into attLabels array
-//       for (var keys in attData[0]){
-//           keys = keys.split("_").join(" ") //converts underscores in csv to spaces for display purposes
-//           attLabels.push(keys);
-//       };
-//
-//       var defaultAtts = [attLabels[11], attLabels[12], attLabels[3], attLabels[4], attLabels[5], attLabels[6]];
-//       // var defaultAtts = attLabels
-//       createAttPanel(attData, defaultAtts)
-// }
+function createDefaultAtts(attObjArray) {
+      // //empty array to hold attribute labels
+      // var attLabels = [];
+      //
+      // //push properties from attData into attLabels array
+      // for (var keys in attData[0]){
+      //     keys = keys.split("_").join(" ") //converts underscores in csv to spaces for display purposes
+      //     attLabels.push(keys);
+      // };
+      //
+      // var defaultAtts = [attLabels[11], attLabels[12], attLabels[3], attLabels[4], attLabels[5], attLabels[6]];
+      // // var defaultAtts = attLabels
+
+      $("#Rent_Income_Ratio_Rank_check")[0].checked = true
+      $("#Transit_Rank_check")[0].checked = true
+
+    attObjArray.map(function(d){
+
+        var attribute = d.Attribute
+        var selection = $("#" + attribute + "_check")[0]
+
+        var sliderID = "#" + attribute + "-slider-range"
+        var labelID = "#"+ attribute + "_rankValMin"
+
+        var rect1ID = "#" + attribute + "_rect1"
+        var rect2ID = "#" + attribute + "_rect2"
+
+        if (selection.checked == true){
+            //populates filter labels for default atts
+            $(labelID).val($(sliderID).slider("values", 0) +
+            " - " + $(sliderID).slider("values", 1));
+
+            //set weight on rectangles for default atts
+            d3.select(rect1ID).style("fill", "#aaa")
+            d3.select(rect2ID).style("fill", "#999")
+
+        }
+
+
+  })
+    //updates checked property appropriately
+    attObjArray.map(function(d){
+        if (d.Attribute == "Rent_Income_Ratio_Rank" || d.Attribute == "Transit_Rank"){
+            d.Checked = 1;
+        }
+    })
+
+    return attObjArray
+      // createAttPanel(attData, defaultAtts)
+}
 
 function createAttPanel(attData) {
 
@@ -146,6 +184,22 @@ function createAttPanel(attData) {
             var vert = i * height - offset; //y value for g translate
             return 'translate(' + horz + ',' + vert + ')';
       });
+
+      var variableRect = variables.append("rect")
+          .attr("class", "variableRect")
+          .attr('x', 0)
+          .attr('y', 750)
+          .attr('width', "450px")
+          .attr('height', "28px")
+        // .append("xhtml")
+          .attr("id", function(d) {
+              //get unique attribute for every variable
+              var attribute = createAttID(d, rankData)
+              //create ID for checkboxes
+              var attID = attribute + "_rect";
+              return attID
+          })
+
 
 
       //adds text to attribute g
@@ -369,7 +423,7 @@ function createAttPanel(attData) {
               var attribute = createAttID(d, rankData);
               filteredCities = createSlider(attData, rankData, attribute);
           } )
-      console.log(filteredCities);
+      // console.log(filteredCities);
       //for loop to set 'y' attr for each slider because d3 is dumb and won't set it like it should
       for (i=0; i<rankData.length; i++){
           d3.select("#"+rankData[i]+"_FO")
@@ -380,6 +434,14 @@ function createAttPanel(attData) {
                   return yVal;
               });
       };
+
+      //sets the default atts to be checked
+      attObjArray = createDefaultAtts(attObjArray);
+      // console.log(attObjArray);
+      var checkedAtts = checkedAttributes(attData, attObjArray);
+      //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+      citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+      citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
 
       //creates cities panel; add here so we can pass rankData for now
       createCitiesPanel(citiesArray, rankData, citySearch);
@@ -546,6 +608,8 @@ function createMap(states, cities) {
 function createCitiesPanel(citiesArray, rankData, citySearch){
     //citiesArray is an array of objects
 
+    // d3.scale.ordinal.domain(citiesArray[Score]).range()
+
         //removes SVG each time function is called
         d3.select(".citySvg").remove()
 
@@ -612,13 +676,22 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
                 messages: {
                     noResults: 'City not found',
                     results: function(){}
+                },
+                select: function(event, ui) {
+                    console.log(ui);
+                    var city = ui.item.value
+                    var selection = "#" + city + "_rect"
+                    console.log(selection);
+                    d3.select(selection).style("fill",function() {
+                        // console.log(citiesArray[city]["Color"]);
+                    })
                 }
             });
 
         } else {
             var cityContainer = d3.select(".cityContainer");
         };
-    console.log(citiesArray);
+    // console.log(citiesArray);
         //create svg for attpanel
         var citySvg = d3.select(".cityContainer").append("svg")
             .attr("class", "citySvg")
@@ -670,7 +743,7 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
             .attr("id", function(d){
                 return d.City + "_rect"
             })
-            .attr("id", "selectable")
+            // .attr("id", "selectable")
             // .attr("x", cityMargin)
             .attr("width", "100%")
             .attr("height", (rectHeight / 3) * 2)
@@ -681,20 +754,18 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
         //used to place checkbox relative to attText labels
         var rectY = +d3.select(".cityRect").attr("y") + 15
 
-        //adds text to attribute g
-        var cityRank = cities.append('text')
-            .attr("class", "cityRank")
-            // .attr("x", attWidth / 5.8)
-            .attr("x", -4)
-            .attr("y", rectY)
-            .text(function(d) {return String(d.Score)})
-            // .attr("id", function(d) {
-            //     var attribute = createAttID(d, rankData)
-            //
-            //     return attribute;
-            // });
-
-
+        // //adds text to attribute g
+        // var cityRank = cities.append('text')
+        //     .attr("class", "cityRank")
+        //     // .attr("x", attWidth / 5.8)
+        //     .attr("x", -4)
+        //     .attr("y", rectY)
+        //     .text(function(d) {return String(d.Score)})
+        //     // .attr("id", function(d) {
+        //     //     var attribute = createAttID(d, rankData)
+        //     //
+        //     //     return attribute;
+        //     // });
 
         //adds text to attribute g
         var cityText = cities.append('text')
@@ -708,6 +779,20 @@ function createCitiesPanel(citiesArray, rankData, citySearch){
             //
             //     return attribute;
             // });
+
+        //adds text to attribute g
+        var cityScore = cities.append('text')
+            .attr("class", "cityRank")
+            // .attr("x", attWidth / 5.8)
+            .attr("x", 200)
+            .attr("y", rectY)
+            .text(function(d) {return String(d.Score)})
+            // .attr("id", function(d) {
+            //     var attribute = createAttID(d, rankData)
+            //
+            //     return attribute;
+            // });
+
 
 }
 
@@ -765,7 +850,13 @@ function createSlider(attData, rankData, attribute) {
         }
 
     });
-    console.log(filteredCities);
+
+    // var selection = $("#" + attribute + "_check")[0]
+    // if (selection.checked == true){
+    //     $(labelID).val($(sliderID).slider("values", 0) +
+    //     " - " + $(sliderID).slider("values", 1));
+    // }
+
     return filteredCities;
 
 }
@@ -918,6 +1009,12 @@ function calcScore (attObjArray, checkedAtts, citiesArray){
       //probably need to change this because it
       var score = +(d3.sum(scoreArray) / scoreArray.length).toFixed(2)
       city["Score"] = score;
+
+      // city["Color"] = color( random(255), random(255), random(255) );
+      // for (i=0; i<citiesArray.length; i++) {
+      //     console.log(city[color]);
+      //     // City[i] = color( random(255), random(255), random(255) );
+      //   };
       // console.log(city);
   })
   // console.log(citiesArray);
