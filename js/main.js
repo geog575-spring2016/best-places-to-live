@@ -380,6 +380,19 @@ function createAttPanel(attData) {
               // })
               // // console.log(citiesArray);
           })
+      var infoicon = variables.append("foreignObject")
+                .attr('x', textX -39)
+                .attr('y', attHeight - 26)
+                .attr('width', "20px")
+                .attr('height', "20px")
+              .append("xhtml:body")
+                .html(function(d) {
+                    //get unique attribute for every variable
+                    var attribute = createAttID(d, rankData)
+                    //create ID for checkboxes
+                    var attID = attribute + "_icon";
+                    return "<form><input class='ui-icon ui-icon-arrowthick-1-n' id='" + attID + "'</input></form>"
+                })
 
       //used to place checkbox relative to attText labels
       var rectX = +d3.select(".attRect3").attr("x") + 40
