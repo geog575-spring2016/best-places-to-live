@@ -20,10 +20,12 @@ function callback(error, statesData, citiesData, attData){
     var states = topojson.feature(statesData, statesData.objects.US).features;
     var cities = topojson.feature(citiesData, citiesData.objects.collection).features;
 
-    createAttPanel(attData);
+    
 
     createMap(states, cities);
 
+    createAttPanel(attData, cities);
+    
 
 }
 //function that returns array of objects containing city name and ID; mostly for testing reordering of cities panel until we implement calculation
@@ -94,7 +96,7 @@ function createDefaultAtts(attObjArray) {
       // createAttPanel(attData, defaultAtts)
 }
 
-function createAttPanel(attData) {
+function createAttPanel(attData, cities) {
 
     //set measurements for panel
     var attMargin = {top: 20, right: 10, bottom: 30, left: 10},
@@ -346,9 +348,11 @@ function createAttPanel(attData) {
               var checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities)
               // console.log(citiesArray);
               createCitiesPanel(citiesArray, rankData, citySearch)
+
+              updatePropSymbols(citiesArray);
 
               // citiesArray = citiesArray.map(function(city){
               //     //array to hold individual scores calculated by multiplying the rank score by the weight
@@ -441,11 +445,15 @@ function createAttPanel(attData) {
       var checkedAtts = checkedAttributes(attData, attObjArray);
       //this is an array containing an object for every city with properties for city name and each selected attribute's rank
       citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-      citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+      citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities);
 
       //creates cities panel; add here so we can pass rankData for now
       createCitiesPanel(citiesArray, rankData, citySearch);
 
+      // console.log(cities);
+      // pairData(citiesArray, cities);
+
+      updatePropSymbols(citiesArray);
 };
 
 function addAttRanks(attData, attObjArray, checkedAtts, citiesArray) {
@@ -513,9 +521,9 @@ function calcMinMax(attData, attribute){
 
 function createMap(states, cities) {
 
-    var mapWidth = 0.75;
+    var mapWidth = 0.65;
     var width = window.innerWidth * mapWidth;
-    var height = window.innerHeight *0.95;
+    var height = window.innerHeight *0.8;
 
     //div container that holds SVG
     var mapContainer = d3.select("body").append("div")
@@ -580,7 +588,7 @@ function createMap(states, cities) {
           //select all the circles and change the radius and stroke width as the scale changes
           g.selectAll("path")
 
-                .attr('d', path.pointRadius(function(d) {  return radius(d.properties.ID); }))
+                .attr('d', path.pointRadius(function(d) {  return radius(d.properties.Score); }))
                 .attr("stroke-width", (1/d3.event.scale)*2+"px");
     }
 
@@ -594,13 +602,29 @@ function createMap(states, cities) {
         //set the radius
         .attr('d', path.pointRadius(function(d) { return radius(d.properties.ID)}))
         //assign the id
-        .attr("class", function(d) {return d.properties.ID})
+        .attr("class", function(d) { return d.properties.ID})
         //assign the location of the city according to coordinates
         .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
         .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
         .attr("fill", "blue")
         .attr("stroke", "white")
         .attr("stroke-width", "2px");
+
+    var legend = map.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(" + (width - 50) + "," + (height - 20) + ")")
+      .selectAll("g")
+        .data([70, 50, 30])
+      .enter().append("g");
+
+    legend.append("circle")
+        .attr("cy", function(d) { return -radius(d); })
+        .attr("r", radius);
+
+    legend.append("text")
+        .attr("y", function(d) { return -2 * radius(d); })
+        .attr("dy", "1.3em")
+        .text(d3.format(".1s"));
 
 }
 
@@ -982,7 +1006,7 @@ function setCheckedProp(attObjArray) {
     return attObjArray;
 }
 
-function calcScore (attObjArray, checkedAtts, citiesArray){
+function calcScore (attObjArray, checkedAtts, citiesArray, cities){
   citiesArray.map(function(city){
       //array to hold individual scores calculated by multiplying the rank score by the weight
       var scoreArray = [];
@@ -1009,6 +1033,22 @@ function calcScore (attObjArray, checkedAtts, citiesArray){
       //probably need to change this because it
       var score = +(d3.sum(scoreArray) / scoreArray.length).toFixed(2)
       city["Score"] = score;
+      cities.forEach(function(d){
+        var props = d.properties;
+        // console.log(city);
+        // console.log(props.City);
+        var x = city.City;
+
+        if (x == "Richmond (VA)"){
+          x = "Richmond";
+        }
+
+        if(props.City == x){
+ 
+          props["Score"] = score;
+        }
+        // console.log(d);
+      });
 
       // city["Color"] = color( random(255), random(255), random(255) );
       // for (i=0; i<citiesArray.length; i++) {
@@ -1034,4 +1074,47 @@ function enableSlider(d){
       var sliderID = "#" + d.Attribute + "-slider-range"
       //disables selected slider
       $(sliderID).slider("enable");
+}
+
+function pairData(citiesArray, cities){
+  citiesArray.forEach(function(d){
+    var city = d.City;
+    cities.forEach()
+  })
+}
+
+function updatePropSymbols (citiesArray){
+
+   var mapWidth = 0.65;
+    var width = window.innerWidth * mapWidth;
+    var height = window.innerHeight *0.8;
+
+
+  var radius = d3.scale.sqrt()
+            .domain([1, 50])
+            .range([2, 30]);
+
+
+var projection = d3.geo.mercator()
+        // .scale((width - 1)/2)
+        .scale((width*(3/4)))
+        .translate([width*2, height]);
+
+    //set the projection
+    var path = d3.geo.path()
+        .projection(projection);
+  
+  var map = d3.select("#mapContainer");
+
+ var g = map.selectAll("g");
+
+ g.selectAll("path")
+        .transition()
+        .delay(0)
+        .duration(1000)
+      .attr('d', path.pointRadius(function(d) { return radius(d.properties.Score); }));
+
+  console.log(g);
+
+
 }

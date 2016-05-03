@@ -1,9 +1,11 @@
 /* 575 boilerplate style.css */
 
-.map {
+#mapContainer {
 	float: right;
 	border: 2px solid black;
 	margin: 5px;
+	bottom: 0;
+
 }
 
 #attContainer {
@@ -13,6 +15,11 @@
     overflow-y: scroll;
     position: fixed;
     bottom: 0;
+    height:8/*0%;
+    width: 30%;*/
+    float: left;
+	border: 2px solid black;
+	margin: 5px;
 }
 
 .attSvg {
@@ -63,4 +70,15 @@
 	fill: #fff;
 	stroke: #000;
 	stroke-width: 0.5px;
+}
+
+.legend circle {
+  fill: none;
+  stroke: #ccc;
+}
+
+.legend text {
+  fill: #777;
+  font: 10px sans-serif;
+  text-anchor: middle;
 }
