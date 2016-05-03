@@ -13,6 +13,7 @@
     overflow-y: scroll;
     position: fixed;
     bottom: 0;
+		font-family: "trebuchet ms";
 }
 
 .attSvg {
