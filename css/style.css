@@ -1,10 +1,19 @@
 /* 575 boilerplate style.css */
-
+#title{
+    color: #E6F2DE;
+    font-size: 4.5em;
+    text-align: center;
+    font-family: Lucida, sans-serif;
+}
+body{
+  background-color: #134B5F;  
+}
 #mapContainer {
 	float: right;
 	border: 2px solid black;
 	margin: 5px;
 	bottom: 0;
+    background-color: white
 
 }
 
@@ -15,11 +24,13 @@
     overflow-y: scroll;
     position: fixed;
     bottom: 0;
+    color:#E6F2DE;
 		font-family: "trebuchet ms";
+
 }
 
 .attSvg {
-		background: #ccc;
+		background: #134B5F;
 }
 
 .variableRect {
@@ -40,6 +51,7 @@
 		bottom: 0;
     margin-right: 5px;
 		cursor: move;
+    background-color: #134B5F
 }
 
 .checkbox {
@@ -48,7 +60,7 @@
 
 #cityTitleRect {
     width: 100%;
-    fill: #eee;
+    fill: #038090;
     color: red;
 
 }

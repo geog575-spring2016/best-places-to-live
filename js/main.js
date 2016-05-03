@@ -4,7 +4,7 @@ window.onload = setPage();
 var citiesArray = [], rawData = [], rankData = [], attLabels = [], citySearch = [],
     attObjArray = [], filteredCities = [], checkedAtts = [];
 
-
+d
 function setPage() {
     //set variable to use queue.js to parallelize asynchronous data loading
     var q = d3_queue.queue();
