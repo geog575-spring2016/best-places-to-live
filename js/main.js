@@ -708,7 +708,7 @@ function createCitiesPanel(){
 
         // //identify which label is the longest so we can use that as the width in the transform for creating text elements
         // var labelWidth = Math.max.apply(Math, labelLength);
-        //prevents creation of multiple divs
+        //conditional to prevent creation of multiple divs
         if(d3.select(".cityContainer").empty() == true){
 
             //div container that holds SVG
@@ -747,107 +747,115 @@ function createCitiesPanel(){
         } else {
             var cityContainer = d3.select(".cityContainer");
         };
-    // console.log(citiesArray);
-        //create svg for attpanel
-        var citySvg = d3.select(".cityContainer").append("svg")
-            .attr("class", "citySvg")
-            .attr("width", "100%")
-            .attr("height", cityHeight)
-          .append("g")
-            .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")")// adds padding to group element in SVG
-        var rectHeight = 31;
 
-        //sets att title
-        var cityTitleRect = citySvg.append("rect")
-            .attr("id", "cityTitleRect")
-            .attr("y", cityMargin)
-            .attr("height", rectHeight)
+        //conditional to accont for no attributes being selected; display message
+        if (checkedAtts.length == 0) {
+            var helpText = cityContainer.append("text")
+                .attr("id", "helpText")
+                .text("Select attributes to calculate a city score.")
+        } else {
 
+            d3.select("#helpText").remove()
+            //create svg for attpanel
+            var citySvg = d3.select(".cityContainer").append("svg")
+                .attr("class", "citySvg")
+                .attr("width", "100%")
+                .attr("height", cityHeight)
+              .append("g")
+                .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")")// adds padding to group element in SVG
+            var rectHeight = 31;
 
-        //used to place checkbox relative to attText labels
-        var titleHeight = +d3.select("#cityTitleRect").attr("height") / 2,
-        titleWidth = (+d3.select(".citySvg").node().getBBox().width) / 9,
-        fontSize = 1.5 * titleHeight    // font fills rect
-
-        var cityTitle = citySvg.append("text")
-            .attr("id", "cityTitle")
-            .attr("x", titleWidth)
-            .attr("y", titleHeight*1.55)
-            .text("Top Ranked Cities")
-            .style("font-size", fontSize + "px")
+            //sets att title
+            var cityTitleRect = citySvg.append("rect")
+                .attr("id", "cityTitleRect")
+                .attr("y", cityMargin)
+                .attr("height", rectHeight)
 
 
-        // creates a group for each rectangle and offsets each by same amount
-        var cities = citySvg.selectAll('.cities')
-            .data(citiesArray)
-            .enter()
-          .append("g")
-            .attr("class", "cities")
-            .attr("id", function(d){
-                return d.City + "_group"
-            })
-            .attr("transform", function(d, i) {            // console.log(offset);
-                var horz = 10; //x value for g translate
-                var vert = i * 28; //y value for g translate
-                return 'translate(' + horz + ',' + vert + ')';
-          });
+            //used to place checkbox relative to attText labels
+            var titleHeight = +d3.select("#cityTitleRect").attr("height") / 2,
+            titleWidth = (+d3.select(".citySvg").node().getBBox().width) / 9,
+            fontSize = 1.5 * titleHeight    // font fills rect
+
+            var cityTitle = citySvg.append("text")
+                .attr("id", "cityTitle")
+                .attr("x", titleWidth)
+                .attr("y", titleHeight*1.55)
+                .text("Top Ranked Cities")
+                .style("font-size", fontSize + "px")
 
 
-        var cityRect = cities.append("rect")
-            .attr("class", "cityRect")
-            .attr("id", function(d){
-                return d.City + "_rect"
-            })
-            // .attr("id", "selectable")
-            // .attr("x", cityMargin)
-            .attr("width", "100%")
-            .attr("height", (rectHeight / 3) * 2)
-            .attr("y", 40)
-            .attr("x", -10)
-            .style("fill", "gray")
+            // creates a group for each rectangle and offsets each by same amount
+            var cities = citySvg.selectAll('.cities')
+                .data(citiesArray)
+                .enter()
+              .append("g")
+                .attr("class", "cities")
+                .attr("id", function(d){
+                    return d.City + "_group"
+                })
+                .attr("transform", function(d, i) {            // console.log(offset);
+                    var horz = 10; //x value for g translate
+                    var vert = i * 28; //y value for g translate
+                    return 'translate(' + horz + ',' + vert + ')';
+                });
 
-        //used to place checkbox relative to attText labels
-        var rectY = +d3.select(".cityRect").attr("y") + 15
 
-        // //adds text to attribute g
-        // var cityRank = cities.append('text')
-        //     .attr("class", "cityRank")
-        //     // .attr("x", attWidth / 5.8)
-        //     .attr("x", -4)
-        //     .attr("y", rectY)
-        //     .text(function(d) {return String(d.Score)})
-        //     // .attr("id", function(d) {
-        //     //     var attribute = createAttID(d, rankData)
-        //     //
-        //     //     return attribute;
-        //     // });
+            var cityRect = cities.append("rect")
+                .attr("class", "cityRect")
+                .attr("id", function(d){
+                    return d.City + "_rect"
+                })
+                // .attr("id", "selectable")
+                // .attr("x", cityMargin)
+                .attr("width", "100%")
+                .attr("height", (rectHeight / 3) * 2)
+                .attr("y", 40)
+                .attr("x", -10)
+                .style("fill", "gray")
 
-        //adds text to attribute g
-        var cityText = cities.append('text')
-            .attr("class", "cityText")
-            // .attr("x", attWidth / 5.8)
-            .attr("x", 20)
-            .attr("y", rectY)
-            .text(function(d ) { ;return d.City })
-            // .attr("id", function(d) {
-            //     var attribute = createAttID(d, rankData)
-            //
-            //     return attribute;
-            // });
+            //used to place checkbox relative to attText labels
+            var rectY = +d3.select(".cityRect").attr("y") + 15
 
-        //adds text to attribute g
-        var cityScore = cities.append('text')
-            .attr("class", "cityRank")
-            // .attr("x", attWidth / 5.8)
-            .attr("x", 200)
-            .attr("y", rectY)
-            .text(function(d) {return String(d.Score)})
-            // .attr("id", function(d) {
-            //     var attribute = createAttID(d, rankData)
-            //
-            //     return attribute;
-            // });
+            // //adds text to attribute g
+            // var cityRank = cities.append('text')
+            //     .attr("class", "cityRank")
+            //     // .attr("x", attWidth / 5.8)
+            //     .attr("x", -4)
+            //     .attr("y", rectY)
+            //     .text(function(d) {return String(d.Score)})
+            //     // .attr("id", function(d) {
+            //     //     var attribute = createAttID(d, rankData)
+            //     //
+            //     //     return attribute;
+            //     // });
 
+            //adds text to attribute g
+            var cityText = cities.append('text')
+                .attr("class", "cityText")
+                // .attr("x", attWidth / 5.8)
+                .attr("x", 20)
+                .attr("y", rectY)
+                .text(function(d ) { ;return d.City })
+                // .attr("id", function(d) {
+                //     var attribute = createAttID(d, rankData)
+                //
+                //     return attribute;
+                // });
+
+            //adds text to attribute g
+            var cityScore = cities.append('text')
+                .attr("class", "cityRank")
+                // .attr("x", attWidth / 5.8)
+                .attr("x", 200)
+                .attr("y", rectY)
+                .text(function(d) {return String(d.Score)})
+                // .attr("id", function(d) {
+                //     var attribute = createAttID(d, rankData)
+                //
+                //     return attribute;
+                // });
+        }
 
 }
 

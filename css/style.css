@@ -29,8 +29,8 @@
 		padding-left: 5px;
 }
 .cityContainer {
-    height: 350px;
-    width: 300px;
+    height: 205px;
+    width: 250px;
     border: 1px solid #ccc;
     overflow-y: scroll;
 		position: absolute;
