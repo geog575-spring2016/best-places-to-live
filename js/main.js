@@ -24,14 +24,16 @@ function callback(error, statesData, citiesData, attData){
     var states = topojson.feature(statesData, statesData.objects.US).features;
     var cities = topojson.feature(citiesData, citiesData.objects.collection).features;
 
-    createAttPanel(attData);
 
-    createMap(states, cities);
+
+
+
+    createAttPanel(attData, cities, states);
 
 
 }
 
-function createAttPanel(attData) {
+function createAttPanel(attData, cities, states) {
 
     //set measurements for panel
     var attMargin = {top: 20, right: 10, bottom: 30, left: 10},
@@ -183,6 +185,7 @@ function createAttPanel(attData) {
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
               createCitiesPanel()
+              updatePropSymbols (cities)
 
           });
 
@@ -228,6 +231,7 @@ function createAttPanel(attData) {
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
               createCitiesPanel()
+              updatePropSymbols (cities)
 
           })
       //creates rect elements for weighting attribute
@@ -267,6 +271,7 @@ function createAttPanel(attData) {
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
               createCitiesPanel()
+              updatePropSymbols (cities)
 
           })
 
@@ -305,9 +310,15 @@ function createAttPanel(attData) {
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
-              createCitiesPanel()
+
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities)
+
+
               // console.log(citiesArray);
+              createCitiesPanel()
+
+              updatePropSymbols(citiesArray);
+
               // citiesArray = citiesArray.map(function(city){
               //     //array to hold individual scores calculated by multiplying the rank score by the weight
               //     var scoreArray = [];
@@ -380,7 +391,7 @@ function createAttPanel(attData) {
               //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
               var attribute = createAttID(d, rankData);
               // createSlider(citySearch, attData, rankData, attribute, filteredCities, attObjArray);
-              createSlider(attData, attribute);
+              createSlider(attData, attribute, cities);
 
           })
 
@@ -407,8 +418,10 @@ function createAttPanel(attData) {
       checkedAtts = checkedAttributes(attData, attObjArray);
       //this is an array containing an object for every city with properties for city name and each selected attribute's rank
       citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-      citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+      citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities);
 
+      createMap(states, cities);
+      // updatePropSymbols(citiesArray);
       // //creates cities panel; add here so we can pass rankData for now
       // createCitiesPanel(citiesArray, rankData, citySearch, filteredCities);
 
@@ -429,6 +442,7 @@ function createCitiesArray(attData) {
         citiesArray.push(cityObj)
     });
     return citiesArray;
+
 };
 function createDefaultAtts(attObjArray) {
       // //empty array to hold attribute labels
@@ -548,7 +562,7 @@ function createMap(states, cities) {
 
     var mapWidth = 0.65;
     var width = window.innerWidth * mapWidth;
-    var height = window.innerHeight *0.95;
+    var height = window.innerHeight *0.8;
 
     //div container that holds SVG
     var mapContainer = d3.select("body").append("div")
@@ -599,11 +613,13 @@ function createMap(states, cities) {
 
     //function to control when the user zooms
     function zoomed() {
-        // var t = d3.event.translate,
-        //     s = d3.event.scale;
-        //     t[0] = Math.min(width / 2 * (s - 1), Math.max(width / 2 * (1 - s), t[0]));
-        //     t[1] = Math.min(height / 2 * (s - 1) + 230 * s, Math.max(height / 2 * (1 - s) - 230 * s, t[1]));
-        //     zoom.translate(t);
+        var t = d3.event.translate,
+            s = d3.event.scale;
+            t[0] = Math.min(width / 2 * (s - 1) + 230 * s, Math.max(width / 2 * (1 - s) - 230 * s, t[0]));
+            t[1] = Math.min(height / 2 * (s - 1) + 230 * s, Math.max(height / 2 * (1 - s) - 230 * s, t[1]));
+            zoom.translate(t);
+
+
 
           g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 
@@ -613,10 +629,10 @@ function createMap(states, cities) {
           //select all the circles and change the radius and stroke width as the scale changes
           g.selectAll("path")
 
-                .attr('d', path.pointRadius(function(d) {  return radius(d.properties.ID); }))
+                .attr('d', path.pointRadius(function(d) {  return radius(d.properties.Score); }))
                 .attr("stroke-width", (1/d3.event.scale)*2+"px");
     }
-
+    joinData(cities);
     //for now the prop symbols use the ID to scale the symbol to the correct size.
     // once we have our overall ranks worked out we'll swap that value in instead
     g.selectAll(".circles")
@@ -627,13 +643,36 @@ function createMap(states, cities) {
         //set the radius
         .attr('d', path.pointRadius(function(d) { return radius(d.properties.ID)}))
         //assign the id
-        .attr("class", function(d) {return d.properties.ID})
+        .attr("class", function(d) { return d.properties.City})
         //assign the location of the city according to coordinates
         .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
         .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
         .attr("fill", "blue")
         .attr("stroke", "white")
-        .attr("stroke-width", "2px");
+        .attr("stroke-width", "2px")
+        .on("mouseover", function(d){
+          highlightCity(d.properties);
+        })
+        .on("mouseout", function(d){
+          dehighlightCity(d.properties);
+        })
+        .on("mousemove", moveLabel);
+
+    var legend = map.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(" + (width - 50) + "," + (height - 20) + ")")
+      .selectAll("g")
+        .data([70, 50, 30])
+      .enter().append("g");
+
+    legend.append("circle")
+        .attr("cy", function(d) { return -radius(d); })
+        .attr("r", radius);
+
+    legend.append("text")
+        .attr("y", function(d) { return -2 * radius(d); })
+        .attr("dy", "1.3em")
+        .text(d3.format(".1s"));
 
 }
 
@@ -934,7 +973,7 @@ function sliderEvent(attData, filteredCities){
 
 
 
-console.log(filteredCities);
+// console.log(filteredCities);
 // var selection = $("#" + attribute + "_check")[0]
 // if (selection.checked == true){
 //     $(labelID).val($(sliderID).slider("values", 0) +
@@ -944,7 +983,7 @@ console.log(filteredCities);
 // return filteredCities;
 };
 
-function createSlider(attData, attribute) {
+function createSlider(attData, attribute, cities) {
     // var filteredCities = [];
     //return array of min max values for specfied attribute
     var minMax = calcMinMax(attData, attribute);
@@ -1036,6 +1075,7 @@ function createSlider(attData, attribute) {
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
             // console.log(citiesArray);
             createCitiesPanel();
+            updatePropSymbols (cities)
 
         }
 
@@ -1164,7 +1204,7 @@ function setCheckedProp(attObjArray) {
     return attObjArray;
 }
 
-function calcScore (attObjArray, checkedAtts, citiesArray){
+function calcScore (attObjArray, checkedAtts, citiesArray, cities){
   citiesArray.map(function(city){
       //array to hold individual scores calculated by multiplying the rank score by the weight
       var scoreArray = [];
@@ -1216,4 +1256,142 @@ function enableSlider(d){
       var sliderID = "#" + d.Attribute + "-slider-range"
       //disables selected slider
       $(sliderID).slider("enable");
+}
+
+function pairData(citiesArray, cities){
+  citiesArray.forEach(function(d){
+    var city = d.City;
+    cities.forEach()
+  })
+}
+
+function updatePropSymbols (cities){
+  joinData(cities);
+   var mapWidth = 0.65;
+    var width = window.innerWidth * mapWidth;
+    var height = window.innerHeight *0.8;
+
+
+  var radius = d3.scale.sqrt()
+            .domain([1, 50])
+            .range([2, 30]);
+
+
+var projection = d3.geo.mercator()
+        // .scale((width - 1)/2)
+        .scale((width*(3/4)))
+        .translate([width*2, height]);
+
+    //set the projection
+    var path = d3.geo.path()
+        .projection(projection);
+
+  var map = d3.select("#mapContainer");
+
+ var g = map.selectAll("g");
+
+ g.selectAll("path")
+        .transition()
+        .delay(0)
+        .duration(1000)
+      .attr('d', path.pointRadius(function(d) { return radius(d.properties.Score); }));
+
+  console.log(g);
+
+
+}
+
+function highlightCity(props){
+  var city = props.City;
+  var cityFixed = city.replace(/ /g, ".");
+  // console.log(props.City);
+   var selected = d3.selectAll("." + cityFixed)
+        .style({
+            "stroke": "black",
+            "stroke-width": "2"
+        });
+
+    setCityLabel(props);
+}
+
+function dehighlightCity(props){
+  var city = props.City;
+  var cityFixed = city.replace(/ /g, ".");
+  // console.log(props.City);
+   var selected = d3.selectAll("." + cityFixed)
+        .style({
+            "stroke": "white",
+            "stroke-width": "2"
+        });
+
+  d3.select(".infolabel")
+        .remove();
+}
+
+function setCityLabel(props){
+    //label content
+    var labelAttribute = "<h1>Score: <b>" + props.Score + "</b></h1>";
+
+    //create info label div
+    var infolabel = d3.select("body")
+        .append("div")
+        .attr({
+            "class": "infolabel",
+            "id": props.City + "_label"
+        })
+        .html(labelAttribute);
+
+    var regionName = infolabel.append("div")
+        .attr("class", "labelname")
+        .html(props.name);
+};
+
+function moveLabel(){
+    //get width of label
+    var labelWidth = d3.select(".infolabel")
+        .node()
+        .getBoundingClientRect()
+        .width;
+
+    //use coordinates of mousemove event to set label coordinates
+    var x1 = d3.event.clientX + 10,
+        y1 = d3.event.clientY - 75,
+        x2 = d3.event.clientX - labelWidth - 10,
+        y2 = d3.event.clientY + 25;
+
+    //horizontal label coordinate, testing for overflow
+    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+    //vertical label coordinate, testing for overflow
+    var y = d3.event.clientY < 75 ? y2 : y1;
+
+    d3.select(".infolabel")
+        .style({
+            "left": x + "px",
+            "top": y + "px"
+        });
+};
+
+function joinData(cities){
+  cities.forEach(function(d){
+    var props = d.properties;
+    // console.log(city);
+    console.log(d);
+
+    for(i = 0; i< citiesArray.length; i++){
+      var x = citiesArray[i].City;
+      var score = citiesArray[i].Score;
+      if (x == "Richmond (VA)"){
+        x = "Richmond";
+      }
+
+      if(props.City == x){
+
+        props["Score"] = score;
+      }
+    }
+
+
+    // console.log(d);
+  });
+
 }

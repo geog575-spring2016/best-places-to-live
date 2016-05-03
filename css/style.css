@@ -1,9 +1,11 @@
 /* 575 boilerplate style.css */
 
-.map {
+#mapContainer {
 	float: right;
 	border: 2px solid black;
 	margin: 5px;
+	bottom: 0;
+
 }
 
 #attContainer {
@@ -64,4 +66,33 @@
 	fill: #fff;
 	stroke: #000;
 	stroke-width: 0.5px;
+}
+
+.legend circle {
+  fill: none;
+  stroke: #ccc;
+}
+
+.legend text {
+  fill: #777;
+  font: 10px sans-serif;
+  text-anchor: middle;
+}
+
+.infolabel {
+    position: absolute;
+    height: 50px;
+    min-width: 100px;
+    color: #fff;
+    background-color: #000;
+    border: solid thin #fff;
+    padding: 5px 10px;
+    top: -75px;
+}
+
+.infolabel h1 {
+    margin: 0 20px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
 }
