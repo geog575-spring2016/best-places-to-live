@@ -574,11 +574,13 @@ function createMap(states, cities) {
 
     //function to control when the user zooms
     function zoomed() {
-        // var t = d3.event.translate,
-        //     s = d3.event.scale;
-        //     t[0] = Math.min(width / 2 * (s - 1), Math.max(width / 2 * (1 - s), t[0]));
-        //     t[1] = Math.min(height / 2 * (s - 1) + 230 * s, Math.max(height / 2 * (1 - s) - 230 * s, t[1]));
-        //     zoom.translate(t);
+        var t = d3.event.translate,
+            s = d3.event.scale;
+            t[0] = Math.min(width / 2 * (s - 1) + 230 * s, Math.max(width / 2 * (1 - s) - 230 * s, t[0]));
+            t[1] = Math.min(height / 2 * (s - 1) + 230 * s, Math.max(height / 2 * (1 - s) - 230 * s, t[1]));
+            zoom.translate(t);
+
+       
 
           g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 
@@ -602,13 +604,20 @@ function createMap(states, cities) {
         //set the radius
         .attr('d', path.pointRadius(function(d) { return radius(d.properties.ID)}))
         //assign the id
-        .attr("class", function(d) { return d.properties.ID})
+        .attr("class", function(d) { return d.properties.City})
         //assign the location of the city according to coordinates
         .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
         .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
         .attr("fill", "blue")
         .attr("stroke", "white")
-        .attr("stroke-width", "2px");
+        .attr("stroke-width", "2px")
+        .on("mouseover", function(d){
+          highlightCity(d.properties);
+        })
+        .on("mouseout", function(d){
+          dehighlightCity(d.properties);
+        })
+        .on("mousemove", moveLabel);
 
     var legend = map.append("g")
         .attr("class", "legend")
@@ -1118,3 +1127,73 @@ var projection = d3.geo.mercator()
 
 
 }
+
+function highlightCity(props){
+  var city = props.City;
+  var cityFixed = city.replace(/ /g, ".");
+  // console.log(props.City);
+   var selected = d3.selectAll("." + cityFixed)
+        .style({
+            "stroke": "black",
+            "stroke-width": "2"
+        });
+
+    setCityLabel(props);
+}
+
+function dehighlightCity(props){
+  var city = props.City;
+  var cityFixed = city.replace(/ /g, ".");
+  // console.log(props.City);
+   var selected = d3.selectAll("." + cityFixed)
+        .style({
+            "stroke": "white",
+            "stroke-width": "2"
+        });
+
+  d3.select(".infolabel")
+        .remove();
+}
+
+function setCityLabel(props){
+    //label content
+    var labelAttribute = "<h1>Score: <b>" + props.Score + "</b></h1>";
+
+    //create info label div
+    var infolabel = d3.select("body")
+        .append("div")
+        .attr({
+            "class": "infolabel",
+            "id": props.City + "_label"
+        })
+        .html(labelAttribute);
+
+    var regionName = infolabel.append("div")
+        .attr("class", "labelname")
+        .html(props.name);
+};
+
+function moveLabel(){
+    //get width of label
+    var labelWidth = d3.select(".infolabel")
+        .node()
+        .getBoundingClientRect()
+        .width;
+
+    //use coordinates of mousemove event to set label coordinates
+    var x1 = d3.event.clientX + 10,
+        y1 = d3.event.clientY - 75,
+        x2 = d3.event.clientX - labelWidth - 10,
+        y2 = d3.event.clientY + 25;
+
+    //horizontal label coordinate, testing for overflow
+    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1; 
+    //vertical label coordinate, testing for overflow
+    var y = d3.event.clientY < 75 ? y2 : y1; 
+
+    d3.select(".infolabel")
+        .style({
+            "left": x + "px",
+            "top": y + "px"
+        });
+};
