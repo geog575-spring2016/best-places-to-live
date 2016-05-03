@@ -13,6 +13,7 @@
     overflow-y: scroll;
     position: fixed;
     bottom: 0;
+		font-family: "trebuchet ms";
 }
 
 .attSvg {
@@ -28,8 +29,8 @@
 		padding-left: 5px;
 }
 .cityContainer {
-    height: 350px;
-    width: 300px;
+    height: 205px;
+    width: 250px;
     border: 1px solid #ccc;
     overflow-y: scroll;
 		position: absolute;
