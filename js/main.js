@@ -215,6 +215,13 @@ function createAttPanel(attData) {
                       attObjArray[i].Weight = 0.5;
                   };
               };
+              //creates array of only checked attributes
+              checkedAtts = checkedAttributes(attData, attObjArray);
+              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              createCitiesPanel()
+
           })
       //creates rect elements for weighting attribute
       var attRect2 = variables.append('rect')
@@ -247,6 +254,13 @@ function createAttPanel(attData) {
                       attObjArray[i].Weight = 1;
                   };
               };
+              //creates array of only checked attributes
+              checkedAtts = checkedAttributes(attData, attObjArray);
+              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              createCitiesPanel()
+
           })
 
       //creates rect elements for weighting attribute
@@ -280,11 +294,11 @@ function createAttPanel(attData) {
                       attObjArray[i].Weight = 2;
                   };
               };
+              //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
-              // console.log(citiesArray);
               createCitiesPanel()
               // console.log(citiesArray);
               // citiesArray = citiesArray.map(function(city){
@@ -620,12 +634,12 @@ function createMap(states, cities) {
 function createCitiesPanel(){
     //citiesArray is an array of objects
 
-    // d3.scale.ordinal.domain(citiesArray[Score]).range()
-      if(d3.select(".citySVG").empty() == false){
-
+    // // d3.scale.ordinal.domain(citiesArray[Score]).range()
+    //   if(d3.select(".citySVG").empty() == false){
+    //
           //removes SVG each time function is called
           d3.select(".citySvg").remove()
-      }
+      // }
         //new array to hold cities that should not be filtered out
         var newArray = []
 
@@ -637,13 +651,15 @@ function createCitiesPanel(){
             for (i=0; i<filteredCities.length; i++){
                 // city in filteredCities array
                 var filteredCity = filteredCities[i]
+                // console.log(d.city);
+                // console.log(filteredCity);
                 if (city == filteredCity){
                     newArray.push(d)
                 }
             }
 
         })
-        //sets cities array = to new array created above
+
         citiesArray = newArray;
         //sort array of objects in descencing order based on specified property
         citiesArray.sort(function(a, b) { return b.Score - a.Score })
@@ -658,9 +674,33 @@ function createCitiesPanel(){
         // rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
         // rectHeight3 = 16, rectSpacing = 3;
 
+        // //array to hold all property names
+        // var allAttributes = [];
+        // console.log(attData[0]);
+        // //push property names from attData into allAttributes array
+        // for (var keys in attData[0]){
+        //     allAttributes.push(keys);
+        // };
+        // //create an array with only properties with Raw values; for PCP display
+        // var rawData = searchStringInArray("Raw", allAttributes);
+        //
+        // //create an array with only properties with Rank values; for calculation
+        // var rankData = searchStringInArray("Rank", allAttributes);
+        //
+        // var attLabels = removeStringFromEnd("_Rank", rankData)
+        //
+        // attLabels = removeUnderscores(attLabels);
+
+        // //empty array to hold length of each label
+        // var labelLength = [];
+        // //for loop to push all label lengths into array
+        // for (i=0; i<rankData.length; i++) {
+        //     var attLength = rankData[i].length;
+        //     labelLength.push(attLength)
+        // }
+
         // //identify which label is the longest so we can use that as the width in the transform for creating text elements
         // var labelWidth = Math.max.apply(Math, labelLength);
-        
         //prevents creation of multiple divs
         if(d3.select(".cityContainer").empty() == true){
 
