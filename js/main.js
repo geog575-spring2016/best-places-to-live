@@ -177,6 +177,13 @@ function createAttPanel(attData) {
                       enableSlider(d);
                   }
               })
+              //creates array of only checked attributes
+              checkedAtts = checkedAttributes(attData, attObjArray);
+              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              createCitiesPanel()
+
           });
 
       //define x,y property values for first rectangle
