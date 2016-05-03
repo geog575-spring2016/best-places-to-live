@@ -4,6 +4,12 @@ window.onload = setPage();
 var citiesArray = [], rawData = [], rankData = [], attLabels = [], citySearch = [],
     attObjArray = [], filteredCities = [], checkedAtts = [];
 
+var numSelectedCities = 0;
+
+var colors = d3.scale.category10();
+console.log(colors[0]);
+
+var colorArray = ["gray", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
 
 function setPage() {
     //set variable to use queue.js to parallelize asynchronous data loading
@@ -32,6 +38,7 @@ function callback(error, statesData, citiesData, attData){
 
 
 }
+
 
 function createAttPanel(attData, cities, states) {
 
@@ -452,11 +459,13 @@ function createCitiesArray(attData) {
     //creates object with city name and ID and pushes them into an array
     attData.map(function(d) { //d is each city object
         var cityObj = {
-            City: d.Cities_Included
+            City: d.Cities_Included,
+            Selected: false
             // Colors: function(){ return d3.scale.category20();}
           };
         citiesArray.push(cityObj)
     });
+    console.log(citiesArray);
     return citiesArray;
 
 };
@@ -598,7 +607,7 @@ function createMap(states, cities) {
     var projection = d3.geo.mercator()
         // .scale((width - 1)/2)
         .scale((width*(3/4)))
-        .translate([width*2, height]);
+        .translate([width*1.75, height*1.333]);
 
    // define what happens on zoom
     var zoom = d3.behavior.zoom()
@@ -653,17 +662,18 @@ function createMap(states, cities) {
     // once we have our overall ranks worked out we'll swap that value in instead
     g.selectAll(".circles")
         //sort the data so that smaller values go on top (so the small circles appear on top of the big circles)
-        .data(cities.sort(function(a, b) { return b.properties.ID - a.properties.ID; }))
+        .data(cities.sort(function(a, b) { return b.properties.Score - a.properties.Score; }))
         .enter()
         .append("path")
         //set the radius
-        .attr('d', path.pointRadius(function(d) { return radius(d.properties.ID)}))
+        // .attr('d', path.pointRadius(function(d) {console.log(d.properties.City +" "+ d.properties.Score); return radius(d.properties.Score)}))
+        .attr('d', path.pointRadius(function(d) { return radius(d.properties.Score)}))
         //assign the id
         .attr("class", function(d) { return d.properties.City})
         //assign the location of the city according to coordinates
         .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
         .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
-        .attr("fill", "blue")
+        .style("fill", "blue")
         .attr("stroke", "white")
         .attr("stroke-width", "2px")
         .on("mouseover", function(d){
@@ -672,7 +682,10 @@ function createMap(states, cities) {
         .on("mouseout", function(d){
           dehighlightCity(d.properties);
         })
-        .on("mousemove", moveLabel);
+        .on("mousemove", moveLabel)
+        .on("click", function (d){
+          selectCity(d.properties.City);
+        });
 
     var legend = map.append("g")
         .attr("class", "legend")
@@ -792,7 +805,9 @@ function createCitiesPanel(){
                     var city = ui.item.value
                     var selection = "#" + city + "_rect"
                     console.log(selection);
-                    d3.select(selection).style("fill", "green")
+                    console.log("in select manu ui");
+                    selectCity(city);
+                    // d3.select(selection).style("fill", "green")
                     // function() {
                     //     // console.log(citiesArray[city]["Color"]);
                     // })
@@ -868,6 +883,10 @@ function createCitiesPanel(){
                 .attr("y", 40)
                 .attr("x", -10)
                 .style("fill", "gray")
+                .on("click", function(d){
+                  console.log("here");
+                  selectCity(d.City);
+                });
 
             //used to place checkbox relative to attText labels
             var rectY = +d3.select(".cityRect").attr("y") + 15
@@ -1312,7 +1331,7 @@ var projection = d3.geo.mercator()
         .duration(1000)
       .attr('d', path.pointRadius(function(d) { return radius(d.properties.Score); }));
 
-  console.log(g);
+  // console.log(g);
 
 
 }
@@ -1391,7 +1410,7 @@ function joinData(cities){
   cities.forEach(function(d){
     var props = d.properties;
     // console.log(city);
-    console.log(d);
+    // console.log(d);
 
     for(i = 0; i< citiesArray.length; i++){
       var x = citiesArray[i].City;
@@ -1410,4 +1429,47 @@ function joinData(cities){
     // console.log(d);
   });
 
+}
+
+function selectCity (city){
+  console.log(city);
+  var cityNoSpaces = city.replace(/ /g, ".");
+  for (i = 0; i < citiesArray.length; i++){
+
+    if (city == citiesArray[i].City){
+      if(citiesArray[i]["Selected"] == true){
+
+        citiesArray[i]["Selected"] = false;
+        numSelectedCities--;
+
+        var color = colorArray[0];
+        // d3.select(city + "_rect").style("fill", "#aaa");
+        d3.select("#" + city + "_rect").style("fill", color);
+        
+        d3.select("path." + cityNoSpaces).style("fill", color);
+          
+        
+
+      }else{
+
+        if(numSelectedCities == 10){
+          window.alert("YOU PICKIN TOO MANY CITIES YO");
+          // console.log("YOU PICKIN TOO MANY CITIES YO");
+        }else{
+        citiesArray[i]["Selected"] = true;
+        numSelectedCities++;
+
+        var color = colorArray[numSelectedCities];
+        d3.select("#" + city + "_rect").style("fill", color);
+        d3.select("path." + cityNoSpaces).style("fill", color);
+        }
+        
+        
+
+
+      }
+      
+    }
+  }
+  console.log(numSelectedCities)
 }
