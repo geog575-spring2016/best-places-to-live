@@ -1,12 +1,13 @@
 /* 575 boilerplate style.css */
 #title{
     color: #E6F2DE;
-    font-size: 4.5em;
+    font-size: 3.5em;
     text-align: center;
     font-family: Lucida, sans-serif;
+		width: 100%;
 }
 body{
-  background-color: #134B5F;  
+  background-color: #134B5F;
 }
 #mapContainer {
 	float: right;
@@ -130,7 +131,7 @@ body{
 
 .attLabel {
     position: absolute;
-    height: 250px;
+    /*height: 250px;*/
     min-width: 100px;
     color: #fff;
     background-color: #038090;

@@ -1647,11 +1647,18 @@ function attPopup(attData, attribute){
 
     var selectedCities = [];
 
-    for (i=0; i<10; i++){
-        selectedCities.push(attData[i].Cities_Included)
-    }
-
+    // for (i=0; i<10; i++){
+    //     selectedCities.push(attData[i].Cities_Included)
+    // }
+    citiesArray.map(function(d){
+        if (d.Selected == true){
+            selectedCities.push(d.City)
+        }
+    })
+    //holds cities that are ranked
     var attArray = [];
+    //holds cities that are not ranked
+    var nrArray = [];
     //loop through every city object
     attData.map(function(d){
         var newArray = [];
@@ -1672,17 +1679,21 @@ function attPopup(attData, attribute){
                     newArray.push(city)
 
                 } else {
-                newArray.push(+d[attribute])
-                newArray.push(city)
+                    newArray.push(+d[attribute])
+                    newArray.push(city)
                 };
             };
         };
         if (newArray.length ==2){
-            //push two element array into array for entire attribute
-            attArray.push(newArray);
+            //if cit is not ranked, push into nrArray
+            if (newArray[0] == "NR"){
+                nrArray.push(newArray)
+            } else{
+              //if city is ranked push into attArray
+              attArray.push(newArray);
+            }
         }
     });
-
 
 
     //sort array of objects in ascending order based on specified property
@@ -1697,20 +1708,24 @@ function attPopup(attData, attribute){
     //create info label div
     var attLabel = d3.select("body")
         .append("div")
-        .attr({
-            "class": "attLabel",
-            "id": attribute + "_label"
-        })
+        .attr("class", "attLabel")
+        .attr("id", attribute + "_label")
+        .attr("height", 25 * (selectedCities.length + 1))
         .html(function(){
-
             var html = labelAttribute
-            for(i=0; i<attArray.length; i++){
-                var cityRank = "<p class='cityP'>" + attArray[i][0] + ". " + attArray[i][1] + "</p>"
-                html += cityRank
+            //conditioanl checks if any cities are selected
+            if (selectedCities.length == 0){
+                html += "<p class='cityP'>No cities selected</p>"
+            } else {
+                for(i=0; i<attArray.length; i++){
+                    var cityRank = "<p class='cityP'>" + attArray[i][0] + ". " + attArray[i][1] + "</p>"
+                    html += cityRank
+                }
+                for(i=0; i<nrArray.length; i++){
+                    var cityRank = "<p class='cityP'>" + nrArray[i][0] + ". " + nrArray[i][1] + "</p>"
+                    html += cityRank
+                }
             }
-
-
-
           return html
         });
 
@@ -1762,12 +1777,13 @@ function moveAttLabel(){
     var x1 = d3.event.clientX + 10,
         y1 = d3.event.clientY - 75,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY + 25;
+        y2 = d3.event.clientY - 255;
+
 
     //horizontal label coordinate, testing for overflow
-    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+    var y = d3.event.clientY > 300  ? y2 : y1;
     //vertical label coordinate, testing for overflow
-    var y = d3.event.clientY < 75 ? y2 : y1;
+    var x = d3.event.clientX < 10 ? x2 : x1;
 
     d3.select(".attLabel")
         .style({
