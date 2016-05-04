@@ -518,7 +518,7 @@ function setWeights(attObjArray, attribute){
               // console.log(citiesArray);
               createCitiesPanel()
 
-              updatePropSymbols(citiesArray);
+              updatePropSymbols(cities);
 
           })
 
@@ -1560,6 +1560,8 @@ var projection = d3.geo.mercator()
         //   }
         // });
 
+        // d3.select("path." + city);
+
         cities.forEach(function(d){
           // console.log(d.properties);
           var city = d.properties.City;
@@ -1591,6 +1593,7 @@ var projection = d3.geo.mercator()
 
                   return "inline";
                  }else{
+
 
                   return "none";
                  }
