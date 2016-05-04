@@ -420,6 +420,7 @@ function createAttPanel(attData, cities, states) {
       citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
       citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities);
 
+      createCitiesPanel();
       createMap(states, cities);
       // updatePropSymbols(citiesArray);
       // //creates cities panel; add here so we can pass rankData for now
