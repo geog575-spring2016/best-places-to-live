@@ -671,7 +671,10 @@ function createMap(states, cities) {
         // .attr('d', path.pointRadius(function(d) {console.log(d.properties.City +" "+ d.properties.Score); return radius(d.properties.Score)}))
         .attr('d', path.pointRadius(function(d) { return radius(d.properties.Score)}))
         //assign the id
-        .attr("class", function(d) { return d.properties.City})
+        .attr("class", function(d) { 
+          var city = d.properties.City.replace(/\./g, "");
+          return city;
+        })
         //assign the location of the city according to coordinates
         .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
         .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
@@ -914,6 +917,9 @@ function createCitiesPanel(){
                 .attr("x", 20)
                 .attr("y", rectY)
                 .text(function(d ) { ;return d.City })
+                .on("click", function(d){
+                  selectCity(d.City);
+                })
                 // .attr("id", function(d) {
                 //     var attribute = createAttID(d, rankData)
                 //
@@ -1347,9 +1353,23 @@ var projection = d3.geo.mercator()
             .duration(1000)
             .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)})) 
              .attr("display", function (){
-               var inArray =  $.inArray(d.properties.City, filteredCities);
-                 // console.log(test);
-                 if(inArray != -1){
+               // var inArray =  $.inArray(d.properties.City, citiesArray);
+                 var found = false;
+                 for(i = 0; i < citiesArray.length; i++){
+                  if(citiesArray[i].City == d.properties.City){
+                    found = true;
+                    break;
+                  }
+                 }
+                 // console.log(citiesArray);
+                 // if(inArray != -1){
+
+                 //  return "inline";
+                 // }else{
+
+                 //  return "none";
+                 // }
+                 if(found){
 
                   return "inline";
                  }else{
@@ -1379,6 +1399,7 @@ var projection = d3.geo.mercator()
 
 function highlightCity(props){
   var city = props.City;
+  city = city.replace(/\./g, "");
   var cityFixed = city.replace(/ /g, ".");
   // console.log(props.City);
    var selected = d3.selectAll("." + cityFixed)
@@ -1392,6 +1413,7 @@ function highlightCity(props){
 
 function dehighlightCity(props){
   var city = props.City;
+  city = city.replace(/\./g, "");
   var cityFixed = city.replace(/ /g, ".");
   // console.log(props.City);
    var selected = d3.selectAll("." + cityFixed)
@@ -1498,12 +1520,12 @@ function selectCity (city){
           window.alert("YOU PICKIN TOO MANY CITIES YO");
           // console.log("YOU PICKIN TOO MANY CITIES YO");
         }else{
-        citiesArray[i]["Selected"] = true;
-        numSelectedCities++;
+          citiesArray[i]["Selected"] = true;
+          numSelectedCities++;
 
-        var color = colorArray[numSelectedCities];
-        d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
-        d3.select("path." + cityReplaceWithPeriod).style("fill", color);
+          var color = colorArray[numSelectedCities];
+          d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
+          d3.select("path." + cityReplaceWithPeriod).style("fill", color);
         }
         
         
