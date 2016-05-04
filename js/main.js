@@ -621,8 +621,8 @@ function createMap(states, cities) {
         //define the radius of the prop symbols.
         // the domain should be the max and min values of the data set
     var radius = d3.scale.sqrt()
-            .domain([1, 50])
-            .range([2, 30]);
+            .domain([0, 50])
+            .range([0, 30]);
 
     //add the states to the map
     g.selectAll(".states")
@@ -638,6 +638,8 @@ function createMap(states, cities) {
 
     //function to control when the user zooms
     function zoomed() {
+
+        //restrict panning
         var t = d3.event.translate,
             s = d3.event.scale;
             t[0] = Math.min(width / 2 * (s - 1) + 230 * s, Math.max(width / 2 * (1 - s) - 230 * s, t[0]));
@@ -660,7 +662,7 @@ function createMap(states, cities) {
     joinData(cities);
     //for now the prop symbols use the ID to scale the symbol to the correct size.
     // once we have our overall ranks worked out we'll swap that value in instead
-    g.selectAll(".circles")
+    g.selectAll("circles")
         //sort the data so that smaller values go on top (so the small circles appear on top of the big circles)
         .data(cities.sort(function(a, b) { return b.properties.Score - a.properties.Score; }))
         .enter()
@@ -673,7 +675,7 @@ function createMap(states, cities) {
         //assign the location of the city according to coordinates
         .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
         .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
-        .style("fill", "blue")
+        .style("fill", colorArray[0])
         .attr("stroke", "white")
         .attr("stroke-width", "2px")
         .on("mouseover", function(d){
@@ -874,7 +876,8 @@ function createCitiesPanel(){
             var cityRect = cities.append("rect")
                 .attr("class", "cityRect")
                 .attr("id", function(d){
-                    return d.City + "_rect"
+                    var cityID = d.City.replace(/ /g,"_");
+                    return cityID + "_rect";
                 })
                 // .attr("id", "selectable")
                 // .attr("x", cityMargin)
@@ -1293,43 +1296,81 @@ function enableSlider(d){
       $(sliderID).slider("enable");
 }
 
-function pairData(citiesArray, cities){
-  citiesArray.forEach(function(d){
-    var city = d.City;
-    cities.forEach()
-  })
-}
 
 function updatePropSymbols (cities){
   joinData(cities);
+
    var mapWidth = 0.65;
     var width = window.innerWidth * mapWidth;
     var height = window.innerHeight *0.8;
 
 
   var radius = d3.scale.sqrt()
-            .domain([1, 50])
-            .range([2, 30]);
+            .domain([0, 50])
+            .range([0, 30]);
 
 
 var projection = d3.geo.mercator()
         // .scale((width - 1)/2)
         .scale((width*(3/4)))
-        .translate([width*2, height]);
+        .translate([width*1.75, height*1.333]);
 
     //set the projection
     var path = d3.geo.path()
         .projection(projection);
 
-  var map = d3.select("#mapContainer");
+ //  var map = d3.select("#mapContainer");
 
- var g = map.selectAll("g");
+ // var g = map.selectAll("g");
 
- g.selectAll("path")
-        .transition()
-        .delay(0)
-        .duration(1000)
-      .attr('d', path.pointRadius(function(d) { return radius(d.properties.Score); }));
+ // g.selectAll("path")
+ //        .transition()
+ //        .delay(0)
+ //        .duration(1000)
+ //        .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)})) 
+        
+
+        // .attr("display", function (d){
+        //   if(typeof d.properties.Score == 'undefined'){
+        //     return "none";
+        //   }
+        // });
+        
+        cities.forEach(function(d){
+          // console.log(d.properties);
+          var city = d.properties.City;
+          city = city.replace(/\./g, "");
+          city = city.replace(/ /g, ".");
+          d3.select("path." + city)
+            .transition()
+            .delay(0)
+            .duration(1000)
+            .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)})) 
+             .attr("display", function (){
+               var inArray =  $.inArray(d.properties.City, filteredCities);
+                 // console.log(test);
+                 if(inArray != -1){
+
+                  return "inline";
+                 }else{
+
+                  return "none";
+                 }
+                
+              });
+
+          // var city = d.properties.;
+          
+          
+        });
+      
+      // .attr('d', path.pointRadius(function(d) {
+      //   if(typeof d.properties.Score == 'undefined'){
+      //     return 0;
+      //   }else{
+      //     return radius(d.properties.Score); 
+      //   }
+      //   }));
 
   // console.log(g);
 
@@ -1425,15 +1466,16 @@ function joinData(cities){
       }
     }
 
-
-    // console.log(d);
   });
 
 }
 
 function selectCity (city){
   console.log(city);
-  var cityNoSpaces = city.replace(/ /g, ".");
+  city = city.replace(/\./g, "");
+  var cityReplaceWithPeriod = city.replace(/ /g, ".");
+  var cityReplaceWithUnderscore = city.replace(/ /g, "_");
+
   for (i = 0; i < citiesArray.length; i++){
 
     if (city == citiesArray[i].City){
@@ -1444,9 +1486,9 @@ function selectCity (city){
 
         var color = colorArray[0];
         // d3.select(city + "_rect").style("fill", "#aaa");
-        d3.select("#" + city + "_rect").style("fill", color);
+        d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
         
-        d3.select("path." + cityNoSpaces).style("fill", color);
+        d3.select("path." + cityReplaceWithPeriod).style("fill", color);
           
         
 
@@ -1460,8 +1502,8 @@ function selectCity (city){
         numSelectedCities++;
 
         var color = colorArray[numSelectedCities];
-        d3.select("#" + city + "_rect").style("fill", color);
-        d3.select("path." + cityNoSpaces).style("fill", color);
+        d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
+        d3.select("path." + cityReplaceWithPeriod).style("fill", color);
         }
         
         
