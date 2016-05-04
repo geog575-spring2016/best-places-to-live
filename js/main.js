@@ -518,7 +518,7 @@ function setWeights(attObjArray, attribute){
               // console.log(citiesArray);
               createCitiesPanel()
 
-              updatePropSymbols(citiesArray);
+              updatePropSymbols(cities);
 
           })
 
@@ -1307,6 +1307,7 @@ function createSlider(attData, attribute, cities) {
                     };
                 };
             });
+            console.log(filteredCities);
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -1679,24 +1680,23 @@ function attPopup(attData, attribute){
 
     //sort array of objects in ascending order based on specified property
     attArray.sort(function(a, b) { return a[0] - b[0] })
-
+    var labelArray = [attribute]
+    labelArray = removeStringFromEnd("_Rank", labelArray)
+    labelArray = removeUnderscores(labelArray)
+    attribute = labelArray[0]
     //label content
     var labelAttribute = "<h1><b>" + attribute + "</b></h1>";
 
     //create info label div
-    var attLabel = d3.select("#attContainer")
+    var attLabel = d3.select("body")
         .append("div")
         .attr({
             "class": "attLabel",
             "id": attribute + "_label"
         })
-        .html(labelAttribute);
-
-    var cityList = attLabel.append("div")
-        .attr("class", "cityList")
         .html(function(){
 
-          var html = "<ul>"
+            var html = labelAttribute + "<ul class='cityUL'>"
             for(i=0; i<attArray.length; i++){
                 var cityRank = "<li>" + attArray[i][0] + ". " + attArray[i][1] + "</li>"
                 html += cityRank
@@ -1706,6 +1706,23 @@ function attPopup(attData, attribute){
 
           return html
         });
+
+
+    // var cityList = attLabel.append("div")
+    //     .attr("class", "cityList")
+    //     .attr("width", titleX)
+    //     .html(function(){
+    //
+    //       var html = "<ul class='cityUL'>"
+    //         for(i=0; i<attArray.length; i++){
+    //             var cityRank = "<li>" + attArray[i][0] + ". " + attArray[i][1] + "</li>"
+    //             html += cityRank
+    //         }
+    //
+    //       html += "</ul>"
+    //
+    //       return html
+    //     });
 };
 
 

@@ -99,13 +99,30 @@
 
 .attLabel {
     position: absolute;
-    height: 50px;
+    height: 230px;
     min-width: 100px;
     color: #fff;
-    background-color: #000;
+    background-color: #038090;
     border: solid thin #fff;
     padding: 5px 10px;
     top: -75px;
+		z-index: 10;
+}
+.cityList {
+    background-color: inherit;
+    padding: 5px 10px;
+    top: -75px;
+		/*z-index: ;*/
+		color: #fff;
+		border: solid thin #fff;
+
+}
+
+.cityUL{
+		padding-left: -50px;
+}
+ul {
+	list-style-type: none;
 }
 
 .attLabel h1 {
