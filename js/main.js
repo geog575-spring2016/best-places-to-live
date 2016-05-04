@@ -788,7 +788,7 @@ function createMap(states, cities) {
         //define the radius of the prop symbols.
         // the domain should be the max and min values of the data set
     var radius = d3.scale.sqrt()
-            .domain([1, 50])
+            .domain([25, 100])
             .range([2, 30]);
 
     //add the states to the map
@@ -1500,13 +1500,14 @@ function pairData(citiesArray, cities){
 
 function updatePropSymbols (cities){
   joinData(cities);
+
    var mapWidth = 0.65;
     var width = window.innerWidth * mapWidth;
     var height = window.innerHeight *0.8;
 
 
   var radius = d3.scale.sqrt()
-            .domain([1, 50])
+            .domain([25, 100])
             .range([2, 30]);
 
 
@@ -1529,7 +1530,6 @@ var projection = d3.geo.mercator()
         .duration(1000)
       .attr('d', path.pointRadius(function(d) { return radius(d.properties.Score); }));
 
-  console.log(g);
 
 
 }
@@ -1616,7 +1616,7 @@ function attPopup(attData, attribute){
     var labelAttribute = "<h1><b>" + attribute + "</b></h1>";
 
     //create info label div
-    var attLabel = d3.select("body")
+    var attLabel = d3.select("#attContainer")
         .append("div")
         .attr({
             "class": "attLabel",
@@ -1624,8 +1624,8 @@ function attPopup(attData, attribute){
         })
         .html(labelAttribute);
 
-    var regionName = attLabel.append("div")
-        .attr("class", "labelname")
+    var cityList = attLabel.append("div")
+        .attr("class", "cityList")
         .html(function(){
 
           var html = "<ul>"
@@ -1732,7 +1732,6 @@ function joinData(cities){
     }
 
 
-    // console.log(d);
   });
 
 }
