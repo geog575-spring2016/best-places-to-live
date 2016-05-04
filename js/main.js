@@ -669,9 +669,9 @@ function createMap(states, cities) {
         .append("path")
         //set the radius
         // .attr('d', path.pointRadius(function(d) {console.log(d.properties.City +" "+ d.properties.Score); return radius(d.properties.Score)}))
-        .attr('d', path.pointRadius(function(d) { return radius(d.properties.Score)}))
+        .attr('d', path.pointRadius(function(d) {  return radius(d.properties.Score)}))
         //assign the id
-        .attr("class", function(d) { 
+        .attr("class", function(d) {
           var city = d.properties.City.replace(/\./g, "");
           return city;
         })
@@ -1333,15 +1333,15 @@ var projection = d3.geo.mercator()
  //        .transition()
  //        .delay(0)
  //        .duration(1000)
- //        .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)})) 
-        
+ //        .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)}))
+
 
         // .attr("display", function (d){
         //   if(typeof d.properties.Score == 'undefined'){
         //     return "none";
         //   }
         // });
-        
+
         cities.forEach(function(d){
           // console.log(d.properties);
           var city = d.properties.City;
@@ -1351,7 +1351,7 @@ var projection = d3.geo.mercator()
             .transition()
             .delay(0)
             .duration(1000)
-            .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)})) 
+            .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)}))
              .attr("display", function (){
                // var inArray =  $.inArray(d.properties.City, citiesArray);
                  var found = false;
@@ -1376,19 +1376,19 @@ var projection = d3.geo.mercator()
 
                   return "none";
                  }
-                
+
               });
 
           // var city = d.properties.;
-          
-          
+
+
         });
-      
+
       // .attr('d', path.pointRadius(function(d) {
       //   if(typeof d.properties.Score == 'undefined'){
       //     return 0;
       //   }else{
-      //     return radius(d.properties.Score); 
+      //     return radius(d.properties.Score);
       //   }
       //   }));
 
@@ -1509,10 +1509,10 @@ function selectCity (city){
         var color = colorArray[0];
         // d3.select(city + "_rect").style("fill", "#aaa");
         d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
-        
+
         d3.select("path." + cityReplaceWithPeriod).style("fill", color);
-          
-        
+
+
 
       }else{
 
@@ -1527,12 +1527,12 @@ function selectCity (city){
           d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
           d3.select("path." + cityReplaceWithPeriod).style("fill", color);
         }
-        
-        
+
+
 
 
       }
-      
+
     }
   }
   console.log(numSelectedCities)
