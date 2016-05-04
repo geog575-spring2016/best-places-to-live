@@ -134,13 +134,20 @@ function createAttPanel(attData, cities, states, sources) {
         .attr("height", attHeight)
       .append("g")
         .attr("transform", "translate(" + attMargin.left + "," + attMargin.top + ")");// adds padding to group element in SVG
-
+//sets att title
+    var attTitleRect = attSvg.append("rect")
+        .attr("id", "attTitleRect")
+        .attr('x', -10)
+        .attr("y", -20)
+        .attr("width", '100%')
+        .attr("height", 60)
+        .text("Attributes")
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
         .attr("x", attWidth / 5)
         .attr("y", attMargin.top)
-        .text("Attributes")
+        .text("Select Attributes")
 
     // var checkAll = attSvg.append("foreignObject")
     //     .attr('x', 23)
@@ -1081,11 +1088,11 @@ function createCitiesPanel(){
                 .attr("height", (rectHeight / 3) * 2)
                 .attr("y", 40)
                 .attr("x", -10)
-                .style("fill", "gray")
                 .on("click", function(d){
                   console.log("here");
                   selectCity(d.City);
                 });
+
 
             //used to place checkbox relative to attText labels
             var rectY = +d3.select(".cityRect").attr("y") + 15
