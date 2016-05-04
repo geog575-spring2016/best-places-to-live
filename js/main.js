@@ -183,7 +183,7 @@ function createAttPanel(attData, cities, states) {
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
 
@@ -229,7 +229,7 @@ function createAttPanel(attData, cities, states) {
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
 
@@ -269,7 +269,7 @@ function createAttPanel(attData, cities, states) {
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
 
@@ -311,7 +311,7 @@ function createAttPanel(attData, cities, states) {
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
 
-              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities)
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
 
 
               // console.log(citiesArray);
@@ -434,7 +434,7 @@ function createAttPanel(attData, cities, states) {
       checkedAtts = checkedAttributes(attData, attObjArray);
       //this is an array containing an object for every city with properties for city name and each selected attribute's rank
       citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-      citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities);
+      citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData);
 
       createCitiesPanel();
       createMap(states, cities);
@@ -574,6 +574,32 @@ function calcMinMax(attData, attribute){
     //return values as an array
     return [min, max]
 };
+
+function calcMinMaxScore(citiesArray, property){
+    //start with min at highest possible and max at lowest possible values
+    var min = Infinity,
+        max = -Infinity;
+    //loops through each object(i.e., city) in array of object
+    citiesArray.forEach(function(city){
+       var attValue = +city[property];
+
+        //doesn't count 0 as min value
+        if (attValue != 0){
+            //test for min
+            if (attValue < min){
+                min = attValue;
+            };
+
+            //test for max
+            if (attValue > max){
+                max = attValue;
+            };
+        };
+    });
+    // //return values as an array
+    return [min, max]
+};
+
 
 function createMap(states, cities) {
 
@@ -724,6 +750,22 @@ function createCitiesPanel(){
         })
 
         citiesArray = newArray;
+
+        // //returns min and max score values as two element array
+        // var minMax = calcMinMaxScore(citiesArray);
+        //
+        // // scale raw scores from 25 - 100
+        // var scale = d3.scale.linear()
+        //     .domain(minMax)
+        //     .range([25, 100])
+        //
+        // //sets Score to scaled score for each city
+        // citiesArray.map(function(d){
+        //   var score = d.Score
+        //
+        //   d["Score"] = scale(score)
+        // })
+
         //sort array of objects in descencing order based on specified property
         citiesArray.sort(function(a, b) { return b.Score - a.Score })
 
@@ -1089,7 +1131,7 @@ function createSlider(attData, attribute, cities) {
             });
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-            citiesArray = calcScore(attObjArray, checkedAtts, citiesArray)
+            citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
             // console.log(citiesArray);
             createCitiesPanel();
             updatePropSymbols (cities)
@@ -1221,43 +1263,68 @@ function setCheckedProp(attObjArray) {
     return attObjArray;
 }
 
-function calcScore (attObjArray, checkedAtts, citiesArray, cities){
-  citiesArray.map(function(city){
-      //array to hold individual scores calculated by multiplying the rank score by the weight
-      var scoreArray = [];
+function calcScore (attObjArray, checkedAtts, citiesArray, cities, attData){
+    citiesArray.map(function(city){
+        //array to hold individual scores calculated by multiplying the rank score by the weight
+        var scoreArray = [];
 
-      // console.log(city);
-      // console.log(checkedAtts);
-      // console.log(attObjArray);
-      // console.log(citiesArray);
-      //loop through all attributes that are checked
-      for (i=0; i<checkedAtts.length; i++){
-          var att = checkedAtts[i];
-          //loops through array containing weight of all attributes
-          attObjArray.map(function(d){
-              // retrieves proper object in attObjArray based on the attribute in checkedAtts
-              if (d.Attribute == att){
-                  //calcs an attScore by multiplying the attribute weight by the rank of the city
-                  var attScore = d.Weight * city[att]
-                  //pushes the attScore into an array of numbers so an average can be calculated
-                  scoreArray.push(attScore)
-              }
-          })
-      }
-      //sets score equal to the mean of the array
-      //probably need to change this because it
-      var score = +(d3.sum(scoreArray) / scoreArray.length).toFixed(2)
-      city["Score"] = score;
 
-      // city["Color"] = color( random(255), random(255), random(255) );
-      // for (i=0; i<citiesArray.length; i++) {
-      //     console.log(city[color]);
-      //     // City[i] = color( random(255), random(255), random(255) );
-      //   };
-      // console.log(city);
-  })
-  // console.log(citiesArray);
-  return citiesArray
+        //loop through all attributes that are checked
+        for (i=0; i<checkedAtts.length; i++){
+            var att = checkedAtts[i];
+            //finds min/max values for current attribute
+            var minMax = calcMinMax(attData, att);
+            var min = minMax[0]
+            var max = minMax[1]
+            //linear scale to reverse the order of ranking (e.g., if 50 cities are ranked, the number 1 ranked city gets a score of 50)
+            var rankScale = d3.scale.linear()
+                .domain(minMax)
+                .range([max, min])
+
+            //loops through array containing weight of all attributes
+            attObjArray.map(function(d){
+                // retrieves proper object in attObjArray based on the attribute in checkedAtts
+                if (d.Attribute == att){
+                    //sets attRank = to current city's rank for current attribute
+                    var attRank = +city[att]
+
+                    //scales the city's ranking
+                    var rankScore = rankScale(attRank)
+                    //the scale sets 0 = to 1 greater than the max, this ensures that 0 rank (i.e., NA) gets a 0 rankScore so that it doesn't inflate the actual score
+                    if (rankScore > max){
+                        rankScore = 0;
+                    }
+                    //calcs an attScore by multiplying the attribute weight by the rank of the city
+                    var attScore = d.Weight * rankScore
+
+                    //pushes the attScore into an array of numbers so an average can be calculated
+                    scoreArray.push(attScore)
+                }
+            })
+        }
+        //sets score equal to the mean of the array
+        //probably need to change this because it
+        var score = +(d3.sum(scoreArray) / scoreArray.length).toFixed(2)
+        city["Score"] = score;
+
+    })
+    //returns min and max score values as two element array
+    var minMax = calcMinMaxScore(citiesArray, "Score");
+
+    // scale raw scores from 25 - 100
+    var scoreScale = d3.scale.linear()
+        .domain(minMax)
+        .range([25, 100])
+
+    //sets Score to scaled score for each city
+    citiesArray.map(function(d){
+      var score = d.Score
+
+      d["Score"] = scoreScale(score)
+    })
+
+    // console.log(citiesArray);
+    return citiesArray
 }
 
 //disables slider
@@ -1392,8 +1459,7 @@ function joinData(cities){
   cities.forEach(function(d){
     var props = d.properties;
     // console.log(city);
-    console.log(d);
-
+    console.log(props);
     for(i = 0; i< citiesArray.length; i++){
       var x = citiesArray[i].City;
       var score = citiesArray[i].Score;
