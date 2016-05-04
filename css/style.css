@@ -99,7 +99,7 @@
 
 .attLabel {
     position: absolute;
-    height: 230px;
+    height: 250px;
     min-width: 100px;
     color: #fff;
     background-color: #038090;
@@ -118,12 +118,10 @@
 
 }
 
-.cityUL{
-		padding-left: -50px;
+.cityP{
+		line-height: 5px;
 }
-ul {
-	list-style-type: none;
-}
+
 
 .attLabel h1 {
     margin: 0 20px 0 0;

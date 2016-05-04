@@ -1696,13 +1696,13 @@ function attPopup(attData, attribute){
         })
         .html(function(){
 
-            var html = labelAttribute + "<ul class='cityUL'>"
+            var html = labelAttribute
             for(i=0; i<attArray.length; i++){
-                var cityRank = "<li>" + attArray[i][0] + ". " + attArray[i][1] + "</li>"
+                var cityRank = "<p class='cityP'>" + attArray[i][0] + ". " + attArray[i][1] + "</p>"
                 html += cityRank
             }
 
-          html += "</ul>"
+
 
           return html
         });
