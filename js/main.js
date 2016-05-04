@@ -5,11 +5,20 @@ var citiesArray = [], rawData = [], rankData = [], attLabels = [], citySearch = 
     attObjArray = [], filteredCities = [], checkedAtts = [];
 
 var numSelectedCities = 0;
+var colorCounter = 0;
 
-var colors = d3.scale.category10();
-console.log(colors[0]);
 
 var colorArray = ["gray", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
+var colorMaster = [];
+colorArray.forEach(function(d){
+  
+  var colorObj = new Object();
+  colorObj.colorString = d;
+  colorObj.inUse = false;
+  colorMaster.push(colorObj);
+})
+
+console.log(colorMaster);
 
 function setPage() {
     //set variable to use queue.js to parallelize asynchronous data loading
@@ -780,10 +789,31 @@ function createMap(states, cities) {
     //no idea how this works but it does
     //will probably need to change it once we decide how big
     //"mapWidth" is actually going to be
-    var projection = d3.geo.mercator()
+    // var projection = d3.geo.mercator()
         // .scale((width - 1)/2)
-        .scale((width*(3/4)))
-        .translate([width*1.75, height*1.333]);
+        // .scale((width*(3/4)))
+        // .translate([width*1.75, height*1.333]);
+
+  var projection = d3.geo.mercator()
+  .center([120, 40 ])
+    .scale(width*(2/3))
+    .rotate([-150,0]);
+    // .translate([width/2, height/2]);
+
+// Create a path generator.
+var path = d3.geo.path()
+    .projection(projection);
+
+// Compute the bounds of a feature of interest, then derive scale & translate.
+// var b = path.bounds(map),
+//     s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+//     t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+//     console.log(b);
+// // Update the projection to use computed scale & translate.
+// projection
+//     .scale(s)
+//     .translate(t);
 
    // define what happens on zoom
     var zoom = d3.behavior.zoom()
@@ -791,8 +821,8 @@ function createMap(states, cities) {
         .on("zoom", zoomed);
 
     //set the projection
-    var path = d3.geo.path()
-        .projection(projection);
+    // var path = d3.geo.path()
+    //     .projection(projection);
 
         //define the radius of the prop symbols.
         // the domain should be the max and min values of the data set
@@ -849,7 +879,14 @@ function createMap(states, cities) {
         .attr('d', path.pointRadius(function(d) {  return radius(d.properties.Score)}))
         //assign the id
         .attr("class", function(d) {
-          var city = d.properties.City.replace(/\./g, "");
+          var city = d.properties.City;
+          // console.log(city);
+          // if (city == "Washington"){
+          //   d.properties.City = "Washington D.C.";
+          //   city = "Washington D.C.";
+          // }
+          city = city.replace(/\./g, "");
+        
           return city;
         })
         //assign the location of the city according to coordinates
@@ -1073,6 +1110,7 @@ function createCitiesPanel(){
                 .attr("class", "cityRect")
                 .attr("id", function(d){
                     var cityID = d.City.replace(/ /g,"_");
+                    cityID = cityID.replace(/\./g,"");
                     return cityID + "_rect";
                 })
                 // .attr("id", "selectable")
@@ -1534,14 +1572,31 @@ function updatePropSymbols (cities){
             .range([2, 30]);
 
 
-var projection = d3.geo.mercator()
-        // .scale((width - 1)/2)
-        .scale((width*(3/4)))
-        .translate([width*1.75, height*1.333]);
+// var projection = d3.geo.mercator()
+//         // .scale((width - 1)/2)
+//         // .scale((width*(3/4)))
+//         // .translate([width*1.75, height*1.333]);
 
-    //set the projection
-    var path = d3.geo.path()
-        .projection(projection);
+//     //set the projection
+//     var path = d3.geo.path()
+//         .projection(projection);
+
+ var projection = d3.geo.mercator()
+  .center([120, 40 ])
+    .scale(width*(2/3))
+    .rotate([-150,0]);
+    // .translate([width/2, height/2]);
+
+// Create a path generator.
+var path = d3.geo.path()
+    .projection(projection);
+        
+
+     d3.selectAll("path.us_states")
+      .transition()
+        .delay(0)
+        .duration(1000)
+      .attr("d", path);
 
  //  var map = d3.select("#mapContainer");
 
@@ -1560,7 +1615,7 @@ var projection = d3.geo.mercator()
         //   }
         // });
 
-        // d3.select("path." + city);
+        
 
         cities.forEach(function(d){
           // console.log(d.properties);
@@ -1572,6 +1627,7 @@ var projection = d3.geo.mercator()
             .delay(0)
             .duration(1000)
             .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)}))
+              // .style("stroke-width", (1/d3.event.scale)*2+"px")
              .attr("display", function (){
                // var inArray =  $.inArray(d.properties.City, citiesArray);
                  var found = false;
@@ -1784,21 +1840,24 @@ function moveLabel(){
 function joinData(cities){
   cities.forEach(function(d){
     // console.log(d);
-    var props = d.properties;
+
+     var city = d.properties.City;
+
+      if (city == "Washington"){
+        d.properties.City = "Washington D.C.";
+        city = "Washington D.C.";
+      }
     // console.log(city);
+    // console.log(props.City);
 
     for(i = 0; i< citiesArray.length; i++){
-      var x = citiesArray[i].City;
+      var citiesArrayCity = citiesArray[i].City;
       var score = citiesArray[i].Score;
 
-      // console.log(score);
-      if (x == "Richmond (VA)"){
-        x = "Richmond";
-      }
 
-      if(props.City == x){
+      if(city == citiesArrayCity){
 
-        props["Score"] = score;
+        d.properties["Score"] = score;
       }
     }
 
@@ -1813,8 +1872,11 @@ function selectCity (city){
   var cityReplaceWithUnderscore = city.replace(/ /g, "_");
 
   for (i = 0; i < citiesArray.length; i++){
+    // console.log(citiesArray[i].City);
 
-    if (city == citiesArray[i].City){
+    var citiesArrayCity = citiesArray[i].City.replace(/\./g, "");
+    if (city == citiesArrayCity){
+
       if(citiesArray[i]["Selected"] == true){
 
         citiesArray[i]["Selected"] = false;
@@ -1827,7 +1889,6 @@ function selectCity (city){
         d3.select("path." + cityReplaceWithPeriod).style("fill", color);
 
 
-
       }else{
 
         if(numSelectedCities == 10){
@@ -1837,13 +1898,19 @@ function selectCity (city){
           citiesArray[i]["Selected"] = true;
           numSelectedCities++;
 
-          var color = colorArray[numSelectedCities];
+          while(colorMaster[colorCounter].inUse){
+
+            colorCounter ++;
+            if(colorCounter > 10){
+              colorCounter = 0;
+            }
+          }
+          colorMaster[colorCounter].inUse = true;
+          var color = colorMaster[colorCounter].colorString;
+          console.log(color);
           d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
           d3.select("path." + cityReplaceWithPeriod).style("fill", color);
         }
-
-
-
 
       }
 
