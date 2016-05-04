@@ -1,12 +1,13 @@
 /* 575 boilerplate style.css */
 #title{
     color: #E6F2DE;
-    font-size: 4.5em;
+    font-size: 3.5em;
     text-align: center;
     font-family: Lucida, sans-serif;
+		width: 100%;
 }
 body{
-  background-color: #134B5F;  
+  background-color: #134B5F;
 }
 #mapContainer {
 	float: right;
@@ -130,14 +131,29 @@ body{
 
 .attLabel {
     position: absolute;
-    height: 50px;
+    /*height: 250px;*/
     min-width: 100px;
     color: #fff;
-    background-color: #000;
+    background-color: #038090;
     border: solid thin #fff;
     padding: 5px 10px;
     top: -75px;
+		z-index: 10;
 }
+.cityList {
+    background-color: inherit;
+    padding: 5px 10px;
+    top: -75px;
+		/*z-index: ;*/
+		color: #fff;
+		border: solid thin #fff;
+
+}
+
+.cityP{
+		line-height: 5px;
+}
+
 
 .attLabel h1 {
     margin: 0 20px 0 0;

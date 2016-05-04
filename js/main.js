@@ -525,7 +525,7 @@ function setWeights(attObjArray, attribute){
               // console.log(citiesArray);
               createCitiesPanel()
 
-              updatePropSymbols(citiesArray);
+              updatePropSymbols(cities);
 
           })
 
@@ -1314,6 +1314,7 @@ function createSlider(attData, attribute, cities) {
                     };
                 };
             });
+            console.log(filteredCities);
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -1646,11 +1647,18 @@ function attPopup(attData, attribute){
 
     var selectedCities = [];
 
-    for (i=0; i<10; i++){
-        selectedCities.push(attData[i].Cities_Included)
-    }
-
+    // for (i=0; i<10; i++){
+    //     selectedCities.push(attData[i].Cities_Included)
+    // }
+    citiesArray.map(function(d){
+        if (d.Selected == true){
+            selectedCities.push(d.City)
+        }
+    })
+    //holds cities that are ranked
     var attArray = [];
+    //holds cities that are not ranked
+    var nrArray = [];
     //loop through every city object
     attData.map(function(d){
         var newArray = [];
@@ -1671,48 +1679,72 @@ function attPopup(attData, attribute){
                     newArray.push(city)
 
                 } else {
-                newArray.push(+d[attribute])
-                newArray.push(city)
+                    newArray.push(+d[attribute])
+                    newArray.push(city)
                 };
             };
         };
         if (newArray.length ==2){
-            //push two element array into array for entire attribute
-            attArray.push(newArray);
+            //if cit is not ranked, push into nrArray
+            if (newArray[0] == "NR"){
+                nrArray.push(newArray)
+            } else{
+              //if city is ranked push into attArray
+              attArray.push(newArray);
+            }
         }
     });
 
 
-
     //sort array of objects in ascending order based on specified property
     attArray.sort(function(a, b) { return a[0] - b[0] })
-
+    var labelArray = [attribute]
+    labelArray = removeStringFromEnd("_Rank", labelArray)
+    labelArray = removeUnderscores(labelArray)
+    attribute = labelArray[0]
     //label content
     var labelAttribute = "<h1><b>" + attribute + "</b></h1>";
 
     //create info label div
-    var attLabel = d3.select("#attContainer")
+    var attLabel = d3.select("body")
         .append("div")
-        .attr({
-            "class": "attLabel",
-            "id": attribute + "_label"
-        })
-        .html(labelAttribute);
-
-    var cityList = attLabel.append("div")
-        .attr("class", "cityList")
+        .attr("class", "attLabel")
+        .attr("id", attribute + "_label")
+        .attr("height", 25 * (selectedCities.length + 1))
         .html(function(){
-
-          var html = "<ul>"
-            for(i=0; i<attArray.length; i++){
-                var cityRank = "<li>" + attArray[i][0] + ". " + attArray[i][1] + "</li>"
-                html += cityRank
+            var html = labelAttribute
+            //conditioanl checks if any cities are selected
+            if (selectedCities.length == 0){
+                html += "<p class='cityP'>No cities selected</p>"
+            } else {
+                for(i=0; i<attArray.length; i++){
+                    var cityRank = "<p class='cityP'>" + attArray[i][0] + ". " + attArray[i][1] + "</p>"
+                    html += cityRank
+                }
+                for(i=0; i<nrArray.length; i++){
+                    var cityRank = "<p class='cityP'>" + nrArray[i][0] + ". " + nrArray[i][1] + "</p>"
+                    html += cityRank
+                }
             }
-
-          html += "</ul>"
-
           return html
         });
+
+
+    // var cityList = attLabel.append("div")
+    //     .attr("class", "cityList")
+    //     .attr("width", titleX)
+    //     .html(function(){
+    //
+    //       var html = "<ul class='cityUL'>"
+    //         for(i=0; i<attArray.length; i++){
+    //             var cityRank = "<li>" + attArray[i][0] + ". " + attArray[i][1] + "</li>"
+    //             html += cityRank
+    //         }
+    //
+    //       html += "</ul>"
+    //
+    //       return html
+    //     });
 };
 
 
@@ -1745,12 +1777,13 @@ function moveAttLabel(){
     var x1 = d3.event.clientX + 10,
         y1 = d3.event.clientY - 75,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY + 25;
+        y2 = d3.event.clientY - 255;
+
 
     //horizontal label coordinate, testing for overflow
-    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+    var y = d3.event.clientY > 300  ? y2 : y1;
     //vertical label coordinate, testing for overflow
-    var y = d3.event.clientY < 75 ? y2 : y1;
+    var x = d3.event.clientX < 10 ? x2 : x1;
 
     d3.select(".attLabel")
         .style({
