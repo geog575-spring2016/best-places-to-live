@@ -30,8 +30,35 @@ function callback(error, statesData, citiesData, attData, sources){
 
 
     createAttPanel(attData, cities, states, sources);
+    // createSourceDivs(sources);
 
 
+}
+
+function createSourceDivs(sources){
+
+    d3.select("body")
+        .data(sources)
+        .enter()
+      .append("div")
+        .attr("class", "dialog")
+        .attr("id", function(d){
+            var att = d.Name;
+            return att + "_dialog"
+        })
+        .attr("title", function(d, i){
+            // get attribut ename
+            var att = d.Name;
+            // create empty array
+            var titleArray = [];
+            // push single element into array because removeUnderscores only accepts an array
+            titleArray.push(att)
+            var title = removeUnderscores(titleArray)
+            return title
+        })
+        .html(function(d){
+            return "<p>" + d.Info + "<p>";
+        })
 }
 
 function createAttPanel(attData, cities, states, sources) {
@@ -108,6 +135,36 @@ function createAttPanel(attData, cities, states, sources) {
         .attr("y", attMargin.top)
         .text("Attributes")
 
+    // var checkAll = attSvg.append("foreignObject")
+    //     .attr('x', 23)
+    //     .attr('y', 25)
+    //     .attr('width', "20px")
+    //     .attr('height', "20px")
+    //   .append("xhtml:body")
+    //     .html(function(d) {
+    //         return "<form action='#'><p><label><input type=checkbox id='checkAll'>Check All</label></input></form>"
+    //     })
+    //     .on("change", function(){
+    //       // console.log($("#checkAll"))
+    //         // var checkStatus = d3.selectAll(".checkbox").attr("checked")
+    //         //     console.log(check);
+    //       var status = $("#checkAll")[0].checked
+    //
+    //       console.log(status);
+    //         d3.selectAll(".checkbox")
+    //             .attr("checked", status)
+    //
+    //
+    //         // console.log($(".checkbox"));
+    //         //creates array of only checked attributes
+    //         checkedAtts = checkedAttributes(attData, attObjArray);
+    //         //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+    //         citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+    //         citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+    //         createCitiesPanel()
+    //         updatePropSymbols (cities)
+    //
+    //     });
     //creates a group for each rectangle and offsets each by same amount
     var variables = attSvg.selectAll('.variables')
         .data(attLabels)
@@ -172,7 +229,7 @@ function createAttPanel(attData, cities, states, sources) {
               var attID = attribute + "_check";
               return "<form><input type=checkbox class='checkbox' id='" + attID + "'</input></form>"
           })
-          .on("change", function(){
+          .on("change", function(d){
               //function updates "checked" property for every attribute
               attObjArray = setCheckedProp(attObjArray);
               //toggles range sliders; buggy right now
@@ -188,10 +245,75 @@ function createAttPanel(attData, cities, states, sources) {
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+              var attribute = createAttID(d, rankData)
+              setWeights(attObjArray, attribute)
               createCitiesPanel()
               updatePropSymbols (cities)
 
           });
+
+function setWeights(attObjArray, attribute){
+
+    var weight = ""
+    attObjArray.map(function(d){
+        if (attribute == d.Attribute){
+            //retrieves checked status of attribute
+            var checked = d.Checked;
+            //if unchecking attribute, remove dark fill
+            if (checked == 0){
+                var attID = attribute + "_rect1"
+                //trim "_rect1" from end of string
+                var att = attID.slice(0, -6);
+
+                var attID2 = attID.replace("1", "2")
+                var attID3 = attID.replace("1", "3")
+                d3.select("#"+ attID).style("fill", "none")
+                d3.select("#"+ attID2).style("fill", "none")
+                d3.select("#"+ attID3).style("fill", "none")
+
+            } else {
+                weight = d.Weight
+
+                    if (weight == 0.5){
+                        var attID = attribute + "_rect1"
+                        //trim "_rect1" from end of string
+                        var att = attID.slice(0, -6);
+
+
+                        var attID2 = attID.replace("1", "2")
+                        var attID3 = attID.replace("1", "3")
+                        d3.select("#"+ attID).style("fill", "#aaa")
+                        d3.select("#"+ attID2).style("fill", "#eee")
+                        d3.select("#"+ attID3).style("fill", "#eee")
+                    } else if (weight == 1){
+                        var attID = attribute + "_rect2"
+                        //trim "_rect1" from end of string
+                        var att = attID.slice(0, -6);
+
+
+                        var attID1 = attID.replace("2", "1")
+                        var attID3 = attID.replace("2", "3")
+                        d3.select("#"+ attID1).style("fill", "#aaa")
+                        d3.select("#"+ attID).style("fill", "#999")
+                        d3.select("#"+ attID3).style("fill", "#eee")
+
+                    } else if (weight == 2){
+                        var attID = attribute + "_rect3"
+                        //trim "_rect1" from end of string
+                        var att = attID.slice(0, -6);
+
+
+                        var attID1 = attID.replace("3", "1")
+                        var attID2 = attID.replace("3", "2")
+                        d3.select("#"+ attID1).style("fill", "#aaa")
+                        d3.select("#"+ attID2).style("fill", "#999")
+                        d3.select("#"+ attID).style("fill", "#888")
+
+                    };
+              };
+          };
+    });
+};
 
           //define x,y property values for first rectangle
           var x1 = (textX + labelWidth)*3.9
@@ -230,13 +352,34 @@ function createAttPanel(attData, cities, states, sources) {
           //         icons: {primary: "ui-icon-info"}
           //     })
           // })
-          .on("click", function(d){
-            //get unique attribute for every variable
-            var attribute = createAttID(d, rankData)
-
-
-          })
-
+          // .on("click", function(d){
+          //   //get unique attribute for every variable
+          //   var attribute = createAttID(d, rankData)
+          //   var attID = attribute + "_icon"
+          //   sourcePopup(d, attID, attribute);
+          //
+          // })
+// function sourcePopup(d, attID, attribute){
+//     var dialogArray = [];
+//     dialogArray.push(d)
+//     dialogArray = addUnderscores(dialogArray)
+//
+//     var name = dialogArray[0]
+//     var dialogID = name + "_dialog"
+//
+//     $("#" + dialogID).dialog();
+//     // $()
+//     // console.log(d3.select(attID));
+//     // var dialog = d3.select(attID).append("div")
+//     //     .attr("id", function(){
+//     //         var dialogID = attribute + "_dialog"
+//     //         return dialogID
+//     //     })
+//     //     .attr("title", d)
+//
+//     // console.log($("#" + attribute + "_dialog"))
+//
+// }
       //define x,y property values for first rectangle
       var x1 = (textX + labelWidth)*4.3
       var y1 = attHeight - 15
