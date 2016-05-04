@@ -349,6 +349,22 @@ function createAttPanel(attData, cities, states) {
               // })
               // // console.log(citiesArray);
           })
+      var infoicon = variables.append("foreignObject")
+          .attr("x", x1 - rectSpacing*9)
+          .attr('y', y1 + rectHeight2 + 1)
+          .attr('width', "20px")
+          .attr('height', "20px")
+        .append("xhtml:div")
+          .html(function(d) {
+              //get unique attribute for every variable
+              var attribute = createAttID(d, rankData)
+              //create ID for checkboxes
+              var attID = attribute + "_icon";
+              return "<button class='ui-icon ui-icon-info' id='" + attID + "'></button>"
+          })
+          .on("click", function(){
+            console.log('hi')
+          })
 
       //used to place checkbox relative to attText labels
       var rectX = +d3.select(".attRect3").attr("x") + 40
