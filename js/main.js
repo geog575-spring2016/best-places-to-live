@@ -7,7 +7,6 @@ var citiesArray = [], rawData = [], rankData = [], attLabels = [], citySearch = 
 var numSelectedCities = 0;
 
 var colors = d3.scale.category10();
-console.log(colors[0]);
 
 var colorArray = ["gray", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
 
@@ -101,7 +100,6 @@ function createAttPanel(attData, cities, states, sources) {
 
     //create array containing only city names to use in search bar in citiesPanel
     citySearch = createSearchArray(attData, rankData);
-
     //creates array of city objects for now just for testing
     citiesArray = createCitiesArray(attData);
 
@@ -109,7 +107,7 @@ function createAttPanel(attData, cities, states, sources) {
     attObjArray = createAttObjArray(rankData);
 
     // create filtered cities array with all cities
-    filteredCities = citySearch;
+    filteredCities = createSearchArray(attData, rankData);
 
     //empty array to hold length of each label
     var labelLength = [];
@@ -569,16 +567,9 @@ function setWeights(attObjArray, attribute){
           .each(function(d){
               //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
               var attribute = createAttID(d, rankData);
-              // createSlider(citySearch, attData, rankData, attribute, filteredCities, attObjArray);
-              createSlider(attData, attribute, cities);
-
+              createSlider(attData, attribute, cities, citySearch);
           })
 
-        // d3.selectAll(".ui-slider-range")
-        //   .each(function(){
-        //     console.log(this);
-        //     // var filteredCities = sliderEvent(attData, filteredCities)
-        //   })
       // console.log(filteredCities);
       //for loop to set 'y' attr for each slider because d3 is dumb and won't set it like it should
       for (i=0; i<rankData.length; i++){
@@ -622,7 +613,6 @@ function createCitiesArray(attData) {
           };
         citiesArray.push(cityObj)
     });
-    console.log(citiesArray);
     return citiesArray;
 
 };
@@ -662,6 +652,9 @@ function createDefaultAtts(attObjArray) {
             d3.select(rect1ID).style("fill", "#aaa")
             d3.select(rect2ID).style("fill", "#999")
 
+        } else {
+            //disables all unchecked sliders by default
+            disableSlider(d);
         }
 
 
@@ -897,7 +890,7 @@ function createMap(states, cities) {
 
 function createCitiesPanel(){
     //citiesArray is an array of objects
-
+    console.log(filteredCities);
     // // d3.scale.ordinal.domain(citiesArray[Score]).range()
     //   if(d3.select(".citySVG").empty() == false){
     //
@@ -1157,75 +1150,75 @@ function createCitiesPanel(){
 
 }
 
-function sliderEvent(attData, filteredCities){
-
-    // console.log(filteredCities);
-    $(labelID).val($(sliderID).slider("values", 0) +
-    " - " + $(sliderID).slider("values", 1));
-
-    //array to hold which attributes are checked
-    checkedAtts = [];
-    //selects all checkboxes
-    var checkboxes =  d3.selectAll(".checkbox")
-        //loops through all checkboxes
-        checkboxes.each(function(){
-            //if current checkbox is checked, push into checkedAtts array
-            if (this.checked != false){
-                checkedAtts.push(this.id)
-            }
-        })
-        //array holding attribute name of attributes with a checked box
-        checkedAtts = removeStringFromEnd("_check", checkedAtts)
-    var rank1 = $(sliderID).slider("values",0)
-    var rank2 = $(sliderID).slider("values",1)
-    // console.log(rank1);
-    // console.log(rank2);
-    //loop through every object in attData
-    attData.map(function(d){
-        //loop through each attribute in checkedAtts to evaluate whether or not the city's rank is within slider range
-        for (i=0; i<checkedAtts.length; i++){
-            var att = checkedAtts[i]
-            var attRank = +d[att];
-            var city = d.Cities_Included
-            // console.log(attRank);
-            // console.log(rank2);
-            //if a cities rank is within the slider range, carry on
-            if (attRank >= rank1 && attRank <= rank2){
-                //if the city's rank is within the slider range & the city is not yet in filteredCities, add it
-                if (filteredCities.indexOf(city) == -1){
-                    filteredCities.push(city)
-                }
-                // for (i=0; i<cityCount.length; i++){
-                //     if (cityCount[i].City == city){
-                //         cityCount[i].Count += 1
-                //     }
-                // }
-                // cityCount[city]
-            } else { //if the city's rank is NOT within the slider range, carry on
-                //check if the city is already in filteredCities
-                if (filteredCities.indexOf(city) > -1){
-                    //put city's index into variable
-                    var index = filteredCities.indexOf(city);
-                    //remove that city fromt the array
-                    filteredCities.splice(index,1);
-                };
-            };
-        };
-    });
-    // console.log(filteredCities);
-    // console.log(filteredCities.length);
-
-
-
-// console.log(filteredCities);
-// var selection = $("#" + attribute + "_check")[0]
-// if (selection.checked == true){
+// function sliderEvent(attData, filteredCities){
+//
+//     // console.log(filteredCities);
 //     $(labelID).val($(sliderID).slider("values", 0) +
 //     " - " + $(sliderID).slider("values", 1));
-// }
-// console.log(filteredCities);
-// return filteredCities;
-};
+//
+//     //array to hold which attributes are checked
+//     checkedAtts = [];
+//     //selects all checkboxes
+//     var checkboxes =  d3.selectAll(".checkbox")
+//         //loops through all checkboxes
+//         checkboxes.each(function(){
+//             //if current checkbox is checked, push into checkedAtts array
+//             if (this.checked != false){
+//                 checkedAtts.push(this.id)
+//             }
+//         })
+//         //array holding attribute name of attributes with a checked box
+//         checkedAtts = removeStringFromEnd("_check", checkedAtts)
+//     var rank1 = $(sliderID).slider("values",0)
+//     var rank2 = $(sliderID).slider("values",1)
+//     // console.log(rank1);
+//     // console.log(rank2);
+//     //loop through every object in attData
+//     attData.map(function(d){
+//         //loop through each attribute in checkedAtts to evaluate whether or not the city's rank is within slider range
+//         for (i=0; i<checkedAtts.length; i++){
+//             var att = checkedAtts[i]
+//             var attRank = +d[att];
+//             var city = d.Cities_Included
+//             // console.log(attRank);
+//             // console.log(rank2);
+//             //if a cities rank is within the slider range, carry on
+//             if (attRank >= rank1 && attRank <= rank2){
+//                 //if the city's rank is within the slider range & the city is not yet in filteredCities, add it
+//                 if (filteredCities.indexOf(city) == -1){
+//                     filteredCities.push(city)
+//                 }
+//                 // for (i=0; i<cityCount.length; i++){
+//                 //     if (cityCount[i].City == city){
+//                 //         cityCount[i].Count += 1
+//                 //     }
+//                 // }
+//                 // cityCount[city]
+//             } else { //if the city's rank is NOT within the slider range, carry on
+//                 //check if the city is already in filteredCities
+//                 if (filteredCities.indexOf(city) > -1){
+//                     //put city's index into variable
+//                     var index = filteredCities.indexOf(city);
+//                     //remove that city fromt the array
+//                     filteredCities.splice(index,1);
+//                 };
+//             };
+//         };
+//     });
+//     // console.log(filteredCities);
+//     // console.log(filteredCities.length);
+//
+//
+//
+// // console.log(filteredCities);
+// // var selection = $("#" + attribute + "_check")[0]
+// // if (selection.checked == true){
+// //     $(labelID).val($(sliderID).slider("values", 0) +
+// //     " - " + $(sliderID).slider("values", 1));
+// // }
+// // console.log(filteredCities);
+// // return filteredCities;
+// };
 
 function createSlider(attData, attribute, cities) {
     // var filteredCities = [];
@@ -1235,11 +1228,7 @@ function createSlider(attData, attribute, cities) {
     var max = minMax [1];
     var sliderID = "#" + attribute + "-slider-range"
     var labelID = "#"+ attribute + "_rankValMin"
-    // d3.select(sliderID)
-    //     .call(d3.slider().axis(true).min(min).max(max).value(minMax))
-    //     .on("slide", function(evt,value){
-    //         console.log(value);
-    //     })
+
     $(sliderID).slider({
         range: true,
         min: min,
@@ -1262,28 +1251,21 @@ function createSlider(attData, attribute, cities) {
                         checkedAtts.push(this.id)
                     }
                 })
-                //array holding attribute name of attributes with a checked box
-                checkedAtts = removeStringFromEnd("_check", checkedAtts)
-            //
-            //
-            // var cityArray = createSearchArray(attData, rankData);
-            // var cityCount = []
-            // cityArray.map(function(d){
-            //     var cityObj = {
-            //         City: d,
-            //         Count: 0
-            //     }
-            //     cityCount.push(cityObj)
-            // })
-
-            // console.log(event);
-            // console.log(ui);
-            var rank1 = $(sliderID).slider("values",0)
-            var rank2 = $(sliderID).slider("values",1)
+            //array holding attribute name of attributes with a checked box
+            checkedAtts = removeStringFromEnd("_check", checkedAtts)
+            // console.log(checkedAtts);
+            //array to hold every occurence of city name that falls within range slider
+            // var allCities = [];
+            // console.log(filteredCities);
             // console.log(rank1);
             // console.log(rank2);
+
+            var rank1 = $(sliderID).slider("values",0)
+            var rank2 = $(sliderID).slider("values",1)
+
             //loop through every object in attData
             attData.map(function(d){
+
                 //loop through each attribute in checkedAtts to evaluate whether or not the city's rank is within slider range
                 for (i=0; i<checkedAtts.length; i++){
                     var att = checkedAtts[i]
@@ -1297,6 +1279,13 @@ function createSlider(attData, attribute, cities) {
                         if (filteredCities.indexOf(city) == -1){
                             filteredCities.push(city)
                         }
+                        // allCities.push(city)
+
+
+                // for (i=0; i<allCities.length; i++){
+                //     if (allCities[i] == )
+                // }
+
                         // for (i=0; i<cityCount.length; i++){
                         //     if (cityCount[i].City == city){
                         //         cityCount[i].Count += 1
@@ -1314,7 +1303,50 @@ function createSlider(attData, attribute, cities) {
                     };
                 };
             });
-            console.log(filteredCities);
+
+            // var attCount = checkedAtts.length;
+            // // console.log(attCount);
+            // var count = 0
+            // // var cityArray = createSearchArray(attData)
+            // console.log(citySearch.length);
+            // for (i=0; i<citySearch.length; i++){
+            // // citySearch.forEach(function(d){
+            // //     console.log(citySearch.length);
+            //     // console.log(d);
+            //     // console.log(count);
+            //     var city = citySearch[i]
+            //     var cityCount = 0;
+            //     for (i=0; i<allCities.length; i++){
+            //
+            //         if (allCities[i] == city){
+            //             cityCount += 1
+            //         }
+            //         // console.log(cityCount);
+            //     }
+            //     if (cityCount != attCount) {
+            //         // console.log(d)
+            //         // console.log(cityCount);
+            //         //check if the city is already in filteredCities
+            //         if (filteredCities.indexOf(city) > -1){
+            //             //put city's index into variable
+            //             var index = filteredCities.indexOf(city);
+            //             //remove that city fromt the array
+            //             filteredCities.splice(index,1);
+            //         }
+            //     } else if (cityCount == attCount) {
+            //         //check that city is not already in filtered cities array
+            //         if (filteredCities.indexOf(city) == -1){
+            //             //add to filtered cities array
+            //             filteredCities.push(city)
+            //         }
+            //     }
+            //     count += 1
+            //
+            // };
+            // }
+
+            // console.log(filteredCities);
+            // console.log(filteredCities.length);
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
