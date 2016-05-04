@@ -28,9 +28,19 @@ body{
 		font-family: "trebuchet ms";
 
 }
+#attTitleRect {
+    fill: #038090;
+}
+.attTitle {
+    fill: #E6F2DE;
+    font-size: 2em;
+}
 
 .attSvg {
 		background: #134B5F;
+}
+.attText {
+    fill: #E6F2DE;
 }
 
 .variableRect {
@@ -53,6 +63,9 @@ body{
 		cursor: move;
     background-color: #134B5F
 }
+#searchDiv {
+    color:#E6F2DE;
+}
 
 .checkbox {
 		cursor: pointer;
@@ -63,6 +76,12 @@ body{
     fill: #038090;
     color: red;
 
+}
+.cityRect {
+    fill:#aaa;
+}
+#cityTitle {
+    fill:#E6F2DE;
 }
 
 .attRect1,
@@ -95,9 +114,9 @@ body{
     position: absolute;
     height: 50px;
     min-width: 100px;
-    color: #fff;
-    background-color: #000;
-    border: solid thin #fff;
+    color: #E6F2DE;
+    background-color: #038090;
+    border: solid thin #000;
     padding: 5px 10px;
     top: -75px;
 }

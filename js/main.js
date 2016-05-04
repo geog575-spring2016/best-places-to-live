@@ -99,13 +99,20 @@ function createAttPanel(attData, cities, states) {
         .attr("height", attHeight)
       .append("g")
         .attr("transform", "translate(" + attMargin.left + "," + attMargin.top + ")");// adds padding to group element in SVG
-
+//sets att title
+    var attTitleRect = attSvg.append("rect")
+        .attr("id", "attTitleRect")
+        .attr('x', -10)
+        .attr("y", -20)
+        .attr("width", '100%')
+        .attr("height", 60)
+        .text("Attributes")
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
         .attr("x", attWidth / 5)
         .attr("y", attMargin.top)
-        .text("Attributes")
+        .text("Select Attributes")
 
     //creates a group for each rectangle and offsets each by same amount
     var variables = attSvg.selectAll('.variables')
@@ -867,7 +874,7 @@ function createCitiesPanel(){
                 .attr("height", (rectHeight / 3) * 2)
                 .attr("y", 40)
                 .attr("x", -10)
-                .style("fill", "gray")
+                
 
             //used to place checkbox relative to attText labels
             var rectY = +d3.select(".cityRect").attr("y") + 15
