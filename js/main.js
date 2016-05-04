@@ -211,7 +211,10 @@ function createAttPanel(attData, cities, states, sources) {
               var attribute = createAttID(d, rankData);
     ////////need to pass selected cities too//////////
               // attPopup(attData, attribute, selectedCities);
-          });
+              attPopup(attData, attribute);
+          })
+          .on("mouseout", removeAttPopup)
+          .on("mousemove", moveAttLabel);
 
       //used to place checkbox relative to attText labels
       var textX = d3.select(".attText").attr("x")
@@ -1558,7 +1561,20 @@ function dehighlightCity(props){
         .remove();
 }
 
-function attPopup(attData, attribute, selectedCities){
+function removeAttPopup(){
+  d3.select(".attLabel")
+        .remove();
+}
+
+
+function attPopup(attData, attribute){
+
+    var selectedCities = [];
+
+    for (i=0; i<10; i++){
+        selectedCities.push(attData[i].Cities_Included)
+    }
+
     var attArray = [];
     //loop through every city object
     attData.map(function(d){
@@ -1566,7 +1582,7 @@ function attPopup(attData, attribute, selectedCities){
         // //new array to hold cities that should not be filtered out
         // var newArray = []
         //city in CitiesArray
-        var city = d.City
+        var city = d.Cities_Included
         for (i=0; i<selectedCities.length; i++){
             // city in filteredCities array
             var selectedCity = selectedCities[i]
@@ -1574,29 +1590,54 @@ function attPopup(attData, attribute, selectedCities){
             // console.log(filteredCity);
             if (city == selectedCity){
                 //creates two element array, with first being the rank and second being the city
+                // if city is unranked use NR
+                if (+d[attribute] == 0){
+                    newArray.push("NR")
+                    newArray.push(city)
+
+                } else {
                 newArray.push(+d[attribute])
                 newArray.push(city)
-            }
+                };
+            };
+        };
+        if (newArray.length ==2){
+            //push two element array into array for entire attribute
+            attArray.push(newArray);
         }
-        //push two element array into array for entire attribute
-        attArray.push(newArray);
     });
 
-    // //label content
-    // var labelAttribute = "<h1>Score: <b>" + props.Score + "</b></h1>";
-    //
-    // //create info label div
-    // var infolabel = d3.select("body")
-    //     .append("div")
-    //     .attr({
-    //         "class": "infolabel",
-    //         "id": props.City + "_label"
-    //     })
-    //     .html(labelAttribute);
-    //
-    // var regionName = infolabel.append("div")
-    //     .attr("class", "labelname")
-    //     .html(props.name);
+
+
+    //sort array of objects in ascending order based on specified property
+    attArray.sort(function(a, b) { return a[0] - b[0] })
+
+    //label content
+    var labelAttribute = "<h1><b>" + attribute + "</b></h1>";
+
+    //create info label div
+    var attLabel = d3.select("body")
+        .append("div")
+        .attr({
+            "class": "attLabel",
+            "id": attribute + "_label"
+        })
+        .html(labelAttribute);
+
+    var regionName = attLabel.append("div")
+        .attr("class", "labelname")
+        .html(function(){
+
+          var html = "<ul>"
+            for(i=0; i<attArray.length; i++){
+                var cityRank = "<li>" + attArray[i][0] + ". " + attArray[i][1] + "</li>"
+                html += cityRank
+            }
+
+          html += "</ul>"
+
+          return html
+        });
 };
 
 
@@ -1617,6 +1658,32 @@ function setCityLabel(props){
         .attr("class", "labelname")
         .html(props.name);
 };
+
+function moveAttLabel(){
+    //get width of label
+    var labelWidth = d3.select(".attLabel")
+        .node()
+        .getBoundingClientRect()
+        .width;
+
+    //use coordinates of mousemove event to set label coordinates
+    var x1 = d3.event.clientX + 10,
+        y1 = d3.event.clientY - 75,
+        x2 = d3.event.clientX - labelWidth - 10,
+        y2 = d3.event.clientY + 25;
+
+    //horizontal label coordinate, testing for overflow
+    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+    //vertical label coordinate, testing for overflow
+    var y = d3.event.clientY < 75 ? y2 : y1;
+
+    d3.select(".attLabel")
+        .style({
+            "left": x + "px",
+            "top": y + "px"
+        });
+};
+
 
 function moveLabel(){
     //get width of label
