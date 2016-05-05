@@ -622,7 +622,6 @@ function createCitiesArray(attData) {
           };
         citiesArray.push(cityObj)
     });
-    console.log(citiesArray);
     return citiesArray;
 
 };
@@ -652,6 +651,8 @@ function createDefaultAtts(attObjArray) {
 
         var rect1ID = "#" + attribute + "_rect1"
         var rect2ID = "#" + attribute + "_rect2"
+        var rect3ID = "#" + attribute + "_rect3"
+
 
         if (selection.checked == true){
             //populates filter labels for default atts
@@ -661,6 +662,13 @@ function createDefaultAtts(attObjArray) {
             //set weight on rectangles for default atts
             d3.select(rect1ID).style("fill", "#aaa")
             d3.select(rect2ID).style("fill", "#999")
+
+        } else {
+            disableSlider(d);
+            //set weight on rectangles for default atts
+            d3.select(rect1ID).style("fill", "none")
+            d3.select(rect2ID).style("fill", "none")
+            d3.select(rect3ID).style("fill", "none")
 
         }
 
@@ -1060,6 +1068,15 @@ function createCitiesPanel(){
                 .style("font-size", fontSize + "px")
 
 
+            var cityHeaderRect = citySvg.append("rect")
+                .attr("id", "cityHeaderRect")
+                .attr("y", 42)
+                .attr("height", rectHeight * .66)
+                .style("z-index", 10)
+
+            var headerHeight = +d3.select("#cityHeaderRect").attr("y") + 15;
+
+
             // creates a group for each rectangle and offsets each by same amount
             var cities = citySvg.selectAll('.cities')
                 .data(citiesArray)
@@ -1086,7 +1103,7 @@ function createCitiesPanel(){
                 // .attr("x", cityMargin)
                 .attr("width", "100%")
                 .attr("height", (rectHeight / 3) * 2)
-                .attr("y", 40)
+                .attr("y", 69)
                 .attr("x", -10)
                 .on("click", function(d){
                   console.log("here");
@@ -1097,24 +1114,34 @@ function createCitiesPanel(){
             //used to place checkbox relative to attText labels
             var rectY = +d3.select(".cityRect").attr("y") + 15
 
-            // //adds text to attribute g
-            // var cityRank = cities.append('text')
-            //     .attr("class", "cityRank")
-            //     // .attr("x", attWidth / 5.8)
-            //     .attr("x", -4)
-            //     .attr("y", rectY)
-            //     .text(function(d) {return String(d.Score)})
-            //     // .attr("id", function(d) {
-            //     //     var attribute = createAttID(d, rankData)
-            //     //
-            //     //     return attribute;
-            //     // });
+            var headerRank = citySvg.append("text")
+                .attr("class", "headerText")
+                .attr("id", "headerRank")
+                .attr("x", 1)
+                .attr("y", headerHeight)
+                .text("Rank")
+
+
+            //adds text to attribute g
+            var cityRank = cities.append('text')
+                .attr("class", "cityRank")
+                // .attr("x", attWidth / 5.8)
+                .attr("x", 3)
+                .attr("y", rectY)
+                .text(function(d, i) {return i + 1})
+
+            var headerCity = citySvg.append("text")
+                .attr("class", "headerText")
+                .attr("id", "headerCity")
+                .attr("x", 60)
+                .attr("y", headerHeight)
+                .text("City")
 
             //adds text to attribute g
             var cityText = cities.append('text')
                 .attr("class", "cityText")
                 // .attr("x", attWidth / 5.8)
-                .attr("x", 20)
+                .attr("x", 40)
                 .attr("y", rectY)
                 .text(function(d ) { ;return d.City })
                 .on("click", function(d){
@@ -1126,11 +1153,19 @@ function createCitiesPanel(){
                 //     return attribute;
                 // });
 
+            var headerScore = citySvg.append("text")
+                .attr("class", "headerText")
+                .attr("id", "headerScore")
+                .attr("x", 173)
+                .attr("y", headerHeight)
+                .text("Score")
+
+
             //adds text to attribute g
             var cityScore = cities.append('text')
                 .attr("class", "cityRank")
                 // .attr("x", attWidth / 5.8)
-                .attr("x", 200)
+                .attr("x", 170)
                 .attr("y", rectY)
                 .text(function(d) {return String(d.Score)})
                 // .attr("id", function(d) {
@@ -1777,11 +1812,11 @@ function moveAttLabel(){
     var x1 = d3.event.clientX + 10,
         y1 = d3.event.clientY - 75,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY - 255;
+        y2 = d3.event.clientY - 275;
 
 
     //horizontal label coordinate, testing for overflow
-    var y = d3.event.clientY > 300  ? y2 : y1;
+    var y = d3.event.clientY > 390  ? y2 : y1;
     //vertical label coordinate, testing for overflow
     var x = d3.event.clientX < 10 ? x2 : x1;
 

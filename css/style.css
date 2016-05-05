@@ -19,7 +19,7 @@ body{
 }
 
 #attContainer {
-    height: 500px;
+    height: 400px;
     width: 400px;
     border:2px solid #000;
     overflow-y: scroll;
@@ -51,6 +51,9 @@ body{
 
 #searchDiv {
 		padding-left: 5px;
+    padding-top: 5px;
+    color:#E6F2DE;
+
 }
 .cityContainer {
     height: 205px;
@@ -62,10 +65,9 @@ body{
 		bottom: 0;
     margin-right: 5px;
 		cursor: move;
-    background-color: #134B5F
-}
-#searchDiv {
-    color:#E6F2DE;
+    background-color: #134B5F;
+    font-family: "trebuchet ms";
+
 }
 
 .checkbox {
@@ -75,13 +77,21 @@ body{
 #cityTitleRect {
     width: 100%;
     fill: #038090;
-    color: red;
-
 }
+
+#cityHeaderRect {
+    width: 100%;
+    fill: #038090;
+}
+
+
 .cityRect {
     fill:#aaa;
 }
 #cityTitle {
+    fill:#E6F2DE;
+}
+.headerText {
     fill:#E6F2DE;
 }
 
@@ -160,4 +170,9 @@ body{
     padding: 0;
     display: inline-block;
     line-height: 1em;
+}
+
+#helpText {
+    color: white;
+    position: absolute;
 }
