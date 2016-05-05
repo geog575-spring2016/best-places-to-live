@@ -622,7 +622,6 @@ function createCitiesArray(attData) {
           };
         citiesArray.push(cityObj)
     });
-    console.log(citiesArray);
     return citiesArray;
 
 };
@@ -652,6 +651,8 @@ function createDefaultAtts(attObjArray) {
 
         var rect1ID = "#" + attribute + "_rect1"
         var rect2ID = "#" + attribute + "_rect2"
+        var rect3ID = "#" + attribute + "_rect3"
+
 
         if (selection.checked == true){
             //populates filter labels for default atts
@@ -664,6 +665,11 @@ function createDefaultAtts(attObjArray) {
 
         } else {
             disableSlider(d);
+            //set weight on rectangles for default atts
+            d3.select(rect1ID).style("fill", "none")
+            d3.select(rect2ID).style("fill", "none")
+            d3.select(rect3ID).style("fill", "none")
+
         }
 
 
@@ -1806,11 +1812,11 @@ function moveAttLabel(){
     var x1 = d3.event.clientX + 10,
         y1 = d3.event.clientY - 75,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY - 255;
+        y2 = d3.event.clientY - 275;
 
 
     //horizontal label coordinate, testing for overflow
-    var y = d3.event.clientY > 300  ? y2 : y1;
+    var y = d3.event.clientY > 390  ? y2 : y1;
     //vertical label coordinate, testing for overflow
     var x = d3.event.clientX < 10 ? x2 : x1;
 
