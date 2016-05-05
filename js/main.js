@@ -144,13 +144,20 @@ function createAttPanel(attData, cities, states, sources) {
         .attr("height", attHeight)
       .append("g")
         .attr("transform", "translate(" + attMargin.left + "," + attMargin.top + ")");// adds padding to group element in SVG
-
+//sets att title
+    var attTitleRect = attSvg.append("rect")
+        .attr("id", "attTitleRect")
+        .attr('x', -10)
+        .attr("y", -20)
+        .attr("width", '100%')
+        .attr("height", 60)
+        .text("Attributes")
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
         .attr("x", attWidth / 5)
         .attr("y", attMargin.top)
-        .text("Attributes")
+        .text("Select Attributes")
 
     // var checkAll = attSvg.append("foreignObject")
     //     .attr('x', 23)
@@ -625,7 +632,6 @@ function createCitiesArray(attData) {
           };
         citiesArray.push(cityObj)
     });
-    console.log(citiesArray);
     return citiesArray;
 
 };
@@ -655,6 +661,8 @@ function createDefaultAtts(attObjArray) {
 
         var rect1ID = "#" + attribute + "_rect1"
         var rect2ID = "#" + attribute + "_rect2"
+        var rect3ID = "#" + attribute + "_rect3"
+
 
         if (selection.checked == true){
             //populates filter labels for default atts
@@ -664,6 +672,13 @@ function createDefaultAtts(attObjArray) {
             //set weight on rectangles for default atts
             d3.select(rect1ID).style("fill", "#aaa")
             d3.select(rect2ID).style("fill", "#999")
+
+        } else {
+            disableSlider(d);
+            //set weight on rectangles for default atts
+            d3.select(rect1ID).style("fill", "none")
+            d3.select(rect2ID).style("fill", "none")
+            d3.select(rect3ID).style("fill", "none")
 
         }
 
@@ -1091,6 +1106,15 @@ function createCitiesPanel(){
                 .style("font-size", fontSize + "px")
 
 
+            var cityHeaderRect = citySvg.append("rect")
+                .attr("id", "cityHeaderRect")
+                .attr("y", 42)
+                .attr("height", rectHeight * .66)
+                .style("z-index", 10)
+
+            var headerHeight = +d3.select("#cityHeaderRect").attr("y") + 15;
+
+
             // creates a group for each rectangle and offsets each by same amount
             var cities = citySvg.selectAll('.cities')
                 .data(citiesArray)
@@ -1118,35 +1142,45 @@ function createCitiesPanel(){
                 // .attr("x", cityMargin)
                 .attr("width", "100%")
                 .attr("height", (rectHeight / 3) * 2)
-                .attr("y", 40)
+                .attr("y", 69)
                 .attr("x", -10)
-                .style("fill", "gray")
                 .on("click", function(d){
                   console.log("here");
                   selectCity(d.City);
                 });
 
+
             //used to place checkbox relative to attText labels
             var rectY = +d3.select(".cityRect").attr("y") + 15
 
-            // //adds text to attribute g
-            // var cityRank = cities.append('text')
-            //     .attr("class", "cityRank")
-            //     // .attr("x", attWidth / 5.8)
-            //     .attr("x", -4)
-            //     .attr("y", rectY)
-            //     .text(function(d) {return String(d.Score)})
-            //     // .attr("id", function(d) {
-            //     //     var attribute = createAttID(d, rankData)
-            //     //
-            //     //     return attribute;
-            //     // });
+            var headerRank = citySvg.append("text")
+                .attr("class", "headerText")
+                .attr("id", "headerRank")
+                .attr("x", 1)
+                .attr("y", headerHeight)
+                .text("Rank")
+
+
+            //adds text to attribute g
+            var cityRank = cities.append('text')
+                .attr("class", "cityRank")
+                // .attr("x", attWidth / 5.8)
+                .attr("x", 3)
+                .attr("y", rectY)
+                .text(function(d, i) {return i + 1})
+
+            var headerCity = citySvg.append("text")
+                .attr("class", "headerText")
+                .attr("id", "headerCity")
+                .attr("x", 60)
+                .attr("y", headerHeight)
+                .text("City")
 
             //adds text to attribute g
             var cityText = cities.append('text')
                 .attr("class", "cityText")
                 // .attr("x", attWidth / 5.8)
-                .attr("x", 20)
+                .attr("x", 40)
                 .attr("y", rectY)
                 .text(function(d ) { ;return d.City })
                 .on("click", function(d){
@@ -1158,11 +1192,19 @@ function createCitiesPanel(){
                 //     return attribute;
                 // });
 
+            var headerScore = citySvg.append("text")
+                .attr("class", "headerText")
+                .attr("id", "headerScore")
+                .attr("x", 173)
+                .attr("y", headerHeight)
+                .text("Score")
+
+
             //adds text to attribute g
             var cityScore = cities.append('text')
                 .attr("class", "cityRank")
                 // .attr("x", attWidth / 5.8)
-                .attr("x", 200)
+                .attr("x", 170)
                 .attr("y", rectY)
                 .text(function(d) {return String(d.Score)})
                 // .attr("id", function(d) {
@@ -1346,6 +1388,7 @@ function createSlider(attData, attribute, cities) {
                     };
                 };
             });
+            console.log(filteredCities);
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -1699,11 +1742,18 @@ function attPopup(attData, attribute){
 
     var selectedCities = [];
 
-    for (i=0; i<10; i++){
-        selectedCities.push(attData[i].Cities_Included)
-    }
-
+    // for (i=0; i<10; i++){
+    //     selectedCities.push(attData[i].Cities_Included)
+    // }
+    citiesArray.map(function(d){
+        if (d.Selected == true){
+            selectedCities.push(d.City)
+        }
+    })
+    //holds cities that are ranked
     var attArray = [];
+    //holds cities that are not ranked
+    var nrArray = [];
     //loop through every city object
     attData.map(function(d){
         var newArray = [];
@@ -1724,48 +1774,72 @@ function attPopup(attData, attribute){
                     newArray.push(city)
 
                 } else {
-                newArray.push(+d[attribute])
-                newArray.push(city)
+                    newArray.push(+d[attribute])
+                    newArray.push(city)
                 };
             };
         };
         if (newArray.length ==2){
-            //push two element array into array for entire attribute
-            attArray.push(newArray);
+            //if cit is not ranked, push into nrArray
+            if (newArray[0] == "NR"){
+                nrArray.push(newArray)
+            } else{
+              //if city is ranked push into attArray
+              attArray.push(newArray);
+            }
         }
     });
 
 
-
     //sort array of objects in ascending order based on specified property
     attArray.sort(function(a, b) { return a[0] - b[0] })
-
+    var labelArray = [attribute]
+    labelArray = removeStringFromEnd("_Rank", labelArray)
+    labelArray = removeUnderscores(labelArray)
+    attribute = labelArray[0]
     //label content
     var labelAttribute = "<h1><b>" + attribute + "</b></h1>";
 
     //create info label div
-    var attLabel = d3.select("#attContainer")
+    var attLabel = d3.select("body")
         .append("div")
-        .attr({
-            "class": "attLabel",
-            "id": attribute + "_label"
-        })
-        .html(labelAttribute);
-
-    var cityList = attLabel.append("div")
-        .attr("class", "cityList")
+        .attr("class", "attLabel")
+        .attr("id", attribute + "_label")
+        .attr("height", 25 * (selectedCities.length + 1))
         .html(function(){
-
-          var html = "<ul>"
-            for(i=0; i<attArray.length; i++){
-                var cityRank = "<li>" + attArray[i][0] + ". " + attArray[i][1] + "</li>"
-                html += cityRank
+            var html = labelAttribute
+            //conditioanl checks if any cities are selected
+            if (selectedCities.length == 0){
+                html += "<p class='cityP'>No cities selected</p>"
+            } else {
+                for(i=0; i<attArray.length; i++){
+                    var cityRank = "<p class='cityP'>" + attArray[i][0] + ". " + attArray[i][1] + "</p>"
+                    html += cityRank
+                }
+                for(i=0; i<nrArray.length; i++){
+                    var cityRank = "<p class='cityP'>" + nrArray[i][0] + ". " + nrArray[i][1] + "</p>"
+                    html += cityRank
+                }
             }
-
-          html += "</ul>"
-
           return html
         });
+
+
+    // var cityList = attLabel.append("div")
+    //     .attr("class", "cityList")
+    //     .attr("width", titleX)
+    //     .html(function(){
+    //
+    //       var html = "<ul class='cityUL'>"
+    //         for(i=0; i<attArray.length; i++){
+    //             var cityRank = "<li>" + attArray[i][0] + ". " + attArray[i][1] + "</li>"
+    //             html += cityRank
+    //         }
+    //
+    //       html += "</ul>"
+    //
+    //       return html
+    //     });
 };
 
 
@@ -1798,12 +1872,13 @@ function moveAttLabel(){
     var x1 = d3.event.clientX + 10,
         y1 = d3.event.clientY - 75,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY + 25;
+        y2 = d3.event.clientY - 275;
+
 
     //horizontal label coordinate, testing for overflow
-    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+    var y = d3.event.clientY > 390  ? y2 : y1;
     //vertical label coordinate, testing for overflow
-    var y = d3.event.clientY < 75 ? y2 : y1;
+    var x = d3.event.clientX < 10 ? x2 : x1;
 
     d3.select(".attLabel")
         .style({
