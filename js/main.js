@@ -1388,7 +1388,7 @@ function createSlider(attData, attribute, cities) {
                     };
                 };
             });
-            console.log(filteredCities);
+            // console.log(filteredCities);
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
