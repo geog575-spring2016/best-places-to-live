@@ -12,7 +12,7 @@ var defaultColor = "gray";
 var colorArray = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "black", "#bcbd22", "#17becf"];
 var colorMaster = [];
 colorArray.forEach(function(d){
-  
+
   var colorObj = new Object();
   colorObj.colorString = d;
   colorObj.inUse = false;
@@ -887,7 +887,7 @@ var path = d3.geo.path()
           //   city = "Washington D.C.";
           // }
           city = city.replace(/\./g, "");
-        
+
           return city;
         })
         //assign the location of the city according to coordinates
@@ -1591,7 +1591,7 @@ function updatePropSymbols (cities){
 // Create a path generator.
 var path = d3.geo.path()
     .projection(projection);
-        
+
 
      d3.selectAll("path.us_states")
       .transition()
@@ -1616,7 +1616,7 @@ var path = d3.geo.path()
         //   }
         // });
 
-        
+
 
         cities.forEach(function(d){
           // console.log(d.properties);
@@ -1885,7 +1885,7 @@ function selectCity (city){
 
         var colorIndex = citiesArray[i]["Color Index"];
         colorMaster[colorIndex].inUse = false;
-          
+
 
         var color = defaultColor;
         // d3.select(city + "_rect").style("fill", "#aaa");
@@ -1897,8 +1897,7 @@ function selectCity (city){
       }else{
 
         if(numSelectedCities == colorArray.length){
-          window.alert("YOU PICKIN TOO MANY CITIES YO");
-          // console.log("YOU PICKIN TOO MANY CITIES YO");
+          window.alert("You have selected too many cities.");
         }else{
           citiesArray[i]["Selected"] = true;
           numSelectedCities++;
