@@ -7,8 +7,9 @@ var citiesArray = [], rawData = [], rankData = [], attLabels = [], citySearch = 
 var numSelectedCities = 0;
 var colorCounter = 0;
 
+var defaultColor = "gray";
 
-var colorArray = ["gray", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
+var colorArray = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "black", "#bcbd22", "#17becf"];
 var colorMaster = [];
 colorArray.forEach(function(d){
   
@@ -892,7 +893,7 @@ var path = d3.geo.path()
         //assign the location of the city according to coordinates
         .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
         .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
-        .style("fill", colorArray[0])
+        .style("fill", defaultColor)
         .attr("stroke", "white")
         .attr("stroke-width", "2px")
         .on("mouseover", function(d){
@@ -1882,7 +1883,11 @@ function selectCity (city){
         citiesArray[i]["Selected"] = false;
         numSelectedCities--;
 
-        var color = colorArray[0];
+        var colorIndex = citiesArray[i]["Color Index"];
+        colorMaster[colorIndex].inUse = false;
+          
+
+        var color = defaultColor;
         // d3.select(city + "_rect").style("fill", "#aaa");
         d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
 
@@ -1891,21 +1896,23 @@ function selectCity (city){
 
       }else{
 
-        if(numSelectedCities == 10){
+        if(numSelectedCities == colorArray.length){
           window.alert("YOU PICKIN TOO MANY CITIES YO");
           // console.log("YOU PICKIN TOO MANY CITIES YO");
         }else{
           citiesArray[i]["Selected"] = true;
           numSelectedCities++;
 
+
           while(colorMaster[colorCounter].inUse){
 
             colorCounter ++;
-            if(colorCounter > 10){
+            if(colorCounter >= colorArray.length){
               colorCounter = 0;
             }
           }
           colorMaster[colorCounter].inUse = true;
+          citiesArray[i]["Color Index"] = colorCounter;
           var color = colorMaster[colorCounter].colorString;
           console.log(color);
           d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
