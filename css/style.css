@@ -88,6 +88,11 @@ body{
 .cityRect {
     fill:#aaa;
 }
+
+.cities{
+  cursor: pointer;
+}
+
 #cityTitle {
     fill:#E6F2DE;
 }
