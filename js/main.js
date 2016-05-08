@@ -225,7 +225,7 @@ function createAttPanel(attData, cities, states, sources) {
         .attr('height', "20px")
       .append("xhtml:body")
         .html(function(d) {
-            return "<form action='#'><p><label><input type=checkbox id='checkAll'>Check All</label></input></form>"
+            return "<form id='checkAllForm' action='#'><p><label><input type=checkbox id='checkAll'>  Check All</label></input></form>"
         })
         .on("change", function(){
 

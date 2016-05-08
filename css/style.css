@@ -31,9 +31,11 @@ body{
     border-radius: 5px;
 }
 
-#attHeaderRect{
+#attHeaderRect,
+.filtersHeader {
   fill: #038090;
 }
+
 
 #attTitleRect {
     fill: #038090;
@@ -90,6 +92,9 @@ body{
     cursor: pointer;
 }
 
+#checkAllForm{
+  background-color: #038090;
+}
 #cityTitleRect {
     width: 100%;
     fill: #038090;
