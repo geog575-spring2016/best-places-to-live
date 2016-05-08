@@ -108,6 +108,7 @@ body{
 
 .cityRect {
     fill:#aaa;
+    cursor: pointer;
 }
 #cityTitle {
     fill:#E6F2DE;

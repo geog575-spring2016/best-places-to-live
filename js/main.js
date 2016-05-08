@@ -492,71 +492,7 @@ function setWeights(attObjArray, attribute){
 
 };
 
-          //define x,y property values for first rectangle
-          var x1 = (textX + labelWidth)*3.9
-          var y1 = attHeight - 15
 
-      //used to place checkbox relative to attText labels
-      var labelX = +d3.select(".attText").attr("x")
-      var labelY = +d3.select(".attText").attr("y") - 13
-
-      var infoicon = variables.append("foreignObject")
-          .attr("x", function(d){
-              //get unique attribute for every variable
-              var attribute = createAttID(d, rankData)
-              var labelWidth = d3.select("#" + attribute).node().getBBox().width
-
-              return labelX + labelWidth + 5
-          })
-          .attr('y', labelY)
-          // .attr('width', "20px")
-          // .attr('height', "20px")
-        .append("xhtml:div")
-          .html(function(d) {
-              //get unique attribute for every variable
-              var attribute = createAttID(d, rankData)
-              //create ID for checkboxes
-              var attID = attribute + "_icon";
-              return "<button class='ui-icon ui-icon-info' id='" + attID + "'></button>"
-          })
-          // .each(function(d){
-          //     //get unique attribute for every variable
-          //     var attribute = createAttID(d, rankData)
-          //     //create ID for checkboxes
-          //     var attID = attribute + "_icon";
-          //     console.log(attID);
-          //     $(attID).button({
-          //         icons: {primary: "ui-icon-info"}
-          //     })
-          // })
-          // .on("click", function(d){
-          //   //get unique attribute for every variable
-          //   var attribute = createAttID(d, rankData)
-          //   var attID = attribute + "_icon"
-          //   sourcePopup(d, attID, attribute);
-          //
-          // })
-// function sourcePopup(d, attID, attribute){
-//     var dialogArray = [];
-//     dialogArray.push(d)
-//     dialogArray = addUnderscores(dialogArray)
-//
-//     var name = dialogArray[0]
-//     var dialogID = name + "_dialog"
-//
-//     $("#" + dialogID).dialog();
-//     // $()
-//     // console.log(d3.select(attID));
-//     // var dialog = d3.select(attID).append("div")
-//     //     .attr("id", function(){
-//     //         var dialogID = attribute + "_dialog"
-//     //         return dialogID
-//     //     })
-//     //     .attr("title", d)
-//
-//     // console.log($("#" + attribute + "_dialog"))
-//
-// }
       //define x,y property values for first rectangle
       var x1 = (textX + labelWidth)*4.3
       var y1 = attHeight +10
