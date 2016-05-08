@@ -86,6 +86,10 @@ body{
 		cursor: pointer;
 }
 
+#checkAll {
+    cursor: pointer;
+}
+
 #cityTitleRect {
     width: 100%;
     fill: #038090;
