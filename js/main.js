@@ -140,11 +140,14 @@ function createAttPanel(attData, cities, states, sources) {
     var collapseButton = attContainer.append("button")
         .html("&raquo;")
 
-
-    var hideWidth = "-385px";
+    //number of pixels to move attContainer to left when hiding
+    var hideWidth = "-375px";
+    //variable to select attContainer
     var collapsibleE1 = $('#attContainer')
+    // variable to select hide button
     var buttonE1 = $("#attContainer button")
 
+    //function for button to expand/collapse div
     $(buttonE1).click(function() {
          var curwidth = $(this).parent().offset(); //get offset value of the parent element
          if(curwidth.left>0) //compare margin-left value
@@ -158,27 +161,56 @@ function createAttPanel(attData, cities, states, sources) {
              $(this).html('&laquo;'); //change text of button
          }
     });
+
     //create svg for attpanel
     var attSvg = d3.select("#attContainer").append("svg")
         .attr("class", "attSvg")
-        .attr("width", "300px")
+        .attr("width", "350px")
         .attr("height", attHeight)
       .append("g")
         .attr("transform", "translate(" + attMargin.left + "," + attMargin.top + ")");// adds padding to group element in SVG
-//sets att title
+
+    //sets att title
     var attTitleRect = attSvg.append("rect")
         .attr("id", "attTitleRect")
         .attr('x', -10)
         .attr("y", -20)
-        .attr("width", '100%')
+        .attr("width", 400)
         .attr("height", 60)
-        .text("Attributes")
+        // .text("Attributes")
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
         .attr("x", attWidth / 5)
         .attr("y", attMargin.top)
         .text("Select Attributes")
+
+    var headerHeight = +d3.select("#attTitleRect").attr("height") / 2;
+
+    //sets att title
+    var attHeaderRect = attSvg.append("rect")
+        .attr("id", "attHeaderRect")
+        .attr('x', -10)
+        .attr("y", headerHeight + 15)
+        .attr("width", 400)
+        .attr("height", headerHeight - 5)
+        // .style("fill", "white")
+
+    //sets att header
+    var headerAttribute = attSvg.append("text")
+        .attr("class", "attHeader")
+        .attr("x", 25)
+        .attr("y", headerHeight + 36)
+        .text("Attribute")
+
+    //sets weight header
+    var headerWeight = attSvg.append("text")
+        .attr("class", "attHeader")
+        .attr("x", 155)
+        .attr("y", headerHeight + 36)
+        .text("Att. Weight")
+
+
 
     // var checkAll = attSvg.append("foreignObject")
     //     .attr('x', 23)
@@ -265,7 +297,7 @@ function createAttPanel(attData, cities, states, sources) {
       var textX = d3.select(".attText").attr("x")
 
       var checkboxes = variables.append("foreignObject")
-          .attr('x', textX - 25)
+          .attr('x', textX - 30)
           .attr('y', attHeight - 26)
           .attr('width', "20px")
           .attr('height', "20px")
@@ -432,6 +464,32 @@ function setWeights(attObjArray, attribute){
       var x1 = (textX + labelWidth)*4.3
       var y1 = attHeight - 15
 
+
+      var tip1 = d3.tip()
+          .attr('class', 'd3-tip')
+          .offset([-10, 0])
+          .html(function(d){
+              return "Not important"
+          })
+
+      var tip2 = d3.tip()
+          .attr('class', 'd3-tip')
+          .offset([-10, 0])
+          .html(function(d){
+              return "Important"
+          })
+      var tip3 = d3.tip()
+          .attr('class', 'd3-tip')
+          .offset([-10, 0])
+          .html(function(d){
+              return "Very important"
+          })
+
+      attSvg.call(tip1)
+      attSvg.call(tip2)
+      attSvg.call(tip3)
+
+
       //creates rect elements for weighting attribute
       var attRect1 = variables.append('rect')
           .attr("class", "attRect1")
@@ -471,8 +529,9 @@ function setWeights(attObjArray, attribute){
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
-
           })
+          .on("mouseover", tip1.show)
+          .on("mouseout", tip1.hide)
       //creates rect elements for weighting attribute
       var attRect2 = variables.append('rect')
           .attr("class", "attRect2")
@@ -511,8 +570,10 @@ function setWeights(attObjArray, attribute){
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
-
           })
+          .on("mouseover", tip2.show)
+          .on("mouseout", tip2.hide)
+
 
       //creates rect elements for weighting attribute
       var attRect3 = variables.append('rect')
@@ -559,6 +620,9 @@ function setWeights(attObjArray, attribute){
               updatePropSymbols(cities);
 
           })
+          .on("mouseover", tip3.show)
+          .on("mouseout", tip3.hide)
+
 
       //used to place checkbox relative to attText labels
       var rectX = +d3.select(".attRect3").attr("x") + 40
@@ -584,7 +648,7 @@ function setWeights(attObjArray, attribute){
               var attribute = createAttID(d, rankData);
               return attribute + "_FO";
           })
-          .attr('width', "150px")
+          .attr('width', "120px")
           .attr('height', "20px")
           .attr("x", rectX - 20)
           // .style("y", 500)
