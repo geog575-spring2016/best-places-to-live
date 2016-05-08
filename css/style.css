@@ -110,6 +110,11 @@ body{
     fill:#aaa;
     cursor: pointer;
 }
+
+.cities{
+  cursor: pointer;
+}
+
 #cityTitle {
     fill:#E6F2DE;
 }
