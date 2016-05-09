@@ -343,7 +343,9 @@ function createAttPanel(attData, cities, states, sources) {
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              // citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              addAttRanks(attData);
+
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               var attribute = createAttID(d, rankData)
               setWeights(attObjArray, attribute)
@@ -623,7 +625,7 @@ function setWeights(attObjArray, attribute){
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
@@ -664,7 +666,7 @@ function setWeights(attObjArray, attribute){
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
@@ -707,7 +709,7 @@ function setWeights(attObjArray, attribute){
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-              citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              addAttRanks(attData);
 
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
 
@@ -789,7 +791,7 @@ function setWeights(attObjArray, attribute){
       // console.log(attObjArray);
       checkedAtts = checkedAttributes(attData, attObjArray);
       //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-      citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+      addAttRanks(attData);
       citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData);
 
       createCitiesPanel();
@@ -878,27 +880,51 @@ function createDefaultAtts(attObjArray) {
       // createAttPanel(attData, defaultAtts)
 }
 
-function addAttRanks(attData, attObjArray, checkedAtts, citiesArray) {
+function addAttRanks(attData) {
     // console.log(checkedAtts);
     // console.log(attObjArray);
     // array to hold objects of city's ranks
-    console.log(citiesArray);
-    var cityRankArray = [];
-    attData.map(function(d){ //d is each city with all of it's rankings
-        var cityRanks = {
-            City: d.Cities_Included
-        };
+
+    citiesArray.map(function(d){
+        // console.log(d);
+
         for (i=0; i<checkedAtts.length; i++) {
-          var property = checkedAtts[i]
-          cityRanks[property] = d[property]//checkedAtts[i] is the attribute rank
+            var property = checkedAtts[i]
+
+            for (j=0; j<attData.length; j++) {
+                var cityIncl = attData[j].Cities_Included;
+                // console.log(cityIncl);
+                if (d.City == cityIncl) {
+                  // console.log(attData.Cities_Included);
+                  // console.log(property);
+                    d[property] = attData[j][property]
+                }
+            }
+              // console.log(attData)
+
+          // cityRanks[property] = d[property]//checkedAtts[i] is the attribute rank
 
           // console.log(d[checkedAtts[i]]);
         }
-        cityRankArray.push(cityRanks)
+
+
     })
+    // attData.map(function(d){ //d is each city with all of it's rankings
+    //     var cityRanks = {
+    //         City: d.Cities_Included
+    //     };
+    //     for (i=0; i<checkedAtts.length; i++) {
+    //       var property = checkedAtts[i]
+    //       cityRanks[property] = d[property]//checkedAtts[i] is the attribute rank
+    //
+    //       // console.log(d[checkedAtts[i]]);
+    //     }
+    //     cityRankArray.push(cityRanks)
+    // })
 
     //this is an array of objects containing city name and the rank for each attribute that is checked
-    return cityRankArray
+    // return cityRankArray
+    console.log(citiesArray);
 }
 
 function checkedAttributes(attData, attObjArray){
@@ -1331,8 +1357,13 @@ function createCitiesPanel(){
                 .attr("y", 69)
                 .attr("x", -10)
                 .on("click", function(d){
-                  console.log("here");
                   selectCity(d.City);
+                })
+                .style("fill", function(d){
+                    if (d.Selected == true){
+                        var index = d["Color Index"]
+                        return colorArray[index]
+                    }
                 });
 
 
@@ -1576,7 +1607,7 @@ function createSlider(attData, attribute, cities) {
             });
             // console.log(filteredCities);
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-            citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+            addAttRanks(attData);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
             // console.log(citiesArray);
             createCitiesPanel();
