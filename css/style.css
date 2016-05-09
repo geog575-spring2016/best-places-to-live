@@ -19,7 +19,7 @@ body{
 }
 
 #attContainer {
-    height: 60%;
+    height: 100%;
     width: 400px;
     /*border:2px solid #000;*/
     overflow-y: scroll;
