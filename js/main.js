@@ -136,6 +136,7 @@ function createAttPanel(attData, cities, states, sources) {
     //div container that holds SVG
     var attContainer = d3.select("body").append("div")
         .attr("id", "attContainer")
+        // .attr("height", window.innerHeight / 2)
 
     var collapseButton = attContainer.append("button")
         .attr("id", "collapseButton")
