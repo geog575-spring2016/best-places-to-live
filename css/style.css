@@ -17,7 +17,22 @@ body{
   background-color: #134B5F;
 
 }
+#buttonText{
+    z-index: 10
+}
 
+#backButton {
+  fill: #038090;
+  z-index: 1;
+
+}
+
+#selectButton {
+    opacity: 0;
+    pointer-events: all;
+    cursor: pointer;
+    fill: none;
+}
 #attContainer {
     height: 100%;
     width: 400px;
