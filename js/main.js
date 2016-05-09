@@ -19,7 +19,6 @@ colorArray.forEach(function(d){
   colorMaster.push(colorObj);
 })
 
-console.log(colorMaster);
 
 function setPage() {
     //set variable to use queue.js to parallelize asynchronous data loading
@@ -114,12 +113,12 @@ function createAttPanel(attData, cities, states, sources) {
 
     //creates array of city objects for now just for testing
     citiesArray = createCitiesArray(attData);
-
+    console.log(citiesArray);
     //creates array of objects with an object for each attribute that also holds weight and checked properties
     attObjArray = createAttObjArray(rankData);
 
-    // create filtered cities array with all cities
-    filteredCities = citySearch;
+    // // create filtered cities array with all cities
+    // filteredCities = citySearch;
 
     //empty array to hold length of each label
     var labelLength = [];
@@ -627,9 +626,9 @@ function createCitiesArray(attData) {
     attData.map(function(d) { //d is each city object
         var cityObj = {
             City: d.Cities_Included,
-            Selected: false
-            // Colors: function(){ return d3.scale.category20();}
-          };
+            Selected: false,
+            Filtered: false
+        };
         citiesArray.push(cityObj)
     });
     return citiesArray;
@@ -952,7 +951,7 @@ function createCitiesPanel(){
       // }
         //new array to hold cities that should not be filtered out
         var newArray = []
-
+console.log(citiesArray);
         citiesArray = citiesArray.map(function(d){
             // //new array to hold cities that should not be filtered out
             // var newArray = []
