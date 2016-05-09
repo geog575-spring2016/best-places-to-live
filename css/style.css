@@ -204,7 +204,7 @@ body{
     position: absolute;
 }
 
-#attContainer button {
+#collapseButton {
     margin-top: 60px;
     height: 620px;
     float: right;
@@ -215,7 +215,7 @@ body{
     margin-right: 15px;
     z-index: 5;
 }
-#attContainer button:hover {
+#collapseButton:hover {
     background: #E6F2DE;
     border: 1px solid #E6F2DE;
     cursor: pointer;
