@@ -1134,16 +1134,72 @@ function createCitiesPanel(){
 
             var cityHeaderRect = citySvg.append("rect")
                 .attr("id", "cityHeaderRect")
-                .attr("y", 42)
+                .attr("y", 62)
                 .attr("height", rectHeight * .66)
                 .style("z-index", 10)
 
             var headerHeight = +d3.select("#cityHeaderRect").attr("y") + 15;
 
+            var backButton = citySvg.append("rect")
+                .attr("id", "backButton")
+                .attr("height", rectHeight * 0.66)
+                .attr("width", "100%")
+                .attr("y", 38)
 
+            var buttonText = citySvg.append("text")
+                .attr("id", "buttonText")
+                .attr("y", 53)
+                .attr("x", 50)
+                .text("Show Selected Cities Only")
+
+            var selectButton = citySvg.append("rect")
+                .attr("id", "selectButton")
+                .attr("height", rectHeight * 0.66)
+                .attr("width", "100%")
+                .attr("y", 38)
+                .on("click", selectCities)
+
+
+
+
+            // //used to place checkbox relative to attText labels
+            // var rectY = +d3.select(".cityRect").attr("y") + 15
+
+            var headerRank = citySvg.append("text")
+                .attr("class", "headerText")
+                .attr("id", "headerRank")
+                .attr("x", 1)
+                .attr("y", headerHeight)
+                .text("Rank")
+
+
+            var headerCity = citySvg.append("text")
+                .attr("class", "headerText")
+                .attr("id", "headerCity")
+                .attr("x", 60)
+                .attr("y", headerHeight)
+                .text("City")
+
+
+          var headerScore = citySvg.append("text")
+              .attr("class", "headerText")
+              .attr("id", "headerScore")
+              .attr("x", 173)
+              .attr("y", headerHeight)
+              .text("Score")
+
+      populateCityPanel(citiesArray);
+
+    };
+}
+
+
+function populateCityPanel(data){
+            var citySvg = d3.select(".citySvg");
+            var rectHeight = 31;
             // creates a group for each rectangle and offsets each by same amount
             var cities = citySvg.selectAll('.cities')
-                .data(citiesArray)
+                .data(data)
                 .enter()
               .append("g")
                 .attr("class", "cities")
@@ -1168,7 +1224,7 @@ function createCitiesPanel(){
                 // .attr("x", cityMargin)
                 .attr("width", "100%")
                 .attr("height", (rectHeight / 3) * 2)
-                .attr("y", 69)
+                .attr("y", 90)
                 .attr("x", -10)
                 .on("click", function(d){
                   selectCity(d.City);
@@ -1180,16 +1236,8 @@ function createCitiesPanel(){
                     }
                 });
 
-
             //used to place checkbox relative to attText labels
             var rectY = +d3.select(".cityRect").attr("y") + 15
-
-            var headerRank = citySvg.append("text")
-                .attr("class", "headerText")
-                .attr("id", "headerRank")
-                .attr("x", 1)
-                .attr("y", headerHeight)
-                .text("Rank")
 
 
             //adds text to attribute g
@@ -1199,14 +1247,6 @@ function createCitiesPanel(){
                 .attr("x", 3)
                 .attr("y", rectY)
                 .text(function(d, i) {return i + 1})
-
-            var headerCity = citySvg.append("text")
-                .attr("class", "headerText")
-                .attr("id", "headerCity")
-                .attr("x", 60)
-                .attr("y", headerHeight)
-                .text("City")
-
             //adds text to attribute g
             var cityText = cities.append('text')
                 .attr("class", "cityText")
@@ -1223,13 +1263,6 @@ function createCitiesPanel(){
                 //     return attribute;
                 // });
 
-            var headerScore = citySvg.append("text")
-                .attr("class", "headerText")
-                .attr("id", "headerScore")
-                .attr("x", 173)
-                .attr("y", headerHeight)
-                .text("Score")
-
 
             //adds text to attribute g
             var cityScore = cities.append('text')
@@ -1245,7 +1278,52 @@ function createCitiesPanel(){
                 // });
         }
 
+
+//changes city panel after button is clicked for displaying selected cities
+function selectCities(){
+    // console.log(selectCities.caller);
+
+    var buttonText = d3.select("#buttonText")[0][0].innerHTML
+        if (buttonText == "Show Selected Cities Only"){
+            var selectedCities = [];
+            citiesArray.map(function(d){
+                if (d.Selected == true)
+                selectedCities.push(d)
+            })
+            d3.select("#buttonText").text("Show All Cities");
+
+            d3.selectAll(".cities").remove()
+
+            populateCityPanel(selectedCities)
+        }
+        if (buttonText == "Show All Cities") {
+            createCitiesPanel();
+            d3.select("#buttonText").text("Show Selected Cities Only");
+
+        }
+
 }
+
+//appends selected cities to cities panel appropriately based on text of button
+function appendCity(){
+      // console.log(selectCities.caller);
+      var buttonText = d3.select("#buttonText")[0][0].innerHTML
+          if (buttonText == "Show All Cities"){
+              var selectedCities = [];
+              citiesArray.map(function(d){
+                  if (d.Selected == true)
+                  selectedCities.push(d)
+              })
+              d3.selectAll(".cities").remove()
+
+              populateCityPanel(selectedCities)
+          }
+          if (buttonText == "Show Selected Cities Only") {
+              createCitiesPanel();
+
+          }
+
+  }
 
 
   function createAttID(d, rankData) {
@@ -1998,8 +2076,8 @@ function selectCity (city){
         d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
 
         d3.select("path." + cityReplaceWithPeriod).style("fill", color);
-
-
+        //update cities panel based on new selection
+        appendCity();
       }else{
 
         if(numSelectedCities == colorArray.length){
@@ -2022,11 +2100,14 @@ function selectCity (city){
           console.log(color);
           d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
           d3.select("path." + cityReplaceWithPeriod).style("fill", color);
+
+          //update cities panel based on new selection
+          appendCity();
+          // appendCitiesPanel(citiesArray[i]);
         }
 
       }
 
     }
   }
-  console.log(numSelectedCities)
 }
