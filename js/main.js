@@ -197,7 +197,7 @@ function createAttPanel(attData, cities, states, sources) {
             updatePropSymbols (cities)
 
         });
-        
+
     //creates a group for each rectangle and offsets each by same amount
     var variables = attSvg.selectAll('.variables')
         .data(attLabels)
@@ -242,8 +242,6 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .on("mouseover", function(d){
               var attribute = createAttID(d, rankData);
-    ////////need to pass selected cities too//////////
-              // attPopup(attData, attribute, selectedCities);
               attPopup(attData, attribute);
           })
           .on("mouseout", removeAttPopup)
@@ -419,39 +417,53 @@ function setWeights(attObjArray, attribute){
 //
 // }
       //define x,y property values for first rectangle
-      var x1 = (textX + labelWidth)*4.3
-      var y1 = attHeight - 15
+      var x1 = (textX + labelWidth)*4.3, y1 = attHeight - 27,
+      textX1 = x1 + 6, textY1 = y1 + 16
 
-      //creates rect elements for weighting attribute
-      var attRect1 = variables.append('rect')
-          .attr("class", "attRect1")
-          // .attr("class", "activeRect")
+
+      var backButton1 = variables.append("rect")
+          .attr("class", "backButton1")
           .attr("id", function(d){
               //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
               var attribute = createAttID(d, rankData);
 
-              return attribute + "_rect1";
+              return attribute + "_backButton1";
           })
-          .attr('width', rectWidth)
-          .attr('height', rectHeight1)
           .attr("x", x1)
-          .attr('y', y1)
+          .attr("y", y1)
+
+      var buttonText1 = variables.append("text")
+          .attr("class", "buttonText1")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_buttonText1";
+          })
+          .attr("x", textX1)
+          .attr("y", textY1)
+          .text("1")
+
+      var clickButton1 = variables.append("rect")
+          .attr("class", "clickButton1")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_clickButton1";
+          })
+          .attr("x", x1)
+          .attr("y", y1)
           .on("click", function(){
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
               //trim "_rect1" from end of string
-              var att = attID.slice(0, -6);
-
-              var attID2 = attID.replace("1", "2")
-              var attID3 = attID.replace("1", "3")
-              d3.select("#"+ attID).style("fill", "#aaa")
-              d3.select("#"+ attID2).style("fill", "#eee")
-              d3.select("#"+ attID3).style("fill", "#eee")
+              var att = attID.slice(0, -13);
 
               //loops through all attribute objects and sets weight to 0.5 if appropriate
               for (i=0; i<attObjArray.length; i++){
                   if (attObjArray[i].Attribute == att) {
-                      attObjArray[i].Weight = 0.5;
+                      attObjArray[i].Weight = 5;
                   };
               };
               //creates array of only checked attributes
@@ -461,32 +473,228 @@ function setWeights(attObjArray, attribute){
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
+          });
 
-          })
-      //creates rect elements for weighting attribute
-      var attRect2 = variables.append('rect')
-          .attr("class", "attRect2")
-          .attr('width', rectWidth)
+      //used to place next rectangle relative to previous
+      var x2 = +d3.select(".clickButton1").attr("x") + 30,
+      textX2 = +d3.select(".buttonText1").attr("x") + 30
+
+
+      var backButton2 = variables.append("rect")
+          .attr("class", "backButton2")
           .attr("id", function(d){
               //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
               var attribute = createAttID(d, rankData);
 
-              return attribute + "_rect2";
+              return attribute + "_backButton2";
           })
-          .attr('height', rectHeight2)
-          .attr("x", x1 + rectSpacing*2)
-          .attr('y', y1 - rectHeight1 + 1)
+          .attr("x", x2)
+          .attr("y", y1)
+
+      var buttonText2 = variables.append("text")
+          .attr("class", "buttonText2")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_buttonText2";
+          })
+          .attr("x", textX2)
+          .attr("y", textY1)
+          .text("2")
+
+      var clickButton2 = variables.append("rect")
+          .attr("class", "clickButton2")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_clickButton2";
+          })
+          .attr("x", x2)
+          .attr("y", y1)
           .on("click", function(){
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
               //trim "_rect1" from end of string
-              var att = attID.slice(0, -6);
+              var att = attID.slice(0, -13);
 
-              var attID1 = attID.replace("2", "1")
-              var attID3 = attID.replace("2", "3")
-              d3.select("#"+ attID1).style("fill", "#aaa")
-              d3.select("#"+ attID).style("fill", "#999")
-              d3.select("#"+ attID3).style("fill", "#eee")
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 4;
+                  };
+              };
+              //creates array of only checked attributes
+              checkedAtts = checkedAttributes(attData, attObjArray);
+              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+              addAttRanks(attData);
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+              createCitiesPanel()
+              updatePropSymbols (cities)
+          });
+
+      //used to place next rectangle relative to previous
+      var x3 = +d3.select(".clickButton2").attr("x") + 30,
+      textX3 = +d3.select(".buttonText2").attr("x") + 30
+
+
+      var backButton3 = variables.append("rect")
+          .attr("class", "backButton3")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_backButton3";
+          })
+          .attr("x", x3)
+          .attr("y", y1)
+
+      var buttonText3 = variables.append("text")
+          .attr("class", "buttonText3")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_buttonText3";
+          })
+          .attr("x", textX3)
+          .attr("y", textY1)
+          .text("3")
+
+      var clickButton3 = variables.append("rect")
+          .attr("class", "clickButton3")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_clickButton3";
+          })
+          .attr("x", x3)
+          .attr("y", y1)
+          .on("click", function(){
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //trim "_rect1" from end of string
+              var att = attID.slice(0, -13);
+
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 3;
+                  };
+              };
+              //creates array of only checked attributes
+              checkedAtts = checkedAttributes(attData, attObjArray);
+              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+              addAttRanks(attData);
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+              createCitiesPanel()
+              updatePropSymbols (cities)
+          });
+
+      //used to place next rectangle relative to previous
+      var x4 = +d3.select(".clickButton3").attr("x") + 30,
+      textX4 = +d3.select(".buttonText3").attr("x") + 30
+
+
+      var backButton4 = variables.append("rect")
+          .attr("class", "backButton4")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_backButton4";
+          })
+          .attr("x", x4)
+          .attr("y", y1)
+
+      var buttonText4 = variables.append("text")
+          .attr("class", "buttonText4")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_buttonText4";
+          })
+          .attr("x", textX4)
+          .attr("y", textY1)
+          .text("4")
+
+      var clickButton4 = variables.append("rect")
+          .attr("class", "clickButton4")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_clickButton4";
+          })
+          .attr("x", x4)
+          .attr("y", y1)
+          .on("click", function(){
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //trim "_rect1" from end of string
+              var att = attID.slice(0, -13);
+
+              //loops through all attribute objects and sets weight to 0.5 if appropriate
+              for (i=0; i<attObjArray.length; i++){
+                  if (attObjArray[i].Attribute == att) {
+                      attObjArray[i].Weight = 2;
+                  };
+              };
+              //creates array of only checked attributes
+              checkedAtts = checkedAttributes(attData, attObjArray);
+              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+              addAttRanks(attData);
+              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+              createCitiesPanel()
+              updatePropSymbols (cities)
+          });
+
+      //used to place next rectangle relative to previous
+      var x5 = +d3.select(".clickButton4").attr("x") + 30,
+      textX5 = +d3.select(".buttonText4").attr("x") + 30
+
+
+      var backButton5 = variables.append("rect")
+          .attr("class", "backButton5")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_backButton5";
+          })
+          .attr("x", x5)
+          .attr("y", y1)
+
+      var buttonText5 = variables.append("text")
+          .attr("class", "buttonText5")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_buttonText5";
+          })
+          .attr("x", textX5)
+          .attr("y", textY1)
+          .text("5")
+
+      var clickButton5 = variables.append("rect")
+          .attr("class", "clickButton5")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_clickButton5";
+          })
+          .attr("x", x5)
+          .attr("y", y1)
+          .on("click", function(){
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //trim "_rect1" from end of string
+              var att = attID.slice(0, -13);
 
               //loops through all attribute objects and sets weight to 0.5 if appropriate
               for (i=0; i<attObjArray.length; i++){
@@ -501,116 +709,198 @@ function setWeights(attObjArray, attribute){
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
-
-          })
-
-      //creates rect elements for weighting attribute
-      var attRect3 = variables.append('rect')
-          .attr("class", "attRect3")
-          .attr("id", function(d){
-              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
-              var attribute = createAttID(d, rankData);
-
-              return attribute + "_rect3";
-          })
-          .attr('width', rectWidth)
-          .attr('height', rectHeight3)
-          .attr("x", x1 + rectSpacing*4)
-          .attr('y', y1 - rectHeight2 + 1)
-          .on("click", function(){
-              //extract ID of whichever rectangle is clicked
-              var attID = this.id;
-              //trim "_rect1" from end of string
-              var att = attID.slice(0, -6);
-
-              var attID1 = attID.replace("3", "1")
-              var attID2 = attID.replace("3", "2")
-              d3.select("#"+ attID1).style("fill", "#aaa")
-              d3.select("#"+ attID2).style("fill", "#999")
-              d3.select("#"+ attID).style("fill", "#888")
-
-              //loops through all attribute objects and sets weight to 0.5 if appropriate
-              for (i=0; i<attObjArray.length; i++){
-                  if (attObjArray[i].Attribute == att) {
-                      attObjArray[i].Weight = 2;
-                  };
-              };
-              //creates array of only checked attributes
-              checkedAtts = checkedAttributes(attData, attObjArray);
-              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-              addAttRanks(attData);
-
-              citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-
-
-              // console.log(citiesArray);
-              createCitiesPanel()
-
-              updatePropSymbols(cities);
-
-          })
-
-      //used to place checkbox relative to attText labels
-      var rectX = +d3.select(".attRect3").attr("x") + 40
-
-      var sliderMinValue = variables.append("foreignObject")
-          .attr("class", "sliderMinValue")
-          .attr("width", "15px")
-          .attr("height", "10px")
-          .attr("x", rectX)
-          .attr("y", attHeight - 40)
-        .append("xhtml:div")
-          .html(function(d){
-            //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
-            var attribute = createAttID(d, rankData);
-            return "<input type='text' id='" + attribute +"_rankValMin' width='15px' height='10px'></input>";
+              console.log(attObjArray);
           });
 
-
-      var sliderRange = variables.append("foreignObject")
-          .attr("class", "sliderRangeFO")
-          .attr("id", function(d){
-              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
-              var attribute = createAttID(d, rankData);
-              return attribute + "_FO";
-          })
-          .attr('width', "150px")
-          .attr('height', "20px")
-          .attr("x", rectX - 20)
-          // .style("y", 500)
-        .append("xhtml:div")
-          .attr("class", "sliderRange")
-          .attr("id", function(d){
-              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
-              var attribute = createAttID(d, rankData);
-
-              return attribute + "-slider-range";
-          })
-          // .style("height", "20px")
-          .each(function(d){
-              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
-              var attribute = createAttID(d, rankData);
-              // createSlider(citySearch, attData, rankData, attribute, filteredCities, attObjArray);
-              createSlider(attData, attribute, cities);
-
-          })
-
-        // d3.selectAll(".ui-slider-range")
-        //   .each(function(){
-        //     console.log(this);
-        //     // var filteredCities = sliderEvent(attData, filteredCities)
-        //   })
-      // console.log(filteredCities);
-      //for loop to set 'y' attr for each slider because d3 is dumb and won't set it like it should
-      for (i=0; i<rankData.length; i++){
-          d3.select("#"+rankData[i]+"_FO")
-              .attr("y", function(){
-                  var yVal = 117;
-                  yVal = yVal + (35*i);
-
-                  return yVal;
-              });
-      };
+      // //creates rect elements for weighting attribute
+      // var attRect1 = variables.append('rect')
+      //     .attr("class", "attRect1")
+      //     // .attr("class", "activeRect")
+      //     .attr("id", function(d){
+      //         //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+      //         var attribute = createAttID(d, rankData);
+      //
+      //         return attribute + "_rect1";
+      //     })
+      //     .attr('width', rectWidth)
+      //     .attr('height', rectHeight1)
+      //     .attr("x", x1)
+      //     .attr('y', y1)
+      //     .on("click", function(){
+      //         //extract ID of whichever rectangle is clicked
+      //         var attID = this.id;
+      //         //trim "_rect1" from end of string
+      //         var att = attID.slice(0, -6);
+      //
+      //         var attID2 = attID.replace("1", "2")
+      //         var attID3 = attID.replace("1", "3")
+      //         d3.select("#"+ attID).style("fill", "#aaa")
+      //         d3.select("#"+ attID2).style("fill", "#eee")
+      //         d3.select("#"+ attID3).style("fill", "#eee")
+      //
+      //         //loops through all attribute objects and sets weight to 0.5 if appropriate
+      //         for (i=0; i<attObjArray.length; i++){
+      //             if (attObjArray[i].Attribute == att) {
+      //                 attObjArray[i].Weight = 0.5;
+      //             };
+      //         };
+      //         //creates array of only checked attributes
+      //         checkedAtts = checkedAttributes(attData, attObjArray);
+      //         //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+      //         addAttRanks(attData);
+      //         citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+      //         createCitiesPanel()
+      //         updatePropSymbols (cities)
+      //
+      //     })
+      // //creates rect elements for weighting attribute
+      // var attRect2 = variables.append('rect')
+      //     .attr("class", "attRect2")
+      //     .attr('width', rectWidth)
+      //     .attr("id", function(d){
+      //         //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+      //         var attribute = createAttID(d, rankData);
+      //
+      //         return attribute + "_rect2";
+      //     })
+      //     .attr('height', rectHeight2)
+      //     .attr("x", x1 + rectSpacing*2)
+      //     .attr('y', y1 - rectHeight1 + 1)
+      //     .on("click", function(){
+      //         //extract ID of whichever rectangle is clicked
+      //         var attID = this.id;
+      //         //trim "_rect1" from end of string
+      //         var att = attID.slice(0, -6);
+      //
+      //         var attID1 = attID.replace("2", "1")
+      //         var attID3 = attID.replace("2", "3")
+      //         d3.select("#"+ attID1).style("fill", "#aaa")
+      //         d3.select("#"+ attID).style("fill", "#999")
+      //         d3.select("#"+ attID3).style("fill", "#eee")
+      //
+      //         //loops through all attribute objects and sets weight to 0.5 if appropriate
+      //         for (i=0; i<attObjArray.length; i++){
+      //             if (attObjArray[i].Attribute == att) {
+      //                 attObjArray[i].Weight = 1;
+      //             };
+      //         };
+      //         //creates array of only checked attributes
+      //         checkedAtts = checkedAttributes(attData, attObjArray);
+      //         //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+      //         addAttRanks(attData);
+      //         citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+      //         createCitiesPanel()
+      //         updatePropSymbols (cities)
+      //
+      //     })
+      //
+      // //creates rect elements for weighting attribute
+      // var attRect3 = variables.append('rect')
+      //     .attr("class", "attRect3")
+      //     .attr("id", function(d){
+      //         //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+      //         var attribute = createAttID(d, rankData);
+      //
+      //         return attribute + "_rect3";
+      //     })
+      //     .attr('width', rectWidth)
+      //     .attr('height', rectHeight3)
+      //     .attr("x", x1 + rectSpacing*4)
+      //     .attr('y', y1 - rectHeight2 + 1)
+      //     .on("click", function(){
+      //         //extract ID of whichever rectangle is clicked
+      //         var attID = this.id;
+      //         //trim "_rect1" from end of string
+      //         var att = attID.slice(0, -6);
+      //
+      //         var attID1 = attID.replace("3", "1")
+      //         var attID2 = attID.replace("3", "2")
+      //         d3.select("#"+ attID1).style("fill", "#aaa")
+      //         d3.select("#"+ attID2).style("fill", "#999")
+      //         d3.select("#"+ attID).style("fill", "#888")
+      //
+      //         //loops through all attribute objects and sets weight to 0.5 if appropriate
+      //         for (i=0; i<attObjArray.length; i++){
+      //             if (attObjArray[i].Attribute == att) {
+      //                 attObjArray[i].Weight = 2;
+      //             };
+      //         };
+      //         //creates array of only checked attributes
+      //         checkedAtts = checkedAttributes(attData, attObjArray);
+      //         //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+      //         addAttRanks(attData);
+      //
+      //         citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+      //
+      //
+      //         // console.log(citiesArray);
+      //         createCitiesPanel()
+      //
+      //         updatePropSymbols(cities);
+      //
+      //     })
+      //
+      // //used to place checkbox relative to attText labels
+      // var rectX = +d3.select(".attRect3").attr("x") + 40
+      //
+      // var sliderMinValue = variables.append("foreignObject")
+      //     .attr("class", "sliderMinValue")
+      //     .attr("width", "15px")
+      //     .attr("height", "10px")
+      //     .attr("x", rectX)
+      //     .attr("y", attHeight - 40)
+      //   .append("xhtml:div")
+      //     .html(function(d){
+      //       //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+      //       var attribute = createAttID(d, rankData);
+      //       return "<input type='text' id='" + attribute +"_rankValMin' width='15px' height='10px'></input>";
+      //     });
+      //
+      //
+      // var sliderRange = variables.append("foreignObject")
+      //     .attr("class", "sliderRangeFO")
+      //     .attr("id", function(d){
+      //         //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+      //         var attribute = createAttID(d, rankData);
+      //         return attribute + "_FO";
+      //     })
+      //     .attr('width', "150px")
+      //     .attr('height', "20px")
+      //     .attr("x", rectX - 20)
+      //     // .style("y", 500)
+      //   .append("xhtml:div")
+      //     .attr("class", "sliderRange")
+      //     .attr("id", function(d){
+      //         //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+      //         var attribute = createAttID(d, rankData);
+      //
+      //         return attribute + "-slider-range";
+      //     })
+      //     // .style("height", "20px")
+      //     .each(function(d){
+      //         //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+      //         var attribute = createAttID(d, rankData);
+      //         // createSlider(citySearch, attData, rankData, attribute, filteredCities, attObjArray);
+      //         createSlider(attData, attribute, cities);
+      //
+      //     })
+      //
+      //   // d3.selectAll(".ui-slider-range")
+      //   //   .each(function(){
+      //   //     console.log(this);
+      //   //     // var filteredCities = sliderEvent(attData, filteredCities)
+      //   //   })
+      // // console.log(filteredCities);
+      // //for loop to set 'y' attr for each slider because d3 is dumb and won't set it like it should
+      // for (i=0; i<rankData.length; i++){
+      //     d3.select("#"+rankData[i]+"_FO")
+      //         .attr("y", function(){
+      //             var yVal = 117;
+      //             yVal = yVal + (35*i);
+      //
+      //             return yVal;
+      //         });
+      // };
 
       //sets the default atts to be checked
       attObjArray = createDefaultAtts(attObjArray);
@@ -703,7 +993,6 @@ function createDefaultAtts(attObjArray) {
     })
 
     return attObjArray
-      // createAttPanel(attData, defaultAtts)
 }
 
 function addAttRanks(attData) {
@@ -1580,7 +1869,7 @@ function createAttObjArray(rankData){
 
         var attObj = {
             Attribute: rankData[i],
-            Weight: 1,
+            Weight: 3,
             Checked: 0
         }
         attObjArray.push(attObj)

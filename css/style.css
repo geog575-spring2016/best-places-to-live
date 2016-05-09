@@ -1,4 +1,52 @@
 /* 575 boilerplate style.css */
+.backButton1,
+.clickButton1,
+.backButton2,
+.clickButton2,
+.backButton3,
+.clickButton3,
+.backButton4,
+.clickButton4,
+.backButton5,
+.clickButton5 {
+    width: 20px;
+    height: 20px;
+    rx: 5px;
+    ry: 5px;
+}
+
+.backButton1 {
+    fill: #ccc;
+
+}
+
+.backButton2 {
+    fill: #bbb;
+}
+
+.backButton3{
+    fill: #aaa;
+}
+.backButton4 {
+    fill: #999;
+}
+
+.backButton5{
+    fill: #888;
+}
+
+
+.clickButton1,
+.clickButton2,
+.clickButton3,
+.clickButton4,
+.clickButton5 {
+    opacity: 0;
+    pointer-events: all;
+    cursor: pointer;
+    fill: none;
+}
+
 #title{
     color: #E6F2DE;
     font-size: 3.5em;
