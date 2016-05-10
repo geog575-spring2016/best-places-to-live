@@ -14,9 +14,34 @@ var bodywidth = +d3.select("body").attr('width')
 var numSelectedCities = 0;
 var colorCounter = 0;
 
-var defaultColor = "gray";
+var defaultColor = "aaa";
+// var colorArray = ["#48a2e0", "#ff9a41", "#5fd35f", "#e25f60","#ad8bcc", "#b0776b", "#e377c2", "black", "#bcbd22", "#17becf"];
+var colorArray = ['#185a89', '#c95e00', '#258525', '#b92223', '#72449c','#6b4239', '#ca2a99', '#5d5d5d' , '#9fa01d', '#1294a1'];
+// var colorArray = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#72449c", "#e377c2", "black", "#bcbd22", "#17becf"];
+// var colorArray = ['#8dd3c7',
+// '#ffffb3',
+// '#bebada',
+// '#fb8072',
+// '#80b1d3',
+// '#fdb462',
+// '#b3de69',
+// '#fccde5',
+// '#d9d9d9',
+// '#bc80bd'];
 
-var colorArray = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "black", "#bcbd22", "#17becf"];
+// var colorArray = [
+// '#aec7e8',
+// '#ffbb78',
+// '#98df8a',
+// '#ff9896',
+// '#c5b0d5',
+// '#c49c94',
+// '#f7b6d2',
+// '#c7c7c7',
+// '#dbdb8d',
+// '#9edae5'
+// ];
+
 var colorMaster = [];
 colorArray.forEach(function(d){
 
@@ -1334,10 +1359,18 @@ function createMap(states, cities) {
         // .scale((width*(3/4)))
         // .translate([width*1.75, height*1.333]);
 
-  var projection = d3.geo.mercator()
-  .center([100, 43 ])
-    .scale(width*(2/3))
-    .rotate([-150,0]);
+  // var projection = d3.geo.mercator()
+  // .center([100, 43 ])
+  //   .scale(width*(2/3))
+  //   .rotate([-150,0]);
+
+  var projection = d3.geo.conicConformal()
+    .rotate([98, 0])
+    .center([0, 38])
+    .parallels([29.5, 45.5])
+    .scale(700)
+    .translate([width / 2, height / 2])
+    .precision(.1);
     // .translate([width/2, height/2]);
 
 // Create a path generator.
@@ -1379,14 +1412,37 @@ var path = d3.geo.path()
             .attr("class", "us_states")
             .attr("d", path);
 
-    map
-        .call(zoom)
-        .call(zoom.event);
+    // map
+    //     .call(zoom)
+    //     .call(zoom.event);
 
+      // var legendContainer = map.append("g")
+      //   .attr("class", "legendContainer")
+      //   .attr("transform", "translate(" + (50) + "," + (height - 20) + ")");
 
+          // .attr("top", "-70px");
+          var legendHeight = height-230;
+          var legendRect = map.append("rect")
+          .attr("class", "legendRect")
+          .attr("height", "100px")
+          .attr("width", "100px")
+          .attr("x", width - 100)
+          .attr("y", legendHeight);
+
+        //
+        var legendTitle = map.append("text")
+        .attr("class", "legendText")
+        .attr("x", width - 90)
+        .attr("y", legendHeight + 15)
+          // .attr("top", "0")
+          // .attr("z-index", "10")
+          // .attr("top", "0")
+          .text("Overall Score");
+        // d3.select(".cityContainer").append("svg")
     var legend = map.append("g")
         .attr("class", "legend")
-        .attr("transform", "translate(" + (width - 50) + "," + (height - 20) + ")")
+
+        .attr("transform", "translate(" + (width - 50) + "," + (height - 140) + ")")
       .selectAll("g")
         .data([100, 70, 50])
       .enter().append("g");
@@ -1399,6 +1455,10 @@ var path = d3.geo.path()
         .attr("y", function(d) { return -2 * radius(d); })
         .attr("dy", "1.3em")
         .text(d3.format(".1s"));
+
+    // legend.append("text")
+    //     .attr("y", "-70px")
+    //     .text("Overall Score");
 
     //function to control when the user zooms
     function zoomed() {
@@ -1455,8 +1515,9 @@ var path = d3.geo.path()
         .style("fill", defaultColor)
         .attr("stroke", "white")
         .attr("stroke-width", "2px")
+        .attr("opacity", "0.9")
         .on("mouseover", function(d){
-          highlightCity(d.properties);
+          highlightCity(d.properties, true);
         })
         .on("mouseout", function(d){
           dehighlightCity(d.properties);
@@ -1504,7 +1565,7 @@ function createCitiesPanel(){
                 .attr("id", "searchDiv")
                 .attr("width", "100%")
                 .attr("height", titleHeight)
-                .html("<label for='tags'>Search City </label><input id='tags'>")
+                .html("<label for='tags'>City: </label><input id='tags'>")
 
             $("#tags").autocomplete({
                 source: citySearch,
@@ -1545,6 +1606,8 @@ function createCitiesPanel(){
                 .attr("id", "cityTitleRect")
                 .attr("y", cityMargin * 5 + 1.5)
                 .attr("height", rectHeight)
+                .attr("width", "100%")
+                .attr("x", -5)
 
 
             //used to place checkbox relative to attText labels
@@ -1564,27 +1627,52 @@ function createCitiesPanel(){
                 .attr("y", 62)
                 .attr("height", rectHeight * .66)
                 .style("z-index", 10)
+                .attr("x", -5)
+                .attr("width", "100%")
 
             var headerHeight = +d3.select("#cityHeaderRect").attr("y") + 15;
 
             var backButton = citySvg.append("rect")
                 .attr("id", "backButton")
                 .attr("height", rectHeight * 0.66)
-                .attr("width", "100%")
+                .attr("width", "96%")
                 .attr("y", cityMargin - 3)
 
             var buttonText = citySvg.append("text")
                 .attr("id", "buttonText")
-                .attr("y", cityMargin + 11)
+                .attr("y", cityMargin + 13)
                 .attr("x", 30)
                 .text("Show Selected Cities Only")
 
             var selectButton = citySvg.append("rect")
                 .attr("id", "selectButton")
                 .attr("height", rectHeight * 0.66)
-                .attr("width", "100%")
+                .attr("width", "96%")
                 .attr("y", cityMargin - 3)
                 .on("click", selectCities)
+                .on("mouseover", function(){
+                    //extract ID of whichever rectangle is clicked
+                    var attID = this.id;
+                    //changes click to back in ID string so we can change fill
+                    var rectID = attID.replace("select", "back")
+                    //change fill
+                    d3.select("#" + rectID).style({
+                        stroke: "#3399FF",
+                        "stroke-width": "2px",
+                        fill: "#999"
+                    })
+                })
+                .on("mouseout", function(){
+                    //extract ID of whichever rectangle is clicked
+                    var attID = this.id;
+                    //changes click to back in ID string so we can change fill
+                    var rectID = attID.replace("select", "back")
+                    //change fill
+                    d3.select("#" + rectID).style({
+                        stroke: "none",
+                        fill: "#ccc"
+                    })
+                })
 
 
 
@@ -1661,6 +1749,12 @@ function populateCityPanel(data){
                         var index = d["Color Index"]
                         return colorArray[index]
                     }
+                })
+                .on("mouseover",function(d){
+                  highlightCity(d, false)
+                })
+                .on("mouseout", function(d){
+                  dehighlightCity(d)
                 });
 
             //used to place checkbox relative to attText labels
@@ -1684,6 +1778,12 @@ function populateCityPanel(data){
                 .on("click", function(d){
                   selectCity(d.City);
                 })
+                .on("mouseover",function(d){
+                  highlightCity(d, false)
+                })
+                .on("mouseout", function(d){
+                  dehighlightCity(d)
+                });
                 // .attr("id", function(d) {
                 //     var attribute = createAttID(d, rankData)
                 //
@@ -1993,11 +2093,19 @@ function updatePropSymbols (cities){
 //     var path = d3.geo.path()
 //         .projection(projection);
 
- var projection = d3.geo.mercator()
-  .center([120, 40 ])
-    .scale(width*(2/3))
-    .rotate([-150,0]);
+ // var projection = d3.geo.mercator()
+ //  .center([120, 40 ])
+ //    .scale(width*(2/3))
+ //    .rotate([-150,0]);
     // .translate([width/2, height/2]);
+
+    var projection = d3.geo.conicConformal()
+      .rotate([98, 0])
+      .center([0, 38])
+      .parallels([29.5, 45.5])
+      .scale(700)
+      .translate([width / 2, height / 2])
+      .precision(.1);
 
 // Create a path generator.
 var path = d3.geo.path()
@@ -2081,7 +2189,7 @@ var path = d3.geo.path()
 
 }
 
-function highlightCity(props){
+function highlightCity(props, showCityLabel){
   var city = props.City;
   city = city.replace(/\./g, "");
   var cityFixed = city.replace(/ /g, ".");
@@ -2091,8 +2199,10 @@ function highlightCity(props){
             "stroke": "black",
             "stroke-width": (1/d3.event.scale)*2+"px"
         });
-
+  if(showCityLabel){
     setCityLabel(props);
+  }
+
 }
 
 function dehighlightCity(props){
@@ -2106,8 +2216,11 @@ function dehighlightCity(props){
             "stroke-width": (1/d3.event.scale)*2+"px"
         });
 
-  d3.select(".infolabel")
-        .remove();
+  // if(removeCityLabel){
+    d3.select(".infolabel")
+          .remove();
+  // }
+
 }
 
 function removeAttPopup(){
