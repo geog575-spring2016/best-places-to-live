@@ -15,6 +15,8 @@
     ry: 5px;
 }
 
+
+
 .backButton1 {
     fill: #ccc;
 
@@ -45,6 +47,7 @@
     pointer-events: all;
     cursor: pointer;
     fill: none;
+
 }
 
 #title{
@@ -83,8 +86,8 @@ body{
 }
 #attContainer {
     height: 100%;
-    width: 400px;
-    border:2px solid #E6F2DE;;
+    width: 350px;
+    border:2px solid #E6F2DE;
     overflow-y: scroll;
     overflow-x: scroll;
     position: fixed;

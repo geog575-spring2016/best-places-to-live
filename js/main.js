@@ -454,6 +454,22 @@ function setWeights(attObjArray, attribute){
           })
           .attr("x", x1)
           .attr("y", y1)
+          .on("mouseover", function(){
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("stroke", "#2799c2")
+          })
+          .on("mouseout", function(){
+            //extract ID of whichever rectangle is clicked
+            var attID = this.id;
+            //changes click to back in ID string so we can change fill
+            var rectID = attID.replace("click", "back")
+            //change fill
+            d3.select("#" + rectID).style("stroke", "none")
+          })
           .on("click", function(){
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
@@ -466,6 +482,29 @@ function setWeights(attObjArray, attribute){
                       attObjArray[i].Weight = 5;
                   };
               };
+
+
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style({
+                  fill: "#038090"
+                })
+
+              //change fill back to original in case it was colored differently
+              var rect2 = rectID.replace("1", "2")
+              d3.select("#" + rect2).style("fill", "#bbb")
+              //change fill back to original in case it was colored differently
+              var rect3 = rectID.replace("1", "3")
+              d3.select("#" + rect3).style("fill", "#aaa")
+              //change fill back to original in case it was colored differently
+              var rect4 = rectID.replace("1", "4")
+              d3.select("#" + rect4).style("fill", "#999")
+              //change fill back to original in case it was colored differently
+              var rect5 = rectID.replace("1", "5")
+              d3.select("#" + rect5).style("fill", "#888")
+
+
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
@@ -513,6 +552,22 @@ function setWeights(attObjArray, attribute){
           })
           .attr("x", x2)
           .attr("y", y1)
+          .on("mouseover", function(){
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("stroke", "#2799c2")
+          })
+          .on("mouseout", function(){
+            //extract ID of whichever rectangle is clicked
+            var attID = this.id;
+            //changes click to back in ID string so we can change fill
+            var rectID = attID.replace("click", "back")
+            //change fill
+            d3.select("#" + rectID).style("stroke", "none")
+          })
           .on("click", function(){
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
@@ -525,6 +580,25 @@ function setWeights(attObjArray, attribute){
                       attObjArray[i].Weight = 4;
                   };
               };
+
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("fill", "#038090")
+
+              //change fill back to original in case it was colored differently
+              var rect1 = rectID.replace("2", "1")
+              d3.select("#" + rect1).style("fill", "#ccc")
+              //change fill back to original in case it was colored differently
+              var rect3 = rectID.replace("2", "3")
+              d3.select("#" + rect3).style("fill", "#aaa")
+              //change fill back to original in case it was colored differently
+              var rect4 = rectID.replace("2", "4")
+              d3.select("#" + rect4).style("fill", "#999")
+              //change fill back to original in case it was colored differently
+              var rect5 = rectID.replace("2", "5")
+              d3.select("#" + rect5).style("fill", "#888")
+
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
@@ -572,6 +646,22 @@ function setWeights(attObjArray, attribute){
           })
           .attr("x", x3)
           .attr("y", y1)
+          .on("mouseover", function(){
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("stroke", "#2799c2")
+          })
+          .on("mouseout", function(){
+            //extract ID of whichever rectangle is clicked
+            var attID = this.id;
+            //changes click to back in ID string so we can change fill
+            var rectID = attID.replace("click", "back")
+            //change fill
+            d3.select("#" + rectID).style("stroke", "none")
+          })
           .on("click", function(){
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
@@ -584,6 +674,26 @@ function setWeights(attObjArray, attribute){
                       attObjArray[i].Weight = 3;
                   };
               };
+
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("fill", "#038090")
+
+              //change fill back to original in case it was colored differently
+              var rect1 = rectID.replace("3", "1")
+              d3.select("#" + rect1).style("fill", "#ccc")
+              //change fill back to original in case it was colored differently
+              var rect2 = rectID.replace("3", "2")
+              d3.select("#" + rect2).style("fill", "#bbb")
+              //change fill back to original in case it was colored differently
+              var rect4 = rectID.replace("3", "4")
+              d3.select("#" + rect4).style("fill", "#999")
+              //change fill back to original in case it was colored differently
+              var rect5 = rectID.replace("3", "5")
+              d3.select("#" + rect5).style("fill", "#888")
+
+
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
@@ -631,6 +741,22 @@ function setWeights(attObjArray, attribute){
           })
           .attr("x", x4)
           .attr("y", y1)
+          .on("mouseover", function(){
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("stroke", "#2799c2")
+          })
+          .on("mouseout", function(){
+            //extract ID of whichever rectangle is clicked
+            var attID = this.id;
+            //changes click to back in ID string so we can change fill
+            var rectID = attID.replace("click", "back")
+            //change fill
+            d3.select("#" + rectID).style("stroke", "none")
+          })
           .on("click", function(){
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
@@ -643,6 +769,25 @@ function setWeights(attObjArray, attribute){
                       attObjArray[i].Weight = 2;
                   };
               };
+
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("fill", "#038090")
+
+              //change fill back to original in case it was colored differently
+              var rect1 = rectID.replace("4", "1")
+              d3.select("#" + rect1).style("fill", "#ccc")
+              //change fill back to original in case it was colored differently
+              var rect2 = rectID.replace("4", "2")
+              d3.select("#" + rect2).style("fill", "#bbb")
+              //change fill back to original in case it was colored differently
+              var rect3 = rectID.replace("4", "3")
+              d3.select("#" + rect3).style("fill", "#aaa")
+              //change fill back to original in case it was colored differently
+              var rect5 = rectID.replace("4", "5")
+              d3.select("#" + rect5).style("fill", "#888")
+
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
@@ -690,6 +835,22 @@ function setWeights(attObjArray, attribute){
           })
           .attr("x", x5)
           .attr("y", y1)
+          .on("mouseover", function(){
+              //extract ID of whichever rectangle is clicked
+              var attID = this.id;
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("stroke", "#2799c2")
+          })
+          .on("mouseout", function(){
+            //extract ID of whichever rectangle is clicked
+            var attID = this.id;
+            //changes click to back in ID string so we can change fill
+            var rectID = attID.replace("click", "back")
+            //change fill
+            d3.select("#" + rectID).style("stroke", "none")
+          })
           .on("click", function(){
               //extract ID of whichever rectangle is clicked
               var attID = this.id;
@@ -702,6 +863,29 @@ function setWeights(attObjArray, attribute){
                       attObjArray[i].Weight = 1;
                   };
               };
+              //changes click to back in ID string so we can change fill
+              var rectID = attID.replace("click", "back")
+              //change fill
+              d3.select("#" + rectID).style("fill", "#038090")
+
+              //change fill back to original in case it was colored differently
+              var rect1 = rectID.replace("5", "1")
+              d3.select("#" + rect1).style("fill", "#ccc")
+              //change fill back to original in case it was colored differently
+              var rect2 = rectID.replace("5", "2")
+              d3.select("#" + rect2).style("fill", "#bbb")
+              //change fill back to original in case it was colored differently
+              var rect3 = rectID.replace("5", "3")
+              d3.select("#" + rect3).style("fill", "#aaa")
+              //change fill back to original in case it was colored differently
+              var rect4 = rectID.replace("5", "4")
+              d3.select("#" + rect4).style("fill", "#999")
+
+
+
+
+
+
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
@@ -709,8 +893,7 @@ function setWeights(attObjArray, attribute){
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
-              console.log(attObjArray);
-          });
+         });
 
       // //creates rect elements for weighting attribute
       // var attRect1 = variables.append('rect')
