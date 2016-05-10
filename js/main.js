@@ -1332,7 +1332,7 @@ function createCitiesPanel(){
                 .attr("id", "searchDiv")
                 .attr("width", "100%")
                 .attr("height", titleHeight)
-                .html("<label for='tags'>City: </label><input id='tags'>")
+                .html("<label for='tags'>Search City </label><input id='tags'>")
 
             $("#tags").autocomplete({
                 source: citySearch,
