@@ -90,8 +90,8 @@
 #title{
     position: float;
     float: right;
-    color: #E6F2DE;
-    font-size: 4em;
+    color: #134B5F;
+    font-size: 5em;
     text-align: center;
     font-family: TitleFont;
 		width: 65%;
@@ -126,7 +126,7 @@
 #attContainer {
 
     height: 100%;
-    width: 345px;
+    width: 365px;
     border:2px solid #E6F2DE;
     overflow-y: scroll;
     overflow-x: scroll;
