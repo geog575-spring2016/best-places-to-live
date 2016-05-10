@@ -51,11 +51,15 @@
 }
 
 #title{
+    position: float;
+    float: right;
     color: #E6F2DE;
-    font-size: 3.5em;
+    /*background-color: white;*/
+    font-size: 4em;
     text-align: center;
     font-family: Lucida, sans-serif;
-		width: 100%;
+		width: 65%;
+    height: 10%
 }
 body{
   background-color: #134B5F;
@@ -106,13 +110,16 @@ body{
   fill: #038090;
 }
 
-
+#headerMost,
+#headerLeast {
+    font-size: 0.7em;
+}
 #attTitleRect {
     fill: #038090;
 }
 .attTitle {
     fill: #E6F2DE;
-    font-size: 1.2em;
+    font-size: 1.7em;
 }
 
 .attHeader{
@@ -159,13 +166,12 @@ body{
 		cursor: pointer;
 }
 
-#checkAll {
+
+#checkAll  {
     cursor: pointer;
 }
 
-#checkAllForm{
-  background-color: #038090;
-}
+
 #cityTitleRect {
     width: 100%;
     fill: #038090;

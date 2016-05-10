@@ -143,30 +143,27 @@ function createAttPanel(attData, cities, states, sources) {
     var attTitleRect = attSvg.append("rect")
         .attr("id", "attTitleRect")
         .attr('x', -10)
-        .attr("y", -20)
+        .attr("y", -11)
         .attr("width", '100%')
-        .attr("height", 60)
+        .attr("height", 40)
         .text("Attributes")
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
-        .attr("x", attWidth / 5)
+        .attr("x", attWidth / 8)
         .attr("y", attMargin.top)
-        .text("Choose What Matters to You")
+        .text("What Matters to You?")
 
     var checkAll = attSvg.append("foreignObject")
-        .attr('x', -3)
-        .attr('y', 40)
+        .attr('x', -9)
+        .attr('y', 50)
         .attr('width', "120px")
         .attr('height', "20px")
       .append("xhtml:body")
         .html(function(d) {
-            return "<form action='#'><p><label><input type=checkbox id='checkAll'>Check All</label></input></form>"
+            return "<form action='#'><p><label><input type=checkbox id='checkAll'>  Check All</label></input></form>"
         })
         .on("change", function(){
-            // console.log($("#checkAll"))
-              // var checkStatus = d3.selectAll(".checkbox").attr("checked")
-              //     console.log(check);
             //retrieve status of check all checkbox
             var status = $("#checkAll")[0].checked
             // set status of all checkboxes to match check all
@@ -205,22 +202,30 @@ function createAttPanel(attData, cities, states, sources) {
         .attr("id", "attHeaderRect")
         .attr("height", "1px")
         .attr("width", "100%")
-        .attr("y", 83)
+        .attr("y", 73)
         .attr("x", -10)
 
     var headerWeight = attSvg.append("text")
         .attr("class", "headerText")
         .attr("id", "headerWeight")
         .attr('x', 180)
-        .attr('y', 78)
+        .attr('y', 48)
         .text("Rank its Importance")
 
-    var headerAtt = attSvg.append("text")
+    var headerMost = attSvg.append("text")
         .attr("class", "headerText")
-        .attr("id", "headerWeight")
-        .attr('x', 7)
-        .attr('y', 78)
-        .text("What Matters to You?")
+        .attr("id", "headerMost")
+        .attr('x', 179)
+        .attr('y', 68)
+        .text("Most")
+
+    var headerLeast = attSvg.append("text")
+        .attr("class", "headerText")
+        .attr("id", "headerLeast")
+        .attr('x', 296)
+        .attr('y', 68)
+        .text("Least")
+
 
     var tip1 = d3.tip()
         .attr("class", "d3-tip")
@@ -255,7 +260,7 @@ function createAttPanel(attData, cities, states, sources) {
       var variableRect = variables.append("rect")
           .attr("class", "variableRect")
           .attr('x', 0)
-          .attr('y', 750)
+          .attr('y', 740)
           .attr('width', "450px")
           .attr('height', "28px")
         // .append("xhtml")
@@ -271,7 +276,7 @@ function createAttPanel(attData, cities, states, sources) {
       var attText = variables.append('text')
           .attr("class", "attText")
           .attr("x", attWidth / 5.8)
-          .attr("y", attHeight - 10)
+          .attr("y", attHeight - 20)
           .text(function(d ) { return d })
           .attr("id", function(d) {
               var attribute = createAttID(d, rankData);
@@ -288,8 +293,8 @@ function createAttPanel(attData, cities, states, sources) {
       var textX = d3.select(".attText").attr("x")
 
       var checkboxes = variables.append("foreignObject")
-          .attr('x', textX - 25)
-          .attr('y', attHeight - 26)
+          .attr('x', textX - 30)
+          .attr('y', attHeight - 36)
           .attr('width', "20px")
           .attr('height', "20px")
         .append("xhtml:body")
@@ -396,7 +401,7 @@ function createAttPanel(attData, cities, states, sources) {
       variables.call(tip1);
       variables.call(tip5);
       //define x,y property values for first rectangle
-      var x1 = (textX + labelWidth)*4.3, y1 = attHeight - 27,
+      var x1 = (textX + labelWidth)*4.3, y1 = attHeight - 37,
       textX1 = x1 + 6, textY1 = y1 + 16
 
 
@@ -422,7 +427,7 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .attr("x", textX1)
           .attr("y", textY1)
-          .text("1")
+          .text("5")
 
       var clickButton1 = variables.append("rect")
           .attr("class", "clickButton1")
@@ -526,7 +531,7 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .attr("x", textX2)
           .attr("y", textY1)
-          .text("2")
+          .text("4")
 
       var clickButton2 = variables.append("rect")
           .attr("class", "clickButton2")
@@ -731,7 +736,7 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .attr("x", textX4)
           .attr("y", textY1)
-          .text("4")
+          .text("2")
 
       var clickButton4 = variables.append("rect")
           .attr("class", "clickButton4")
@@ -833,7 +838,7 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .attr("x", textX5)
           .attr("y", textY1)
-          .text("5")
+          .text("1")
 
       var clickButton5 = variables.append("rect")
           .attr("class", "clickButton5")
