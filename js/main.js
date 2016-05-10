@@ -7,9 +7,34 @@ var citiesArray = [], rawData = [], rankData = [], attLabels = [], citySearch = 
 var numSelectedCities = 0;
 var colorCounter = 0;
 
-var defaultColor = "gray";
+var defaultColor = "aaa";
+var colorArray = ["#48a2e0", "#ff9a41", "#5fd35f", "#e25f60","#ad8bcc", "#b0776b", "#e377c2", "black", "#bcbd22", "#17becf"];
 
-var colorArray = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "black", "#bcbd22", "#17becf"];
+// var colorArray = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728","#9467bd", "#8c564b", "#e377c2", "black", "#bcbd22", "#17becf"];
+// var colorArray = ['#8dd3c7',
+// '#ffffb3',
+// '#bebada',
+// '#fb8072',
+// '#80b1d3',
+// '#fdb462',
+// '#b3de69',
+// '#fccde5',
+// '#d9d9d9',
+// '#bc80bd'];
+
+// var colorArray = [
+// '#aec7e8',
+// '#ffbb78',
+// '#98df8a',
+// '#ff9896',
+// '#c5b0d5',
+// '#c49c94',
+// '#f7b6d2',
+// '#c7c7c7',
+// '#dbdb8d',
+// '#9edae5'
+// ];
+
 var colorMaster = [];
 colorArray.forEach(function(d){
 
@@ -1274,6 +1299,7 @@ var path = d3.geo.path()
         .style("fill", defaultColor)
         .attr("stroke", "white")
         .attr("stroke-width", "2px")
+        .attr("opacity", "0.9")
         .on("mouseover", function(d){
           highlightCity(d.properties);
         })
