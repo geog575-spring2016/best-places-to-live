@@ -193,6 +193,9 @@ function createAttPanel(attData, cities, states, sources) {
 
             //change label opacity based on what is checked
             changeLabelOpacity();
+
+            resetButtonFill();
+
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             addAttRanks(attData);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -281,6 +284,8 @@ function createAttPanel(attData, cities, states, sources) {
               checkedAtts = checkedAttributes(attData, attObjArray);
               //change label opacity based on what is checked
               changeLabelOpacity();
+
+              resetButtonFill();
 
               addAttRanks(attData);
 
@@ -444,16 +449,22 @@ function createAttPanel(attData, cities, states, sources) {
               var rect5 = rectID.replace("1", "5")
               d3.select("#" + rect5).style("fill", "#888")
 
-
+              //create variable equal to ID of this attribute
+              var checkID = "#" + att + "_check"
+              //checks the checkbox for this attribute
+              checkThisAtt(checkID);
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
+              //sets the checked property
+              attObjArray = setCheckedProp(attObjArray);
+              // changes label opacity
+              changeLabelOpacity();
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
               createCitiesPanel()
               updatePropSymbols (cities)
           });
-
       //used to place next rectangle relative to previous
       var x2 = +d3.select(".clickButton1").attr("x") + 30,
       textX2 = +d3.select(".buttonText1").attr("x") + 30
@@ -539,8 +550,17 @@ function createAttPanel(attData, cities, states, sources) {
               var rect5 = rectID.replace("2", "5")
               d3.select("#" + rect5).style("fill", "#888")
 
+              //create variable equal to ID of this attribute
+              var checkID = "#" + att + "_check"
+              //checks the checkbox for this attribute
+              checkThisAtt(checkID);
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
+              //sets the checked property
+              attObjArray = setCheckedProp(attObjArray);
+              // changes label opacity
+              changeLabelOpacity();
+
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -633,9 +653,16 @@ function createAttPanel(attData, cities, states, sources) {
               var rect5 = rectID.replace("3", "5")
               d3.select("#" + rect5).style("fill", "#888")
 
-
+              //create variable equal to ID of this attribute
+              var checkID = "#" + att + "_check"
+              //checks the checkbox for this attribute
+              checkThisAtt(checkID);
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
+              //sets the checked property
+              attObjArray = setCheckedProp(attObjArray);
+              // changes label opacity
+              changeLabelOpacity();
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -728,8 +755,16 @@ function createAttPanel(attData, cities, states, sources) {
               var rect5 = rectID.replace("4", "5")
               d3.select("#" + rect5).style("fill", "#888")
 
+              //create variable equal to ID of this attribute
+              var checkID = "#" + att + "_check"
+              //checks the checkbox for this attribute
+              checkThisAtt(checkID);
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
+              //sets the checked property
+              attObjArray = setCheckedProp(attObjArray);
+              // changes label opacity
+              changeLabelOpacity();
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -822,12 +857,16 @@ function createAttPanel(attData, cities, states, sources) {
               d3.select("#" + rect4).style("fill", "#999")
 
 
-
-
-
-
+              //create variable equal to ID of this attribute
+              var checkID = "#" + att + "_check"
+              //checks the checkbox for this attribute
+              checkThisAtt(checkID);
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
+              //sets the checked property
+              attObjArray = setCheckedProp(attObjArray);
+              // changes label opacity
+              changeLabelOpacity();
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -1029,8 +1068,11 @@ function createAttPanel(attData, cities, states, sources) {
       attObjArray = createDefaultAtts(attObjArray);
 
       changeLabelOpacity();
-      // console.log(attObjArray);
+
       checkedAtts = checkedAttributes(attData, attObjArray);
+      //sets buttons as selected/colored correctly
+      resetButtonFill();
+
       //this is an array containing an object for every city with properties for city name and each selected attribute's rank
       addAttRanks(attData);
       citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData);
@@ -2550,3 +2592,68 @@ function selectCity (city){
     }
   }
 }
+
+//resets button fill to correct button based on stored weight when att is rechecked
+function resetButtonFill(){
+    var checked =  d3.selectAll(".checkbox")
+    //loops through all checkboxes
+    checked.each(function(){
+        //if current checkbox is checked, push into checkedAtts array
+        if (this.checked != false){
+            var checkID = this.id;
+            var attribute = checkID.slice(0, -6)
+            for (i=0; i<attObjArray.length; i++){
+                if (attObjArray[i].Attribute == attribute){
+                    var weight = attObjArray[i].Weight;
+                    setButtonColor(attribute, weight);
+                };
+            };
+        } else { //if att isn't checked, set all buttons to original colors
+            var checkID = this.id;
+            var attribute = checkID.slice(0, -6)
+
+            var rectID = attribute + "_backButton3"
+            //change fill
+            d3.select("#" + rectID).style("fill", "#aaa")
+
+            //change fill back to original in case it was colored differently
+            var rect1 = rectID.replace("3", "1")
+            d3.select("#" + rect1).style("fill", "#ccc")
+            //change fill back to original in case it was colored differently
+            var rect2 = rectID.replace("3", "2")
+            d3.select("#" + rect2).style("fill", "#bbb")
+            //change fill back to original in case it was colored differently
+            var rect4 = rectID.replace("3", "4")
+            d3.select("#" + rect4).style("fill", "#999")
+            //change fill back to original in case it was colored differently
+            var rect5 = rectID.replace("3", "5")
+            d3.select("#" + rect5).style("fill", "#888")
+
+        }
+
+    })
+}
+
+//sets button color based on weight when att is reselected
+function setButtonColor(attribute, weight){
+    if (weight == 1){
+        var rectID = attribute + "_backButton5"
+    } else if (weight == 2){
+      var rectID = attribute + "_backButton4"
+    } else if (weight == 3){
+        var rectID = attribute + "_backButton3"
+    } else if (weight == 4){
+        var rectID = attribute + "_backButton2"
+    } else if (weight == 5){
+        var rectID = attribute + "_backButton1"
+    }
+
+    //change fill
+    d3.select("#" + rectID).style("fill", "#038090")
+
+};
+
+//checks attribute whe ranking button is clicked
+function checkThisAtt(checkID){
+    d3.select(checkID).property("checked", true)
+};
