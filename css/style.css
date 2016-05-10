@@ -97,7 +97,11 @@ body{
     border-radius: 5px;
 }
 
-#attHeaderRect,
+#attHeaderRect {
+    fill: none;
+    stroke: #E6F2DE;
+
+}
 .filtersHeader {
   fill: #038090;
 }
