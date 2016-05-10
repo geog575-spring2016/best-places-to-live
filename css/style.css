@@ -120,6 +120,7 @@ body{
 }
 .attText {
     fill: #E6F2DE;
+    /*opacity: 0.15;*/
 }
 
 .variableRect {

@@ -177,19 +177,22 @@ function createAttPanel(attData, cities, states, sources) {
 
             //sets checked property
             attObjArray = setCheckedProp(attObjArray);
-            //toggles range sliders; buggy right now
-            attObjArray.map(function(d){
-                if (d.Checked == 0) {
-                    disableSlider(d);
-                } else if (d.Checked ==1) {
-                    enableSlider(d);
-                }
-            })
-
+            // //toggles range sliders; buggy right now
+            // attObjArray.map(function(d){
+            //     if (d.Checked == 0) {
+            //         disableSlider(d);
+            //     } else if (d.Checked ==1) {
+            //         enableSlider(d);
+            //     }
+            // })
+            //
 
             // console.log($(".checkbox"));
             //creates array of only checked attributes
             checkedAtts = checkedAttributes(attData, attObjArray);
+
+            //change label opacity based on what is checked
+            changeLabelOpacity();
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             addAttRanks(attData);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
@@ -267,89 +270,26 @@ function createAttPanel(attData, cities, states, sources) {
               //function updates "checked" property for every attribute
               attObjArray = setCheckedProp(attObjArray);
               //toggles range sliders; buggy right now
-              attObjArray.map(function(d){
-                  if (d.Checked == 0) {
-                      disableSlider(d);
-                  } else if (d.Checked ==1) {
-                      enableSlider(d);
-                  }
-              })
+              // attObjArray.map(function(d){
+              //     if (d.Checked == 0) {
+              //         disableSlider(d);
+              //     } else if (d.Checked ==1) {
+              //         enableSlider(d);
+              //     }
+              // })
               //creates array of only checked attributes
               checkedAtts = checkedAttributes(attData, attObjArray);
-              //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-              // citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
+              //change label opacity based on what is checked
+              changeLabelOpacity();
+
               addAttRanks(attData);
 
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-              var attribute = createAttID(d, rankData)
-              setWeights(attObjArray, attribute)
               createCitiesPanel()
               updatePropSymbols (cities)
 
           });
 
-function setWeights(attObjArray, attribute){
-
-    var weight = ""
-    attObjArray.map(function(d){
-        if (attribute == d.Attribute){
-            //retrieves checked status of attribute
-            var checked = d.Checked;
-            //if unchecking attribute, remove dark fill
-            if (checked == 0){
-                var attID = attribute + "_rect1"
-                //trim "_rect1" from end of string
-                var att = attID.slice(0, -6);
-
-                var attID2 = attID.replace("1", "2")
-                var attID3 = attID.replace("1", "3")
-                d3.select("#"+ attID).style("fill", "none")
-                d3.select("#"+ attID2).style("fill", "none")
-                d3.select("#"+ attID3).style("fill", "none")
-
-            } else {
-                weight = d.Weight
-
-                    if (weight == 0.5){
-                        var attID = attribute + "_rect1"
-                        //trim "_rect1" from end of string
-                        var att = attID.slice(0, -6);
-
-
-                        var attID2 = attID.replace("1", "2")
-                        var attID3 = attID.replace("1", "3")
-                        d3.select("#"+ attID).style("fill", "#aaa")
-                        d3.select("#"+ attID2).style("fill", "#eee")
-                        d3.select("#"+ attID3).style("fill", "#eee")
-                    } else if (weight == 1){
-                        var attID = attribute + "_rect2"
-                        //trim "_rect1" from end of string
-                        var att = attID.slice(0, -6);
-
-
-                        var attID1 = attID.replace("2", "1")
-                        var attID3 = attID.replace("2", "3")
-                        d3.select("#"+ attID1).style("fill", "#aaa")
-                        d3.select("#"+ attID).style("fill", "#999")
-                        d3.select("#"+ attID3).style("fill", "#eee")
-
-                    } else if (weight == 2){
-                        var attID = attribute + "_rect3"
-                        //trim "_rect1" from end of string
-                        var att = attID.slice(0, -6);
-
-
-                        var attID1 = attID.replace("3", "1")
-                        var attID2 = attID.replace("3", "2")
-                        d3.select("#"+ attID1).style("fill", "#aaa")
-                        d3.select("#"+ attID2).style("fill", "#999")
-                        d3.select("#"+ attID).style("fill", "#888")
-
-                    };
-              };
-          };
-    });
-};
 
           //define x,y property values for first rectangle
           var x1 = (textX + labelWidth)*3.9
@@ -1087,6 +1027,8 @@ function setWeights(attObjArray, attribute){
 
       //sets the default atts to be checked
       attObjArray = createDefaultAtts(attObjArray);
+
+      changeLabelOpacity();
       // console.log(attObjArray);
       checkedAtts = checkedAttributes(attData, attObjArray);
       //this is an array containing an object for every city with properties for city name and each selected attribute's rank
@@ -1100,6 +1042,17 @@ function setWeights(attObjArray, attribute){
       // createCitiesPanel(citiesArray, rankData, citySearch, filteredCities);
 
 };
+
+function changeLabelOpacity(){
+    attObjArray.map(function(d){
+        if (d.Checked == 1){
+            d3.select("#" + d.Attribute).style("opacity", "1")
+        } else {
+            d3.select("#" + d.Attribute).style("opacity", "0.25")
+        }
+
+    })
+}
 //function that returns array of objects containing city name and ID; mostly for testing reordering of cities panel until we implement calculation
 function createCitiesArray(attData) {
 
@@ -1135,39 +1088,39 @@ function createDefaultAtts(attObjArray) {
       $("#Rent_Income_Ratio_Rank_check")[0].checked = true
       $("#Transit_Rank_check")[0].checked = true
 
-    attObjArray.map(function(d){
-
-        var attribute = d.Attribute
-        var selection = $("#" + attribute + "_check")[0]
-
-        var sliderID = "#" + attribute + "-slider-range"
-        var labelID = "#"+ attribute + "_rankValMin"
-
-        var rect1ID = "#" + attribute + "_rect1"
-        var rect2ID = "#" + attribute + "_rect2"
-        var rect3ID = "#" + attribute + "_rect3"
-
-
-        if (selection.checked == true){
-            //populates filter labels for default atts
-            $(labelID).val($(sliderID).slider("values", 0) +
-            " - " + $(sliderID).slider("values", 1));
-
-            //set weight on rectangles for default atts
-            d3.select(rect1ID).style("fill", "#aaa")
-            d3.select(rect2ID).style("fill", "#999")
-
-        } else {
-            disableSlider(d);
-            //set weight on rectangles for default atts
-            d3.select(rect1ID).style("fill", "none")
-            d3.select(rect2ID).style("fill", "none")
-            d3.select(rect3ID).style("fill", "none")
-
-        }
-
-
-  })
+  //   attObjArray.map(function(d){
+  //
+  //       var attribute = d.Attribute
+  //       var selection = $("#" + attribute + "_check")[0]
+  //
+  //       var sliderID = "#" + attribute + "-slider-range"
+  //       var labelID = "#"+ attribute + "_rankValMin"
+  //
+  //       var rect1ID = "#" + attribute + "_rect1"
+  //       var rect2ID = "#" + attribute + "_rect2"
+  //       var rect3ID = "#" + attribute + "_rect3"
+  //
+  //
+  //       if (selection.checked == true){
+  //           //populates filter labels for default atts
+  //           $(labelID).val($(sliderID).slider("values", 0) +
+  //           " - " + $(sliderID).slider("values", 1));
+  //
+  //           //set weight on rectangles for default atts
+  //           d3.select(rect1ID).style("fill", "#aaa")
+  //           d3.select(rect2ID).style("fill", "#999")
+  //
+  //       } else {
+  //           disableSlider(d);
+  //           //set weight on rectangles for default atts
+  //           d3.select(rect1ID).style("fill", "none")
+  //           d3.select(rect2ID).style("fill", "none")
+  //           d3.select(rect3ID).style("fill", "none")
+  //
+  //       }
+  //
+  //
+  // })
     //updates checked property appropriately
     attObjArray.map(function(d){
         if (d.Attribute == "Rent_Income_Ratio_Rank" || d.Attribute == "Transit_Rank"){
