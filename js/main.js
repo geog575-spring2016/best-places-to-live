@@ -19,8 +19,6 @@ colorArray.forEach(function(d){
   colorMaster.push(colorObj);
 })
 
-console.log(colorMaster);
-
 function setPage() {
     //set variable to use queue.js to parallelize asynchronous data loading
     var q = d3_queue.queue();
@@ -157,38 +155,49 @@ function createAttPanel(attData, cities, states, sources) {
         .attr("class", "attTitle")
         .attr("x", attWidth / 5)
         .attr("y", attMargin.top)
-        .text("Select Attributes")
+        .text("Choose What Matters to You")
 
-    // var checkAll = attSvg.append("foreignObject")
-    //     .attr('x', 23)
-    //     .attr('y', 25)
-    //     .attr('width', "20px")
-    //     .attr('height', "20px")
-    //   .append("xhtml:body")
-    //     .html(function(d) {
-    //         return "<form action='#'><p><label><input type=checkbox id='checkAll'>Check All</label></input></form>"
-    //     })
-    //     .on("change", function(){
-    //       // console.log($("#checkAll"))
-    //         // var checkStatus = d3.selectAll(".checkbox").attr("checked")
-    //         //     console.log(check);
-    //       var status = $("#checkAll")[0].checked
-    //
-    //       console.log(status);
-    //         d3.selectAll(".checkbox")
-    //             .attr("checked", status)
-    //
-    //
-    //         // console.log($(".checkbox"));
-    //         //creates array of only checked attributes
-    //         checkedAtts = checkedAttributes(attData, attObjArray);
-    //         //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-    //         citiesArray = addAttRanks(attData, attObjArray, checkedAtts, citiesArray);
-    //         citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-    //         createCitiesPanel()
-    //         updatePropSymbols (cities)
-    //
-    //     });
+    var checkAll = attSvg.append("foreignObject")
+        .attr('x', -3)
+        .attr('y', 40)
+        .attr('width', "120px")
+        .attr('height', "20px")
+      .append("xhtml:body")
+        .html(function(d) {
+            return "<form action='#'><p><label><input type=checkbox id='checkAll'>Check All</label></input></form>"
+        })
+        .on("change", function(){
+            // console.log($("#checkAll"))
+              // var checkStatus = d3.selectAll(".checkbox").attr("checked")
+              //     console.log(check);
+            //retrieve status of check all checkbox
+            var status = $("#checkAll")[0].checked
+            // set status of all checkboxes to match check all
+            $(":checkbox").prop("checked", status)
+
+            //sets checked property
+            attObjArray = setCheckedProp(attObjArray);
+            //toggles range sliders; buggy right now
+            attObjArray.map(function(d){
+                if (d.Checked == 0) {
+                    disableSlider(d);
+                } else if (d.Checked ==1) {
+                    enableSlider(d);
+                }
+            })
+
+
+            // console.log($(".checkbox"));
+            //creates array of only checked attributes
+            checkedAtts = checkedAttributes(attData, attObjArray);
+            //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+            addAttRanks(attData);
+            citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+            createCitiesPanel()
+            updatePropSymbols (cities)
+
+        });
+        
     //creates a group for each rectangle and offsets each by same amount
     var variables = attSvg.selectAll('.variables')
         .data(attLabels)
@@ -740,7 +749,6 @@ function addAttRanks(attData) {
 
     //this is an array of objects containing city name and the rank for each attribute that is checked
     // return cityRankArray
-    console.log(citiesArray);
 }
 
 function checkedAttributes(attData, attObjArray){
@@ -1789,7 +1797,13 @@ var path = d3.geo.path()
             .transition()
             .delay(0)
             .duration(1000)
-            .attr('d', path.pointRadius(function(d) {return radius(d.properties.Score)}))
+            .attr('d', path.pointRadius(function(d) {
+                if (d.properties.Score > 0){
+                    return radius(d.properties.Score)
+                } else { //sets all circles to radius of 5 when no atts selected
+                    return 5
+                }
+            }))
               // .style("stroke-width", (1/d3.event.scale)*2+"px")
              .attr("display", function (){
                // var inArray =  $.inArray(d.properties.City, citiesArray);
