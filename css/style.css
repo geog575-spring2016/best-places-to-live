@@ -52,20 +52,22 @@
 
 #title{
     color: #E6F2DE;
+    background-color: #038090;
+    border: solid;
+    border-color: #E6F2DE;
     font-size: 3.5em;
     text-align: center;
     font-family: Lucida, sans-serif;
 		width: 100%;
 }
-body{
-  background-color: #134B5F;
-}
+
 #mapContainer {
 	float: right;
 	/*border: 2px solid black;*/
 	margin: 5px;
 	bottom: 0;
-  background-color: #134B5F;
+  background-color: #ccc
+  opacity: .11;
 
 }
 #buttonText{
@@ -85,8 +87,8 @@ body{
     fill: none;
 }
 #attContainer {
-    height: 100%;
-    width: 350px;
+    height: 85%;
+    width: 400px;
     border:2px solid #E6F2DE;
     overflow-y: scroll;
     overflow-x: scroll;
@@ -95,6 +97,7 @@ body{
     color:#E6F2DE;
 		font-family: "trebuchet ms";
     border-radius: 5px;
+    opacity: .9;
 }
 
 #attHeaderRect {
@@ -152,6 +155,7 @@ body{
     background-color: #134B5F;
     font-family: "trebuchet ms";
     border-radius: 5px;
+    opacity: .9;
 
 }
 

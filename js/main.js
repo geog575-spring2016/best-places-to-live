@@ -3,7 +3,16 @@ window.onload = setPage();
 //create empty arrays that are globally accessible
 var citiesArray = [], rawData = [], rankData = [], attLabels = [], citySearch = [],
     attObjArray = [], checkedAtts = [];
-
+var bodywidth = +d3.select("body").attr('width')
+    console.log(window.innerWidth)
+    if (window.innerWidth > 1350){
+      var background = 'url(../img/largecity.jpg)'
+    }
+    else {
+      var background = 'url(../img/citymed.jpg)'
+    }
+    d3.select("body").style("background", background)
+    
 var numSelectedCities = 0;
 var colorCounter = 0;
 
@@ -1179,7 +1188,7 @@ function createMap(states, cities) {
         // .translate([width*1.75, height*1.333]);
 
   var projection = d3.geo.mercator()
-  .center([120, 40 ])
+  .center([100, 43 ])
     .scale(width*(2/3))
     .rotate([-150,0]);
     // .translate([width/2, height/2]);
