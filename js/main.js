@@ -885,6 +885,23 @@ var path = d3.geo.path()
         .call(zoom)
         .call(zoom.event);
 
+
+    var legend = map.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(" + (width - 50) + "," + (height - 20) + ")")
+      .selectAll("g")
+        .data([100, 70, 50])
+      .enter().append("g");
+
+    legend.append("circle")
+        .attr("cy", function(d) { return -radius(d); })
+        .attr("r", radius);
+
+    legend.append("text")
+        .attr("y", function(d) { return -2 * radius(d); })
+        .attr("dy", "1.3em")
+        .text(d3.format(".1s"));
+
     //function to control when the user zooms
     function zoomed() {
 
@@ -907,6 +924,9 @@ var path = d3.geo.path()
 
                 .attr('d', path.pointRadius(function(d) {  return radius(d.properties.Score); }))
                 .attr("stroke-width", (1/d3.event.scale)*2+"px");
+
+          // legend.attr("r", radius);
+
     }
     joinData(cities);
     //for now the prop symbols use the ID to scale the symbol to the correct size.
@@ -948,21 +968,7 @@ var path = d3.geo.path()
           selectCity(d.properties.City);
         });
 
-    var legend = map.append("g")
-        .attr("class", "legend")
-        .attr("transform", "translate(" + (width - 50) + "," + (height - 20) + ")")
-      .selectAll("g")
-        .data([70, 50, 30])
-      .enter().append("g");
-
-    legend.append("circle")
-        .attr("cy", function(d) { return -radius(d); })
-        .attr("r", radius);
-
-    legend.append("text")
-        .attr("y", function(d) { return -2 * radius(d); })
-        .attr("dy", "1.3em")
-        .text(d3.format(".1s"));
+    
 
 }
 
@@ -1768,6 +1774,10 @@ var path = d3.geo.path()
         //   }
         // });
 
+// g.selectAll("path")
+
+//                 // .attr('d', path.pointRadius(function(d) {  return radius(d.properties.Score); }))
+//                 .attr("stroke-width", (1/d3.event.scale)*2+"px");
 
 
         cities.forEach(function(d){
@@ -1820,7 +1830,7 @@ function highlightCity(props){
    var selected = d3.selectAll("." + cityFixed)
         .style({
             "stroke": "black",
-            "stroke-width": "2"
+            "stroke-width": (1/d3.event.scale)*2+"px"
         });
 
     setCityLabel(props);
@@ -1834,7 +1844,7 @@ function dehighlightCity(props){
    var selected = d3.selectAll("." + cityFixed)
         .style({
             "stroke": "white",
-            "stroke-width": "2"
+            "stroke-width": (1/d3.event.scale)*2+"px"
         });
 
   d3.select(".infolabel")
@@ -1954,7 +1964,30 @@ function attPopup(attData, attribute){
 
 function setCityLabel(props){
     //label content
-    var labelAttribute = "<h1>Score: <b>" + props.Score + "</b></h1>";
+
+    console.log(citiesArray);
+    var label = "";
+    // var count = 0;
+    citiesArray.forEach(function(d){
+      // console.log(d.City);
+      // console.log(props.City);
+      
+      if(d.City == props.City){
+        for (var key in d) {
+
+          var keyLabel = key.replace(/_Rank/g, "");
+          keyLabel = keyLabel.replace(/_/g, " ");
+          // count ++;
+          if (key != "Selected" && key != "Score" && key != "City") {
+            label += "<h3><b>" + keyLabel + ": " + d[key] + "</h3></b><br>";
+          }
+        }
+      }
+    })
+
+    // console.log(label);
+    var cityLabel = "<h1><b>" + props.name + "</b></h1>";
+    var scoreLabel = "<h2>Overall Score: "+ props.Score + "</h2>"
 
     //create info label div
     var infolabel = d3.select("body")
@@ -1963,11 +1996,17 @@ function setCityLabel(props){
             "class": "infolabel",
             "id": props.City + "_label"
         })
-        .html(labelAttribute);
+        .html(cityLabel);
+
+    var scoreDiv = infolabel.append("div")
+        .attr("class", "labelname")
+        // .attr("height",  25 * (count + 1))
+        .html(scoreLabel);
 
     var regionName = infolabel.append("div")
         .attr("class", "labelname")
-        .html(props.name);
+        // .attr("height",  25 * (count + 1))
+        .html(label);
 };
 
 function moveAttLabel(){
@@ -2056,6 +2095,12 @@ function selectCity (city){
   var cityReplaceWithPeriod = city.replace(/ /g, ".");
   var cityReplaceWithUnderscore = city.replace(/ /g, "_");
 
+   d3.selection.prototype.moveToFront = function() {  
+      return this.each(function(){
+        this.parentNode.appendChild(this);
+      });
+    };
+
   for (i = 0; i < citiesArray.length; i++){
     // console.log(citiesArray[i].City);
 
@@ -2099,7 +2144,9 @@ function selectCity (city){
           var color = colorMaster[colorCounter].colorString;
           console.log(color);
           d3.select("#" + cityReplaceWithUnderscore + "_rect").style("fill", color);
-          d3.select("path." + cityReplaceWithPeriod).style("fill", color);
+          d3.select("path." + cityReplaceWithPeriod)
+            .style("fill", color)
+           .moveToFront();
 
           //update cities panel based on new selection
           appendCity();
