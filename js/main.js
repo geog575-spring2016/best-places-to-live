@@ -201,11 +201,26 @@ function createAttPanel(attData, cities, states, sources) {
 
         });
 
+    var attHeaderRect = attSvg.append("rect")
+        .attr("id", "attHeaderRect")
+        .attr("height", "1px")
+        .attr("width", "100%")
+        .attr("y", 83)
+        .attr("x", -10)
+
     var headerWeight = attSvg.append("text")
+        .attr("class", "headerText")
         .attr("id", "headerWeight")
-        .attr('x', 170)
-        .attr('y', 55)
-        .text("How important is this?")
+        .attr('x', 180)
+        .attr('y', 78)
+        .text("Rank its Importance")
+
+    var headerAtt = attSvg.append("text")
+        .attr("class", "headerText")
+        .attr("id", "headerWeight")
+        .attr('x', 7)
+        .attr('y', 78)
+        .text("What Matters to You?")
 
     var tip1 = d3.tip()
         .attr("class", "d3-tip")
@@ -1270,7 +1285,7 @@ var path = d3.geo.path()
           selectCity(d.properties.City);
         });
 
-    
+
 
 }
 
@@ -2027,7 +2042,7 @@ function setCityLabel(props){
     var label = "";
     // var count = 0;
     citiesArray.forEach(function(d){
-      
+
       if(d.City == props.City){
         for (var key in d) {
           var keyLabel = key.replace(/_Rank/g, "");
@@ -2036,7 +2051,7 @@ function setCityLabel(props){
             if($.inArray(key, checkedAtts) >= 0){
               label += "<h3><b>" + keyLabel + ": " + d[key] + "</h3></b><br>";
             }
-            
+
           // }
         }
       }
@@ -2158,7 +2173,7 @@ function selectCity (city){
   var cityReplaceWithPeriod = city.replace(/ /g, ".");
   var cityReplaceWithUnderscore = city.replace(/ /g, "_");
 
-   d3.selection.prototype.moveToFront = function() {  
+   d3.selection.prototype.moveToFront = function() {
       return this.each(function(){
         this.parentNode.appendChild(this);
       });
