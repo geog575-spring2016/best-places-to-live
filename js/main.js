@@ -1528,7 +1528,7 @@ function createCitiesPanel(){
             //sets att title
             var cityTitleRect = citySvg.append("rect")
                 .attr("id", "cityTitleRect")
-                .attr("y", cityMargin)
+                .attr("y", cityMargin * 5 + 1.5)
                 .attr("height", rectHeight)
 
 
@@ -1540,9 +1540,8 @@ function createCitiesPanel(){
             var cityTitle = citySvg.append("text")
                 .attr("id", "cityTitle")
                 .attr("x", titleWidth)
-                .attr("y", titleHeight*1.55)
+                .attr("y", titleHeight*3)
                 .text("Top Ranked Cities")
-                .style("font-size", fontSize + "px")
 
 
             var cityHeaderRect = citySvg.append("rect")
@@ -1557,19 +1556,19 @@ function createCitiesPanel(){
                 .attr("id", "backButton")
                 .attr("height", rectHeight * 0.66)
                 .attr("width", "100%")
-                .attr("y", 38)
+                .attr("y", cityMargin - 3)
 
             var buttonText = citySvg.append("text")
                 .attr("id", "buttonText")
-                .attr("y", 53)
-                .attr("x", 50)
+                .attr("y", cityMargin + 11)
+                .attr("x", 30)
                 .text("Show Selected Cities Only")
 
             var selectButton = citySvg.append("rect")
                 .attr("id", "selectButton")
                 .attr("height", rectHeight * 0.66)
                 .attr("width", "100%")
-                .attr("y", 38)
+                .attr("y", cityMargin - 3)
                 .on("click", selectCities)
 
 
@@ -1703,7 +1702,8 @@ function selectCities(){
                 if (d.Selected == true)
                 selectedCities.push(d)
             })
-            d3.select("#buttonText").text("Show All Cities");
+            d3.select("#buttonText").text("Show All Cities")
+                .attr("x", 70)
 
             d3.selectAll(".cities").remove()
 
@@ -1711,7 +1711,9 @@ function selectCities(){
         }
         if (buttonText == "Show All Cities") {
             createCitiesPanel();
-            d3.select("#buttonText").text("Show Selected Cities Only");
+            d3.select("#buttonText").text("Show Selected Cities Only")
+            .attr("x", 30)
+
 
         }
 
