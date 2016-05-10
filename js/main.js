@@ -4,15 +4,13 @@ window.onload = setPage();
 var citiesArray = [], rawData = [], rankData = [], attLabels = [], citySearch = [],
     attObjArray = [], checkedAtts = [];
 var bodywidth = +d3.select("body").attr('width')
-    console.log(window.innerWidth)
     if (window.innerWidth > 1350){
       var background = 'url(../img/largecity.jpg)'
-    }
-    else {
+    } else {
       var background = 'url(../img/citymed.jpg)'
     }
     d3.select("body").style("background", background)
-    
+
 var numSelectedCities = 0;
 var colorCounter = 0;
 
@@ -53,36 +51,54 @@ function callback(error, statesData, citiesData, attData, sources){
 
 
     createAttPanel(attData, cities, states, sources);
-    // createSourceDivs(sources);
-
 
 }
 
-// function createSourceDivs(sources){
-//
-//     d3.select("body")
-//         .data(sources)
-//         .enter()
-//       .append("div")
-//         .attr("class", "dialog")
-//         .attr("id", function(d){
-//             var att = d.Name;
-//             return att + "_dialog"
-//         })
-//         .attr("title", function(d, i){
-//             // get attribut ename
-//             var att = d.Name;
-//             // create empty array
-//             var titleArray = [];
-//             // push single element into array because removeUnderscores only accepts an array
-//             titleArray.push(att)
-//             var title = removeUnderscores(titleArray)
-//             return title
-//         })
-//         .html(function(d){
-//             return "<p>" + d.Info + "<p>";
-//         })
-// }
+function createSourceDivs(sources){
+
+    d3.select("#attContainer")
+        .data(sources)
+        .enter()
+      .append("div")
+        .attr("class", "dialog")
+        .attr("id", function(d){
+            var att = d.Name;
+
+            return att + "_dialog"
+        })
+        .attr("title", function(d, i){
+            // get attribute name
+            var att = d.Name;
+            // create empty array
+            var titleArray = [];
+            // push single element into array because removeUnderscores only accepts an array
+            titleArray.push(att)
+            var title = removeUnderscores(titleArray)
+            var newTitle = title[0].slice(0, -5)
+            return newTitle
+        })
+        .html(function(d){
+            var info = "<p>" + d.Info + "<p>";
+
+            var att = d.Name;
+            // create empty array
+            var titleArray = [];
+            // push single element into array because removeUnderscores only accepts an array
+            titleArray.push(att)
+            var label = removeUnderscores(titleArray)
+            var newLabel = label[0].slice(0, -5)
+
+            var link = "<a href=" + d.Source + " target='_blank'>" + newLabel + "</a>"
+
+            return info + link
+        })
+        .each(function(d){
+            var attID = "#" + this.id;
+            $(attID).dialog({
+                autoOpen: false
+            })
+        })
+}
 
 function createAttPanel(attData, cities, states, sources) {
 
@@ -159,7 +175,7 @@ function createAttPanel(attData, cities, states, sources) {
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
-        .attr("x", attWidth / 8)
+        .attr("x", attWidth / 9)
         .attr("y", attMargin.top)
         .text("What Matters to You?")
 
@@ -234,20 +250,6 @@ function createAttPanel(attData, cities, states, sources) {
         .attr('x', 296)
         .attr('y', 68)
         .text("Least")
-
-
-    var tip1 = d3.tip()
-        .attr("class", "d3-tip")
-        .offset([-10, 0])
-        .html(function(d){
-            return "Very important"
-        })
-    var tip5 = d3.tip()
-        .attr("class", "d3-tip")
-        .offset([-10, 0])
-        .html(function(d){
-            return "Not that important"
-        })
 
     //creates a group for each rectangle and offsets each by same amount
     var variables = attSvg.selectAll('.variables')
@@ -349,7 +351,52 @@ function createAttPanel(attData, cities, states, sources) {
       var labelX = +d3.select(".attText").attr("x")
       var labelY = +d3.select(".attText").attr("y") - 13
 
-      var infoicon = variables.append("foreignObject")
+      // var infoicon = variables.append("foreignObject")
+      //     .attr("x", function(d){
+      //         //get unique attribute for every variable
+      //         var attribute = createAttID(d, rankData)
+      //         var labelWidth = d3.select("#" + attribute).node().getBBox().width
+      //
+      //         return labelX + labelWidth + 5
+      //     })
+      //     .attr('y', labelY)
+      //     // .attr('width', "20px")
+      //     // .attr('height', "20px")
+      //   .append("xhtml:div")
+      //     .html(function(d) {
+      //         //get unique attribute for every variable
+      //         var attribute = createAttID(d, rankData)
+      //         //create ID for checkboxes
+      //         var attID = attribute + "_icon";
+      //         return "<button class='ui-icon ui-icon-info' id='" + attID + "'></button>"
+      //     })
+      //     // .each(function(d){
+      //     //     //get unique attribute for every variable
+      //     //     var attribute = createAttID(d, rankData)
+      //     //     //create ID for checkboxes
+      //     //     var attID = attribute + "_icon";
+      //     //     console.log(attID);
+      //     //     $(attID).button({
+      //     //         icons: {primary: "ui-icon-info"}
+      //     //     })
+      //     // })
+      //     .on("click", function(d){
+      //       //get unique attribute for every variable
+      //       var attribute = d.Name;
+      //       var attID = attribute + "_dialog"
+      //       // sourcePopup(d, attID, attribute);
+      //       $("#" + attID).dialog( "open" );
+      //     })
+      var labelY = +d3.select(".attText").attr("y") - 11
+
+      var infoBack = variables.append("rect")
+          .attr("class", "infoBack")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_infoBack";
+          })
           .attr("x", function(d){
               //get unique attribute for every variable
               var attribute = createAttID(d, rankData)
@@ -358,33 +405,141 @@ function createAttPanel(attData, cities, states, sources) {
               return labelX + labelWidth + 5
           })
           .attr('y', labelY)
-          // .attr('width', "20px")
-          // .attr('height', "20px")
-        .append("xhtml:div")
-          .html(function(d) {
-              //get unique attribute for every variable
-              var attribute = createAttID(d, rankData)
-              //create ID for checkboxes
-              var attID = attribute + "_icon";
-              return "<button class='ui-icon ui-icon-info' id='" + attID + "'></button>"
+
+
+
+
+      var infoText = variables.append("text")
+          // .attr("class", "infoT")
+          .attr("id", "infoText")
+          .attr("x", function(d){
+              var attribute = createAttID(d, rankData);
+
+              var attID = "#" + attribute + "_infoBack";
+              return +d3.select(attID).attr("x") + 3
           })
-          // .each(function(d){
-          //     //get unique attribute for every variable
-          //     var attribute = createAttID(d, rankData)
-          //     //create ID for checkboxes
-          //     var attID = attribute + "_icon";
-          //     console.log(attID);
-          //     $(attID).button({
-          //         icons: {primary: "ui-icon-info"}
-          //     })
-          // })
-          // .on("click", function(d){
-          //   //get unique attribute for every variable
-          //   var attribute = createAttID(d, rankData)
-          //   var attID = attribute + "_icon"
-          //   sourcePopup(d, attID, attribute);
-          //
-          // })
+          .attr("y", labelY + 10)
+          .text("?")
+
+      var clickButton1 = variables.append("rect")
+          .attr("class", "infoClick")
+          .attr("id", function(d){
+              //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+              var attribute = createAttID(d, rankData);
+
+              return attribute + "_infoClick";
+          })
+          .attr("x", function(d){
+              var attribute = createAttID(d, rankData);
+
+              var attID = "#" + attribute + "_infoBack";
+              return +d3.select(attID).attr("x")
+          })
+          .attr("y", labelY)
+          .on("click", function(d){
+              var attID = this.id;
+              // //trim "_rect1" from end of string
+              // var att = attID.slice(0, -13);
+              //changes click to back in ID string so we can change fill
+              var dialogID = "#" + attID.replace("infoClick", "dialog")
+
+
+              // sourcePopup(d, attID, attribute);
+              $(dialogID).dialog( "open" );
+          })
+        //
+        //
+        //
+        //
+        //   var buttonText1 = variables.append("text")
+        //       .attr("class", "buttonText1")
+        //       .attr("id", function(d){
+        //           //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+        //           var attribute = createAttID(d, rankData);
+        //
+        //           return attribute + "_buttonText1";
+        //       })
+        //       .attr("x", textX1)
+        //       .attr("y", textY1)
+        //       .text("5")
+        //
+        //   var clickButton1 = variables.append("rect")
+        //       .attr("class", "clickButton1")
+        //       .attr("id", function(d){
+        //           //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
+        //           var attribute = createAttID(d, rankData);
+        //
+        //           return attribute + "_clickButton1";
+        //       })
+        //       .attr("x", x1)
+        //       .attr("y", y1)
+        //       .on("mouseover", function(){
+        //           //extract ID of whichever rectangle is clicked
+        //           var attID = this.id;
+        //           //changes click to back in ID string so we can change fill
+        //           var rectID = attID.replace("click", "back")
+        //           //change fill
+        //           d3.select("#" + rectID).style("stroke", "#2799c2")
+        //       })
+        //       .on("mouseout", function(){
+        //         //extract ID of whichever rectangle is clicked
+        //         var attID = this.id;
+        //         //changes click to back in ID string so we can change fill
+        //         var rectID = attID.replace("click", "back")
+        //         //change fill
+        //         d3.select("#" + rectID).style("stroke", "none")
+        //       })
+        //       .on("click", function(){
+        //           //extract ID of whichever rectangle is clicked
+        //           var attID = this.id;
+        //           //trim "_rect1" from end of string
+        //           var att = attID.slice(0, -13);
+        //
+        //           //loops through all attribute objects and sets weight to 0.5 if appropriate
+        //           for (i=0; i<attObjArray.length; i++){
+        //               if (attObjArray[i].Attribute == att) {
+        //                   attObjArray[i].Weight = 5;
+        //               };
+        //           };
+        //
+        //
+        //           //changes click to back in ID string so we can change fill
+        //           var rectID = attID.replace("click", "back")
+        //           //change fill
+        //           d3.select("#" + rectID).style({
+        //               fill: "#038090"
+        //             })
+        //
+        //           //change fill back to original in case it was colored differently
+        //           var rect2 = rectID.replace("1", "2")
+        //           d3.select("#" + rect2).style("fill", "#bbb")
+        //           //change fill back to original in case it was colored differently
+        //           var rect3 = rectID.replace("1", "3")
+        //           d3.select("#" + rect3).style("fill", "#aaa")
+        //           //change fill back to original in case it was colored differently
+        //           var rect4 = rectID.replace("1", "4")
+        //           d3.select("#" + rect4).style("fill", "#999")
+        //           //change fill back to original in case it was colored differently
+        //           var rect5 = rectID.replace("1", "5")
+        //           d3.select("#" + rect5).style("fill", "#888")
+        //
+        //           //create variable equal to ID of this attribute
+        //           var checkID = "#" + att + "_check"
+        //           //checks the checkbox for this attribute
+        //           checkThisAtt(checkID);
+        //           //creates array of only checked attributes
+        //           checkedAtts = checkedAttributes(attData, attObjArray);
+        //           //sets the checked property
+        //           attObjArray = setCheckedProp(attObjArray);
+        //           // changes label opacity
+        //           changeLabelOpacity();
+        //           //this is an array containing an object for every city with properties for city name and each selected attribute's rank
+        //           addAttRanks(attData);
+        //           citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
+        //           createCitiesPanel()
+        //           updatePropSymbols (cities)
+        //       });
+
 // function sourcePopup(d, attID, attribute){
 //     var dialogArray = [];
 //     dialogArray.push(d)
@@ -406,9 +561,6 @@ function createAttPanel(attData, cities, states, sources) {
 //     // console.log($("#" + attribute + "_dialog"))
 //
 // }
-
-      variables.call(tip1);
-      variables.call(tip5);
       //define x,y property values for first rectangle
       var x1 = (textX + labelWidth)*4.3, y1 = attHeight - 37,
       textX1 = x1 + 6, textY1 = y1 + 16
@@ -939,8 +1091,8 @@ function createAttPanel(attData, cities, states, sources) {
 
       createCitiesPanel();
       createMap(states, cities);
-      // updatePropSymbols(citiesArray);
 
+      createSourceDivs(sources);
 };
 
 function changeLabelOpacity(){
