@@ -158,14 +158,14 @@ body{
 }
 
 .legend text {
-  fill: #777;
+  fill: white;
   font: 10px sans-serif;
   text-anchor: middle;
 }
 
 .infolabel {
     position: absolute;
-    height: 50px;
+    /*height: 50px;*/
     min-width: 100px;
     color: #E6F2DE;
     background-color: #038090;
@@ -175,6 +175,20 @@ body{
 }
 
 .infolabel h1 {
+    margin: 0 20px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
+}
+
+.infolabel h2 {
+    margin: 0 20px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
+}
+
+.infolabel h3 {
     margin: 0 20px 0 0;
     padding: 0;
     display: inline-block;
