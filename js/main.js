@@ -237,19 +237,19 @@ function createAttPanel(attData, cities, states, sources) {
         .attr('y', 48)
         .text("Rank its Importance")
 
-    var headerMost = attSvg.append("text")
-        .attr("class", "headerText")
-        .attr("id", "headerMost")
-        .attr('x', 179)
-        .attr('y', 68)
-        .text("Most")
-
     var headerLeast = attSvg.append("text")
         .attr("class", "headerText")
         .attr("id", "headerLeast")
-        .attr('x', 296)
+        .attr('x', 179)
         .attr('y', 68)
         .text("Least")
+
+    var headerMost = attSvg.append("text")
+        .attr("class", "headerText")
+        .attr("id", "headerMost")
+        .attr('x', 299)
+        .attr('y', 68)
+        .text("Most")
 
     //creates a group for each rectangle and offsets each by same amount
     var variables = attSvg.selectAll('.variables')
@@ -421,7 +421,7 @@ function createAttPanel(attData, cities, states, sources) {
           .attr("y", labelY + 10)
           .text("?")
 
-      var clickButton1 = variables.append("rect")
+      var infoClick = variables.append("rect")
           .attr("class", "infoClick")
           .attr("id", function(d){
               //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
@@ -479,7 +479,7 @@ function createAttPanel(attData, cities, states, sources) {
         //           //changes click to back in ID string so we can change fill
         //           var rectID = attID.replace("click", "back")
         //           //change fill
-        //           d3.select("#" + rectID).style("stroke", "#2799c2")
+        //           d3.select("#" + rectID).style("stroke", "#3399FF")
         //       })
         //       .on("mouseout", function(){
         //         //extract ID of whichever rectangle is clicked
@@ -507,7 +507,7 @@ function createAttPanel(attData, cities, states, sources) {
         //           var rectID = attID.replace("click", "back")
         //           //change fill
         //           d3.select("#" + rectID).style({
-        //               fill: "#038090"
+        //               fill: "#3399FF"
         //             })
         //
         //           //change fill back to original in case it was colored differently
@@ -588,7 +588,7 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .attr("x", textX1)
           .attr("y", textY1)
-          .text("5")
+          .text("1")
 
       var clickButton1 = variables.append("rect")
           .attr("class", "clickButton1")
@@ -606,7 +606,10 @@ function createAttPanel(attData, cities, states, sources) {
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("stroke", "#2799c2")
+              d3.select("#" + rectID).style({
+                  stroke: "#3399FF",
+                  "stroke-width": "2px"
+              })
           })
           .on("mouseout", function(){
             //extract ID of whichever rectangle is clicked
@@ -625,7 +628,7 @@ function createAttPanel(attData, cities, states, sources) {
               //loops through all attribute objects and sets weight to 0.5 if appropriate
               for (i=0; i<attObjArray.length; i++){
                   if (attObjArray[i].Attribute == att) {
-                      attObjArray[i].Weight = 5;
+                      attObjArray[i].Weight = 1;
                   };
               };
 
@@ -634,21 +637,21 @@ function createAttPanel(attData, cities, states, sources) {
               var rectID = attID.replace("click", "back")
               //change fill
               d3.select("#" + rectID).style({
-                  fill: "#038090"
+                  fill: "#3399FF"
                 })
 
               //change fill back to original in case it was colored differently
               var rect2 = rectID.replace("1", "2")
-              d3.select("#" + rect2).style("fill", "#bbb")
+              d3.select("#" + rect2).style("fill", "#999")
               //change fill back to original in case it was colored differently
               var rect3 = rectID.replace("1", "3")
               d3.select("#" + rect3).style("fill", "#aaa")
               //change fill back to original in case it was colored differently
               var rect4 = rectID.replace("1", "4")
-              d3.select("#" + rect4).style("fill", "#999")
+              d3.select("#" + rect4).style("fill", "#bbb")
               //change fill back to original in case it was colored differently
               var rect5 = rectID.replace("1", "5")
-              d3.select("#" + rect5).style("fill", "#888")
+              d3.select("#" + rect5).style("fill", "#ccc")
 
               //create variable equal to ID of this attribute
               var checkID = "#" + att + "_check"
@@ -692,7 +695,7 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .attr("x", textX2)
           .attr("y", textY1)
-          .text("4")
+          .text("2")
 
       var clickButton2 = variables.append("rect")
           .attr("class", "clickButton2")
@@ -710,7 +713,10 @@ function createAttPanel(attData, cities, states, sources) {
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("stroke", "#2799c2")
+              d3.select("#" + rectID).style({
+                  stroke: "#3399FF",
+                  "stroke-width": "2px"
+              })
           })
           .on("mouseout", function(){
             //extract ID of whichever rectangle is clicked
@@ -729,27 +735,27 @@ function createAttPanel(attData, cities, states, sources) {
               //loops through all attribute objects and sets weight to 0.5 if appropriate
               for (i=0; i<attObjArray.length; i++){
                   if (attObjArray[i].Attribute == att) {
-                      attObjArray[i].Weight = 4;
+                      attObjArray[i].Weight = 2;
                   };
               };
 
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("fill", "#038090")
+              d3.select("#" + rectID).style("fill", "#3399FF")
 
               //change fill back to original in case it was colored differently
               var rect1 = rectID.replace("2", "1")
-              d3.select("#" + rect1).style("fill", "#ccc")
+              d3.select("#" + rect1).style("fill", "#888")
               //change fill back to original in case it was colored differently
               var rect3 = rectID.replace("2", "3")
               d3.select("#" + rect3).style("fill", "#aaa")
               //change fill back to original in case it was colored differently
               var rect4 = rectID.replace("2", "4")
-              d3.select("#" + rect4).style("fill", "#999")
+              d3.select("#" + rect4).style("fill", "#bbb")
               //change fill back to original in case it was colored differently
               var rect5 = rectID.replace("2", "5")
-              d3.select("#" + rect5).style("fill", "#888")
+              d3.select("#" + rect5).style("fill", "#ccc")
 
               //create variable equal to ID of this attribute
               var checkID = "#" + att + "_check"
@@ -813,7 +819,10 @@ function createAttPanel(attData, cities, states, sources) {
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("stroke", "#2799c2")
+              d3.select("#" + rectID).style({
+                  stroke: "#3399FF",
+                  "stroke-width": "2px"
+              })
           })
           .on("mouseout", function(){
             //extract ID of whichever rectangle is clicked
@@ -839,20 +848,20 @@ function createAttPanel(attData, cities, states, sources) {
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("fill", "#038090")
+              d3.select("#" + rectID).style("fill", "#3399FF")
 
               //change fill back to original in case it was colored differently
               var rect1 = rectID.replace("3", "1")
-              d3.select("#" + rect1).style("fill", "#ccc")
+              d3.select("#" + rect1).style("fill", "#888")
               //change fill back to original in case it was colored differently
               var rect2 = rectID.replace("3", "2")
-              d3.select("#" + rect2).style("fill", "#bbb")
+              d3.select("#" + rect2).style("fill", "#999")
               //change fill back to original in case it was colored differently
               var rect4 = rectID.replace("3", "4")
-              d3.select("#" + rect4).style("fill", "#999")
+              d3.select("#" + rect4).style("fill", "#bbb")
               //change fill back to original in case it was colored differently
               var rect5 = rectID.replace("3", "5")
-              d3.select("#" + rect5).style("fill", "#888")
+              d3.select("#" + rect5).style("fill", "#ccc")
 
               //create variable equal to ID of this attribute
               var checkID = "#" + att + "_check"
@@ -897,7 +906,7 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .attr("x", textX4)
           .attr("y", textY1)
-          .text("2")
+          .text("4")
 
       var clickButton4 = variables.append("rect")
           .attr("class", "clickButton4")
@@ -915,7 +924,10 @@ function createAttPanel(attData, cities, states, sources) {
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("stroke", "#2799c2")
+              d3.select("#" + rectID).style({
+                  stroke: "#3399FF",
+                  "stroke-width": "2px"
+              })
           })
           .on("mouseout", function(){
             //extract ID of whichever rectangle is clicked
@@ -934,27 +946,27 @@ function createAttPanel(attData, cities, states, sources) {
               //loops through all attribute objects and sets weight to 0.5 if appropriate
               for (i=0; i<attObjArray.length; i++){
                   if (attObjArray[i].Attribute == att) {
-                      attObjArray[i].Weight = 2;
+                      attObjArray[i].Weight = 4;
                   };
               };
 
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("fill", "#038090")
+              d3.select("#" + rectID).style("fill", "#3399FF")
 
               //change fill back to original in case it was colored differently
               var rect1 = rectID.replace("4", "1")
-              d3.select("#" + rect1).style("fill", "#ccc")
+              d3.select("#" + rect1).style("fill", "#888")
               //change fill back to original in case it was colored differently
               var rect2 = rectID.replace("4", "2")
-              d3.select("#" + rect2).style("fill", "#bbb")
+              d3.select("#" + rect2).style("fill", "#999")
               //change fill back to original in case it was colored differently
               var rect3 = rectID.replace("4", "3")
               d3.select("#" + rect3).style("fill", "#aaa")
               //change fill back to original in case it was colored differently
               var rect5 = rectID.replace("4", "5")
-              d3.select("#" + rect5).style("fill", "#888")
+              d3.select("#" + rect5).style("fill", "#ccc")
 
               //create variable equal to ID of this attribute
               var checkID = "#" + att + "_check"
@@ -999,7 +1011,7 @@ function createAttPanel(attData, cities, states, sources) {
           })
           .attr("x", textX5)
           .attr("y", textY1)
-          .text("1")
+          .text("5")
 
       var clickButton5 = variables.append("rect")
           .attr("class", "clickButton5")
@@ -1017,7 +1029,10 @@ function createAttPanel(attData, cities, states, sources) {
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("stroke", "#2799c2")
+              d3.select("#" + rectID).style({
+                  stroke: "#3399FF",
+                  "stroke-width": "2px"
+              })
           })
           .on("mouseout", function(){
             //extract ID of whichever rectangle is clicked
@@ -1036,26 +1051,26 @@ function createAttPanel(attData, cities, states, sources) {
               //loops through all attribute objects and sets weight to 0.5 if appropriate
               for (i=0; i<attObjArray.length; i++){
                   if (attObjArray[i].Attribute == att) {
-                      attObjArray[i].Weight = 1;
+                      attObjArray[i].Weight = 5;
                   };
               };
               //changes click to back in ID string so we can change fill
               var rectID = attID.replace("click", "back")
               //change fill
-              d3.select("#" + rectID).style("fill", "#038090")
+              d3.select("#" + rectID).style("fill", "#3399FF")
 
               //change fill back to original in case it was colored differently
               var rect1 = rectID.replace("5", "1")
-              d3.select("#" + rect1).style("fill", "#ccc")
+              d3.select("#" + rect1).style("fill", "#888")
               //change fill back to original in case it was colored differently
               var rect2 = rectID.replace("5", "2")
-              d3.select("#" + rect2).style("fill", "#bbb")
+              d3.select("#" + rect2).style("fill", "#999")
               //change fill back to original in case it was colored differently
               var rect3 = rectID.replace("5", "3")
               d3.select("#" + rect3).style("fill", "#aaa")
               //change fill back to original in case it was colored differently
               var rect4 = rectID.replace("5", "4")
-              d3.select("#" + rect4).style("fill", "#999")
+              d3.select("#" + rect4).style("fill", "#bbb")
 
 
               //create variable equal to ID of this attribute
@@ -2433,39 +2448,37 @@ function resetButtonFill(){
             d3.select("#" + rectID).style("fill", "#aaa")
 
             //change fill back to original in case it was colored differently
-            var rect1 = rectID.replace("3", "1")
-            d3.select("#" + rect1).style("fill", "#ccc")
-            //change fill back to original in case it was colored differently
-            var rect2 = rectID.replace("3", "2")
-            d3.select("#" + rect2).style("fill", "#bbb")
+            var rect5 = rectID.replace("3", "5")
+            d3.select("#" + rect5).style("fill", "#ccc")
             //change fill back to original in case it was colored differently
             var rect4 = rectID.replace("3", "4")
-            d3.select("#" + rect4).style("fill", "#999")
+            d3.select("#" + rect4).style("fill", "#bbb")
             //change fill back to original in case it was colored differently
-            var rect5 = rectID.replace("3", "5")
-            d3.select("#" + rect5).style("fill", "#888")
-
+            var rect2 = rectID.replace("3", "2")
+            d3.select("#" + rect2).style("fill", "#999")
+            //change fill back to original in case it was colored differently
+            var rect1 = rectID.replace("3", "1")
+            d3.select("#" + rect1).style("fill", "#888")
         }
-
     })
 }
 
 //sets button color based on weight when att is reselected
 function setButtonColor(attribute, weight){
-    if (weight == 1){
+    if (weight == 5){
         var rectID = attribute + "_backButton5"
-    } else if (weight == 2){
+    } else if (weight == 4){
       var rectID = attribute + "_backButton4"
     } else if (weight == 3){
         var rectID = attribute + "_backButton3"
-    } else if (weight == 4){
+    } else if (weight == 2){
         var rectID = attribute + "_backButton2"
-    } else if (weight == 5){
+    } else if (weight == 1){
         var rectID = attribute + "_backButton1"
     }
 
     //change fill
-    d3.select("#" + rectID).style("fill", "#038090")
+    d3.select("#" + rectID).style("fill", "#3399FF")
 
 };
 

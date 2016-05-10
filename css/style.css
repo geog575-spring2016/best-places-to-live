@@ -17,23 +17,23 @@
 
 
 
-.backButton1 {
+.backButton5 {
     fill: #ccc;
 
 }
 
-.backButton2 {
+.backButton4 {
     fill: #bbb;
 }
 
 .backButton3{
     fill: #aaa;
 }
-.backButton4 {
+.backButton2 {
     fill: #999;
 }
 
-.backButton5{
+.backButton1{
     fill: #888;
 }
 
@@ -110,7 +110,7 @@
 }
 #attContainer {
     height: 100%;
-    width: 345px;
+    width: 360px;
     border:2px solid #E6F2DE;
     overflow-y: scroll;
     overflow-x: scroll;
