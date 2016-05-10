@@ -1978,30 +1978,32 @@ function attPopup(attData, attribute){
 
 function setCityLabel(props){
     //label content
-
-    console.log(citiesArray);
     var label = "";
     // var count = 0;
     citiesArray.forEach(function(d){
-      // console.log(d.City);
-      // console.log(props.City);
       
       if(d.City == props.City){
         for (var key in d) {
-
           var keyLabel = key.replace(/_Rank/g, "");
           keyLabel = keyLabel.replace(/_/g, " ");
-          // count ++;
-          if (key != "Selected" && key != "Score" && key != "City") {
-            label += "<h3><b>" + keyLabel + ": " + d[key] + "</h3></b><br>";
-          }
+
+            if($.inArray(key, checkedAtts) >= 0){
+              label += "<h3><b>" + keyLabel + ": " + d[key] + "</h3></b><br>";
+            }
+            
+          // }
         }
       }
     })
 
     // console.log(label);
     var cityLabel = "<h1><b>" + props.name + "</b></h1>";
-    var scoreLabel = "<h2>Overall Score: "+ props.Score + "</h2>"
+    var scoreLabel = "<h2>Overall Score: "+ props.Score + "</h2>";
+
+    if(isNaN(props.Score)){
+      scoreLabel = "<h2>Select Attributes to Calculate Score</h2>";
+      label = "";
+    }
 
     //create info label div
     var infolabel = d3.select("body")
@@ -2104,6 +2106,7 @@ function joinData(cities){
 }
 
 function selectCity (city){
+  // if(city)
   console.log(city);
   city = city.replace(/\./g, "");
   var cityReplaceWithPeriod = city.replace(/ /g, ".");
@@ -2120,6 +2123,10 @@ function selectCity (city){
 
     var citiesArrayCity = citiesArray[i].City.replace(/\./g, "");
     if (city == citiesArrayCity){
+
+      if(isNaN(citiesArray[i]["Score"])){
+        return;
+      }
 
       if(citiesArray[i]["Selected"] == true){
 
