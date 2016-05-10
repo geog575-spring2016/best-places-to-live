@@ -17,23 +17,23 @@
 
 
 
-.backButton1 {
+.backButton5 {
     fill: #ccc;
 
 }
 
-.backButton2 {
+.backButton4 {
     fill: #bbb;
 }
 
 .backButton3{
     fill: #aaa;
 }
-.backButton4 {
+.backButton2 {
     fill: #999;
 }
 
-.backButton5{
+.backButton1{
     fill: #888;
 }
 
@@ -130,7 +130,6 @@
     fill: none;
 }
 #attContainer {
-
     height: 100%;
     width: 365px;
     border:2px solid #E6F2DE;
@@ -189,7 +188,7 @@
 		padding-left: 5px;
     padding-top: 5px;
     color:#E6F2DE;
-    
+
 
 
 }
