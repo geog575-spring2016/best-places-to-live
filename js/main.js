@@ -200,9 +200,9 @@ function createAttPanel(attData, cities, states, sources) {
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
-        .attr("x", attWidth / 9)
-        .attr("y", attMargin.top)
-        .text("What Matters to You?")
+        .attr("x", 5)
+        .attr("y", attMargin.top - 5)
+        .text("What Do You Care About?")
 
     var checkAll = attSvg.append("foreignObject")
         .attr('x', -9)
@@ -1337,7 +1337,7 @@ function createMap(states, cities) {
 
     var mapWidth = 0.65;
     var width = window.innerWidth * mapWidth;
-    var height = window.innerHeight *0.8;
+    var height = window.innerHeight *0.88;
 
     //div container that holds SVG
     var mapContainer = d3.select("body").append("div")
@@ -1363,15 +1363,15 @@ function createMap(states, cities) {
   // .center([100, 43 ])
   //   .scale(width*(2/3))
   //   .rotate([-150,0]);
-
   var projection = d3.geo.conicConformal()
     .rotate([98, 0])
     .center([0, 38])
     .parallels([29.5, 45.5])
-    .scale(700)
-    .translate([width / 2, height / 2])
+    .scale(750)
+    .translate([width / 1.8, height / 2.8])
     .precision(.1);
     // .translate([width/2, height/2]);
+
 
 // Create a path generator.
 var path = d3.geo.path()
@@ -1421,28 +1421,23 @@ var path = d3.geo.path()
       //   .attr("transform", "translate(" + (50) + "," + (height - 20) + ")");
 
           // .attr("top", "-70px");
-          var legendHeight = height-230;
-          var legendRect = map.append("rect")
-          .attr("class", "legendRect")
-          .attr("height", "100px")
-          .attr("width", "100px")
-          .attr("x", width - 100)
-          .attr("y", legendHeight);
+      var legendHeight = height-180;
+      var legendRect = map.append("rect")
+        .attr("class", "legendRect")
+        .attr("height", "85px")
+        .attr("width", "80px")
+        .attr("x", width - 230)
+        .attr("y", legendHeight);
 
-        //
-        var legendTitle = map.append("text")
+    var legendTitle = map.append("text")
         .attr("class", "legendText")
-        .attr("x", width - 90)
-        .attr("y", legendHeight + 15)
-          // .attr("top", "0")
-          // .attr("z-index", "10")
-          // .attr("top", "0")
-          .text("Overall Score");
-        // d3.select(".cityContainer").append("svg")
+        .attr("x", width - 225)
+        .attr("y", legendHeight + 16)
+        .text("Overall Score");
+
     var legend = map.append("g")
         .attr("class", "legend")
-
-        .attr("transform", "translate(" + (width - 50) + "," + (height - 140) + ")")
+        .attr("transform", "translate(" + (width - 190) + "," + (height - 100) + ")")
       .selectAll("g")
         .data([100, 70, 50])
       .enter().append("g");
@@ -1455,10 +1450,6 @@ var path = d3.geo.path()
         .attr("y", function(d) { return -2 * radius(d); })
         .attr("dy", "1.3em")
         .text(d3.format(".1s"));
-
-    // legend.append("text")
-    //     .attr("y", "-70px")
-    //     .text("Overall Score");
 
     //function to control when the user zooms
     function zoomed() {
@@ -1535,7 +1526,7 @@ var path = d3.geo.path()
 function createCitiesPanel(){
         //removes SVG each time function is called
         d3.select(".citySvg").remove()
-
+        console.log(citiesArray);
         //sort array of objects in descencing order based on specified property
         citiesArray.sort(function(a, b) { return b.Score - a.Score })
 
@@ -1617,8 +1608,8 @@ function createCitiesPanel(){
 
             var cityTitle = citySvg.append("text")
                 .attr("id", "cityTitle")
-                .attr("x", titleWidth)
-                .attr("y", titleHeight*3)
+                .attr("x", 10)
+                .attr("y", titleHeight*3 + 3)
                 .text("Top Ranked Cities")
 
 
@@ -1850,7 +1841,6 @@ function appendCity(){
           }
           if (buttonText == "Show Selected Cities Only") {
               createCitiesPanel();
-
           }
 
   }
@@ -2076,7 +2066,7 @@ function updatePropSymbols (cities){
 
    var mapWidth = 0.65;
     var width = window.innerWidth * mapWidth;
-    var height = window.innerHeight *0.8;
+    var height = window.innerHeight *0.88;
 
 
   var radius = d3.scale.sqrt()
@@ -2103,8 +2093,8 @@ function updatePropSymbols (cities){
       .rotate([98, 0])
       .center([0, 38])
       .parallels([29.5, 45.5])
-      .scale(700)
-      .translate([width / 2, height / 2])
+      .scale(750)
+      .translate([width / 1.8, height / 2.8])
       .precision(.1);
 
 // Create a path generator.
