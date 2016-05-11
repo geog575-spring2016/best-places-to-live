@@ -70,7 +70,7 @@
 }
 
 .infoBack {
-  fill: white;
+  fill: #888;
   width: 12px;
   height: 12px;
   rx: 3px;
@@ -80,16 +80,17 @@
 #infoText {
   font-size: 12px;
   font-weight: bold;
+  fill: #eee;
 }
 
 #title{
     position: float;
     float: right;
     color: #134B5F;
-    font-size: 3em;
+    font-size: 2em;
     text-align: center;
     font-family: TitleFont;
-		width: 65%;
+		width: 100%;
     height: 10%
 }
 #subtitle{
@@ -99,7 +100,7 @@
     font-size: 1em;
     text-align: center;
     font-family: HeaderFont;
-    width: 65%;
+    width: 100%;
     height: 10%
 }
 
@@ -109,10 +110,8 @@
 	bottom: 0;
   background-color: #ccc
   opacity: .11;
+  border: black;
 
-}
-#buttonText{
-    z-index: 10
 }
 
 
@@ -123,7 +122,7 @@
     fill: none;
 }
 #attContainer {
-    height: 100%;
+    height: 75%;
     width: 365px;
     border:2px solid #E6F2DE;
     overflow-y: scroll;
@@ -154,7 +153,7 @@
 }
 .attTitle {
     fill: #E6F2DE;
-    font-size: 1.1em;
+    font-size: 1.25em;
     font-family: HeaderFont;
 
 }
@@ -168,7 +167,7 @@
 }
 .attText {
     fill: #E6F2DE;
-    font-size: .85em;
+    font-size: 1em;
     /*opacity: 0.15;*/
 }
 
@@ -230,8 +229,16 @@
 }
 .cityRank,
 .cityText,
-.cityScore{
+.cityScore,
+#buttonText,
+.buttonText1,
+.buttonText2,
+.buttonText3,
+.buttonText4,
+.buttonText5{
+
   font-family: 'trebuchet ms';
+  fill: #121517;
 }
 
 .cities{
@@ -240,11 +247,13 @@
 
 #cityTitle {
     fill:#E6F2DE;
-    font-size: 1.35em;
+    font-size: 1.25em;
+    font-family: headerFont;
+
 }
 .headerText {
     fill:#E6F2DE;
-    font-size: .85em;
+    font-size: 1em;
     font-weight: bold;
 }
 
@@ -280,18 +289,19 @@
 }
 
 .legend circle {
-  fill: #038090;
-  stroke: #ccc;
+  fill: #aaa;
+  stroke: #777;
   z-index: 10;
 }
 .legendRect{
-  fill: none;
+  fill: white;
   stroke: #aaa;
+  opacity: 0.8;
 }
 .legendText{
   text-align: center;
   fill: #aaa;
-  font: 14px sans-serif;
+  font: 12px "trebuchet ms";
   text-anchor: center;
 
 }
@@ -368,9 +378,11 @@
 }
 
 #helpText {
-    color: white;
-    position: absolute;
-}
+    color: #E6F2DE;
+    position: relative;
+    bottom: 1500px;
+    left: 5px;
+  }
 
 
 .ui-state-default .ui-icon {
