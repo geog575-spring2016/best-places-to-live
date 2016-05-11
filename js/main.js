@@ -198,7 +198,7 @@ function createAttPanel(attData, cities, states, sources) {
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
-        .attr("x", 5)
+        .attr("x", 2)
         .attr("y", attMargin.top - 5)
         .text("What Do You Care About?")
 
