@@ -1264,7 +1264,7 @@ function createCitiesPanel(){
           //adds title
           var cityTitle = citySvg.append("text")
               .attr("id", "cityTitle")
-              .attr("x", 10)
+              .attr("x", 0)
               .attr("y", titleHeight*3 + 3)
               .text("Top Ranked Cities")
           //adds rect for header
