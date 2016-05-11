@@ -243,7 +243,7 @@ function createAttPanel(attData, cities, states, sources) {
             //this is an array containing an object for every city with properties for city name and each selected attribute's rank
             addAttRanks(attData);
             citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-            createCitiesPanel()
+            populateCityPanel()
             updatePropSymbols (cities)
 
         });
@@ -362,7 +362,7 @@ function createAttPanel(attData, cities, states, sources) {
               addAttRanks(attData);
 
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-              createCitiesPanel()
+              populateCityPanel()
               updatePropSymbols (cities)
 
           });
@@ -472,120 +472,6 @@ function createAttPanel(attData, cities, states, sources) {
               // sourcePopup(d, attID, attribute);
               $(dialogID).dialog( "open" );
           })
-        //
-        //
-        //
-        //
-        //   var buttonText1 = variables.append("text")
-        //       .attr("class", "buttonText1")
-        //       .attr("id", function(d){
-        //           //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
-        //           var attribute = createAttID(d, rankData);
-        //
-        //           return attribute + "_buttonText1";
-        //       })
-        //       .attr("x", textX1)
-        //       .attr("y", textY1)
-        //       .text("5")
-        //
-        //   var clickButton1 = variables.append("rect")
-        //       .attr("class", "clickButton1")
-        //       .attr("id", function(d){
-        //           //call function that turns d from label into object property (e.g., "Pet Friendly" becomes "Pet_Friendly_Rank")
-        //           var attribute = createAttID(d, rankData);
-        //
-        //           return attribute + "_clickButton1";
-        //       })
-        //       .attr("x", x1)
-        //       .attr("y", y1)
-        //       .on("mouseover", function(){
-        //           //extract ID of whichever rectangle is clicked
-        //           var attID = this.id;
-        //           //changes click to back in ID string so we can change fill
-        //           var rectID = attID.replace("click", "back")
-        //           //change fill
-        //           d3.select("#" + rectID).style("stroke", "#3399FF")
-        //       })
-        //       .on("mouseout", function(){
-        //         //extract ID of whichever rectangle is clicked
-        //         var attID = this.id;
-        //         //changes click to back in ID string so we can change fill
-        //         var rectID = attID.replace("click", "back")
-        //         //change fill
-        //         d3.select("#" + rectID).style("stroke", "none")
-        //       })
-        //       .on("click", function(){
-        //           //extract ID of whichever rectangle is clicked
-        //           var attID = this.id;
-        //           //trim "_rect1" from end of string
-        //           var att = attID.slice(0, -13);
-        //
-        //           //loops through all attribute objects and sets weight to 0.5 if appropriate
-        //           for (i=0; i<attObjArray.length; i++){
-        //               if (attObjArray[i].Attribute == att) {
-        //                   attObjArray[i].Weight = 5;
-        //               };
-        //           };
-        //
-        //
-        //           //changes click to back in ID string so we can change fill
-        //           var rectID = attID.replace("click", "back")
-        //           //change fill
-        //           d3.select("#" + rectID).style({
-        //               fill: "#3399FF"
-        //             })
-        //
-        //           //change fill back to original in case it was colored differently
-        //           var rect2 = rectID.replace("1", "2")
-        //           d3.select("#" + rect2).style("fill", "#bbb")
-        //           //change fill back to original in case it was colored differently
-        //           var rect3 = rectID.replace("1", "3")
-        //           d3.select("#" + rect3).style("fill", "#aaa")
-        //           //change fill back to original in case it was colored differently
-        //           var rect4 = rectID.replace("1", "4")
-        //           d3.select("#" + rect4).style("fill", "#999")
-        //           //change fill back to original in case it was colored differently
-        //           var rect5 = rectID.replace("1", "5")
-        //           d3.select("#" + rect5).style("fill", "#888")
-        //
-        //           //create variable equal to ID of this attribute
-        //           var checkID = "#" + att + "_check"
-        //           //checks the checkbox for this attribute
-        //           checkThisAtt(checkID);
-        //           //creates array of only checked attributes
-        //           checkedAtts = checkedAttributes(attData, attObjArray);
-        //           //sets the checked property
-        //           attObjArray = setCheckedProp(attObjArray);
-        //           // changes label opacity
-        //           changeLabelOpacity();
-        //           //this is an array containing an object for every city with properties for city name and each selected attribute's rank
-        //           addAttRanks(attData);
-        //           citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-        //           createCitiesPanel()
-        //           updatePropSymbols (cities)
-        //       });
-
-// function sourcePopup(d, attID, attribute){
-//     var dialogArray = [];
-//     dialogArray.push(d)
-//     dialogArray = addUnderscores(dialogArray)
-//
-//     var name = dialogArray[0]
-//     var dialogID = name + "_dialog"
-//
-//     $("#" + dialogID).dialog();
-//     // $()
-//     // console.log(d3.select(attID));
-//     // var dialog = d3.select(attID).append("div")
-//     //     .attr("id", function(){
-//     //         var dialogID = attribute + "_dialog"
-//     //         return dialogID
-//     //     })
-//     //     .attr("title", d)
-//
-//     // console.log($("#" + attribute + "_dialog"))
-//
-// }
       //define x,y property values for first rectangle
       var x1 = (textX + labelWidth)*4.3, y1 = attHeight - 37,
       textX1 = x1 + 6, textY1 = y1 + 16
@@ -691,7 +577,7 @@ function createAttPanel(attData, cities, states, sources) {
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-              createCitiesPanel()
+              populateCityPanel()
               updatePropSymbols (cities)
           });
       //used to place next rectangle relative to previous
@@ -796,7 +682,7 @@ function createAttPanel(attData, cities, states, sources) {
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-              createCitiesPanel()
+              populateCityPanel()
               updatePropSymbols (cities)
           });
 
@@ -901,7 +787,7 @@ function createAttPanel(attData, cities, states, sources) {
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-              createCitiesPanel()
+              populateCityPanel()
               updatePropSymbols (cities)
           });
 
@@ -1006,7 +892,7 @@ function createAttPanel(attData, cities, states, sources) {
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-              createCitiesPanel()
+              populateCityPanel()
               updatePropSymbols (cities)
           });
 
@@ -1111,7 +997,7 @@ function createAttPanel(attData, cities, states, sources) {
               //this is an array containing an object for every city with properties for city name and each selected attribute's rank
               addAttRanks(attData);
               citiesArray = calcScore(attObjArray, checkedAtts, citiesArray, cities, attData)
-              createCitiesPanel()
+              populateCityPanel()
               updatePropSymbols (cities)
          });
 
@@ -1524,188 +1410,204 @@ var path = d3.geo.path()
 
 
 function createCitiesPanel(){
-        //removes SVG each time function is called
-        d3.select(".citySvg").remove()
-        console.log(citiesArray);
-        //sort array of objects in descencing order based on specified property
-        citiesArray.sort(function(a, b) { return b.Score - a.Score })
-
-        //set measurements for panel
-        var cityMargin = 5,
-        cityHeight = 1600,
-        cityHeight = cityHeight - cityMargin * 2,
-        cityWidth = 400,
-        cityWidth = cityWidth - cityMargin * 2,
-        citySpacing = cityHeight / 40;
-        // rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
-        // rectHeight3 = 16, rectSpacing = 3;
-
-        //conditional to prevent creation of multiple divs
-        if(d3.select(".cityContainer").empty() == true){
-
-            //div container that holds SVG
-            var cityContainer = d3.select("body").append("div")
-                .attr("class", "cityContainer")
-                .attr("id", "draggable")
-                .call(function(d){ //makes city div draggable
-                    $("#draggable").draggable()
-                })
-
-            var searchDiv = cityContainer.append("div")
-                .attr("class", "ui-widget")
-                .attr("id", "searchDiv")
-                .attr("width", "100%")
-                .attr("height", titleHeight)
-                .html("<label for='tags'>City: </label><input id='tags'>")
-
-            $("#tags").autocomplete({
-                source: citySearch,
-                messages: {
-                    noResults: 'City not found',
-                    results: function(){}
-                },
-                select: function(event, ui) {
-                    var city = ui.item.value
-                    var selection = "#" + city + "_rect"
-                    selectCity(city);
-                }
-            });
-
-        } else {
-            var cityContainer = d3.select(".cityContainer");
-        };
-
-        //conditional to accont for no attributes being selected; display message
-        if (checkedAtts.length == 0) {
-            var helpText = cityContainer.append("text")
-                .attr("id", "helpText")
-                .text("Select attributes to calculate a city score.")
-        } else {
-
-            d3.select("#helpText").remove()
-            //create svg for attpanel
-            var citySvg = d3.select(".cityContainer").append("svg")
-                .attr("class", "citySvg")
-                .attr("width", "100%")
-                .attr("height", cityHeight)
-              .append("g")
-                .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")")// adds padding to group element in SVG
-            var rectHeight = 31;
-
-            //sets att title
-            var cityTitleRect = citySvg.append("rect")
-                .attr("id", "cityTitleRect")
-                .attr("y", cityMargin * 5 + 1.5)
-                .attr("height", rectHeight)
-                .attr("width", "100%")
-                .attr("x", -5)
-
-
-            //used to place checkbox relative to attText labels
-            var titleHeight = +d3.select("#cityTitleRect").attr("height") / 2,
-            titleWidth = (+d3.select(".citySvg").node().getBBox().width) / 9,
-            fontSize = 1.5 * titleHeight    // font fills rect
-
-            var cityTitle = citySvg.append("text")
-                .attr("id", "cityTitle")
-                .attr("x", 10)
-                .attr("y", titleHeight*3 + 3)
-                .text("Top Ranked Cities")
-
-
-            var cityHeaderRect = citySvg.append("rect")
-                .attr("id", "cityHeaderRect")
-                .attr("y", 62)
-                .attr("height", rectHeight * .66)
-                .style("z-index", 10)
-                .attr("x", -5)
-                .attr("width", "100%")
-
-            var headerHeight = +d3.select("#cityHeaderRect").attr("y") + 15;
-
-            var backButton = citySvg.append("rect")
-                .attr("id", "backButton")
-                .attr("height", rectHeight * 0.66)
-                .attr("width", "96%")
-                .attr("y", cityMargin - 3)
-
-            var buttonText = citySvg.append("text")
-                .attr("id", "buttonText")
-                .attr("y", cityMargin + 13)
-                .attr("x", 30)
-                .text("Show Selected Cities Only")
-
-            var selectButton = citySvg.append("rect")
-                .attr("id", "selectButton")
-                .attr("height", rectHeight * 0.66)
-                .attr("width", "96%")
-                .attr("y", cityMargin - 3)
-                .on("click", selectCities)
-                .on("mouseover", function(){
-                    //extract ID of whichever rectangle is clicked
-                    var attID = this.id;
-                    //changes click to back in ID string so we can change fill
-                    var rectID = attID.replace("select", "back")
-                    //change fill
-                    d3.select("#" + rectID).style({
-                        stroke: "#3399FF",
-                        "stroke-width": "2px",
-                        fill: "#999"
-                    })
-                })
-                .on("mouseout", function(){
-                    //extract ID of whichever rectangle is clicked
-                    var attID = this.id;
-                    //changes click to back in ID string so we can change fill
-                    var rectID = attID.replace("select", "back")
-                    //change fill
-                    d3.select("#" + rectID).style({
-                        stroke: "none",
-                        fill: "#ccc"
-                    })
-                })
 
 
 
+      //sort array of objects in descencing order based on specified property
+      citiesArray.sort(function(a, b) { return b.Score - a.Score })
 
-            // //used to place checkbox relative to attText labels
-            // var rectY = +d3.select(".cityRect").attr("y") + 15
+      //set measurements for panel
+      var cityMargin = 5,
+      cityHeight = 1600,
+      cityHeight = cityHeight - cityMargin * 2,
+      cityWidth = 400,
+      cityWidth = cityWidth - cityMargin * 2,
+      citySpacing = cityHeight / 40;
+      // rectWidth = 4, rectHeight1 = 6, rectHeight2 = 11,
+      // rectHeight3 = 16, rectSpacing = 3;
 
-            var headerRank = citySvg.append("text")
-                .attr("class", "headerText")
-                .attr("id", "headerRank")
-                .attr("x", 1)
-                .attr("y", headerHeight)
-                .text("Rank")
+      //conditional to prevent creation of multiple divs
+      if(d3.select(".cityContainer").empty() == true){
+
+          //div container that holds SVG
+          var cityContainer = d3.select("body").append("div")
+              .attr("class", "cityContainer")
+              .attr("id", "draggable")
+              .call(function(d){ //makes city div draggable
+                  $("#draggable").draggable()
+              })
+
+          var searchDiv = cityContainer.append("div")
+              .attr("class", "ui-widget")
+              .attr("id", "searchDiv")
+              .attr("width", "100%")
+              .attr("height", titleHeight)
+              .html("<label for='tags'>City: </label><input id='tags'>")
+
+          $("#tags").autocomplete({
+              source: citySearch,
+              messages: {
+                  noResults: 'City not found',
+                  results: function(){}
+              },
+              select: function(event, ui) {
+                  var city = ui.item.value
+                  var selection = "#" + city + "_rect"
+                  selectCity(city);
+              }
+          });
+
+      } else {
+          var cityContainer = d3.select(".cityContainer");
+      };
+
+      //conditional to accont for no attributes being selected; display message
+      if (checkedAtts.length == 0) {
+          var helpText = cityContainer.append("text")
+              .attr("id", "helpText")
+              .text("Select attributes to calculate a city score.")
+      } else {
+
+          d3.select("#helpText").remove()
+          //create svg for attpanel
+          var citySvg = d3.select(".cityContainer").append("svg")
+              .attr("class", "citySvg")
+              .attr("width", "100%")
+              .attr("height", cityHeight)
+            .append("g")
+              .attr("transform", "translate(" + cityMargin + "," + cityMargin + ")")// adds padding to group element in SVG
+          var rectHeight = 31;
+
+          //sets att title
+          var cityTitleRect = citySvg.append("rect")
+              .attr("id", "cityTitleRect")
+              .attr("y", cityMargin * 5 + 1.5)
+              .attr("height", rectHeight)
+              .attr("width", "100%")
+              .attr("x", -5)
 
 
-            var headerCity = citySvg.append("text")
-                .attr("class", "headerText")
-                .attr("id", "headerCity")
-                .attr("x", 60)
-                .attr("y", headerHeight)
-                .text("City")
+          //used to place checkbox relative to attText labels
+          var titleHeight = +d3.select("#cityTitleRect").attr("height") / 2,
+          titleWidth = (+d3.select(".citySvg").node().getBBox().width) / 9,
+          fontSize = 1.5 * titleHeight    // font fills rect
+
+          var cityTitle = citySvg.append("text")
+              .attr("id", "cityTitle")
+              .attr("x", 10)
+              .attr("y", titleHeight*3 + 3)
+              .text("Top Ranked Cities")
 
 
-          var headerScore = citySvg.append("text")
+          var cityHeaderRect = citySvg.append("rect")
+              .attr("id", "cityHeaderRect")
+              .attr("y", 62)
+              .attr("height", rectHeight * .66)
+              .style("z-index", 10)
+              .attr("x", -5)
+              .attr("width", "100%")
+
+          var headerHeight = +d3.select("#cityHeaderRect").attr("y") + 15;
+
+          var backButton = citySvg.append("rect")
+              .attr("id", "backButton")
+              .attr("height", rectHeight * 0.66)
+              .attr("width", "96%")
+              .attr("y", cityMargin - 3)
+
+          var buttonText = citySvg.append("text")
+              .attr("id", "buttonText")
+              .attr("y", cityMargin + 13)
+              .attr("x", 30)
+              .text("Show Selected Cities Only")
+
+          var selectButton = citySvg.append("rect")
+              .attr("id", "selectButton")
+              .attr("height", rectHeight * 0.66)
+              .attr("width", "96%")
+              .attr("y", cityMargin - 3)
+              .on("click", selectCities)
+              .on("mouseover", function(){
+                  //extract ID of whichever rectangle is clicked
+                  var attID = this.id;
+                  //changes click to back in ID string so we can change fill
+                  var rectID = attID.replace("select", "back")
+                  //change fill
+                  d3.select("#" + rectID).style({
+                      stroke: "#3399FF",
+                      "stroke-width": "2px",
+                      fill: "#999"
+                  })
+              })
+              .on("mouseout", function(){
+                  //extract ID of whichever rectangle is clicked
+                  var attID = this.id;
+                  //changes click to back in ID string so we can change fill
+                  var rectID = attID.replace("select", "back")
+                  //change fill
+                  d3.select("#" + rectID).style({
+                      stroke: "none",
+                      fill: "#ccc"
+                  })
+              })
+
+
+
+
+          // //used to place checkbox relative to attText labels
+          // var rectY = +d3.select(".cityRect").attr("y") + 15
+
+          var headerRank = citySvg.append("text")
               .attr("class", "headerText")
-              .attr("id", "headerScore")
-              .attr("x", 173)
+              .attr("id", "headerRank")
+              .attr("x", 1)
               .attr("y", headerHeight)
-              .text("Score")
+              .text("Rank")
 
-      populateCityPanel(citiesArray);
 
+          var headerCity = citySvg.append("text")
+              .attr("class", "headerText")
+              .attr("id", "headerCity")
+              .attr("x", 60)
+              .attr("y", headerHeight)
+              .text("City")
+
+
+        var headerScore = citySvg.append("text")
+            .attr("class", "headerText")
+            .attr("id", "headerScore")
+            .attr("x", 173)
+            .attr("y", headerHeight)
+            .text("Score")
     };
+    populateCityPanel();
 }
 
 
 function populateCityPanel(data){
-            var citySvg = d3.select(".citySvg");
+
+    d3.selectAll(".cities").remove();
+    var citySvg = d3.select(".citySvg");
+    var selectedCities = [];
+    var buttonTextSelect = d3.select("#buttonText")[0][0].innerHTML
+        if (buttonTextSelect == "Show All Cities"){
+            var selectedCities = [];
+            citiesArray.map(function(d){
+                if (d.Selected == true)
+                selectedCities.push(d)
+            })
+
+            // populateCityPanel(selectedCities);
+        } else {
+
+            selectedCities = citiesArray
+        };
+        console.log(selectedCities);
+
             var rectHeight = 31;
             // creates a group for each rectangle and offsets each by same amount
             var cities = citySvg.selectAll('.cities')
-                .data(data)
+                .data(selectedCities)
                 .enter()
               .append("g")
                 .attr("class", "cities")
@@ -1784,11 +1686,11 @@ function populateCityPanel(data){
 
             //adds text to attribute g
             var cityScore = cities.append('text')
-                .attr("class", "cityRank")
+                .attr("class", "cityScore")
                 // .attr("x", attWidth / 5.8)
                 .attr("x", 170)
                 .attr("y", rectY)
-                .text(function(d) {return String(d.Score)})
+                .text(function(d) {console.log(d.Score);return String(d.Score)})
                 // .attr("id", function(d) {
                 //     var attribute = createAttID(d, rankData)
                 //
@@ -1816,9 +1718,10 @@ function selectCities(){
             populateCityPanel(selectedCities)
         }
         if (buttonText == "Show All Cities") {
-            createCitiesPanel();
             d3.select("#buttonText").text("Show Selected Cities Only")
-            .attr("x", 30)
+                .attr("x", 30)
+
+            populateCityPanel();
 
 
         }
@@ -1840,7 +1743,7 @@ function appendCity(){
               populateCityPanel(selectedCities)
           }
           if (buttonText == "Show Selected Cities Only") {
-              createCitiesPanel();
+              populateCityPanel();
           }
 
   }
@@ -2189,6 +2092,12 @@ function highlightCity(props, showCityLabel){
             "stroke": "black",
             "stroke-width": (1/d3.event.scale)*2+"px"
         });
+  var cityRect = d3.select("#" + cityFixed + "_rect")
+      .style({
+          "stroke": "black",
+          "stroke-width": "2px"
+      });
+
   if(showCityLabel){
     setCityLabel(props);
   }
@@ -2204,6 +2113,10 @@ function dehighlightCity(props){
         .style({
             "stroke": "white",
             "stroke-width": (1/d3.event.scale)*2+"px"
+        });
+    var cityRect = d3.select("#" + cityFixed + "_rect")
+        .style({
+            "stroke": "none",
         });
 
   // if(removeCityLabel){
