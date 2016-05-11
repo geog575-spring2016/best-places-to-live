@@ -1,4 +1,54 @@
-/* 575 boilerplate style.css */
+@font-face {
+  font-family: TitleFont;
+  src: url(../font/NexaShadow.otf);
+}
+
+@font-face {
+  font-family: HeaderFont;
+  src: url(../font/NexaSans.otf);
+}
+#title{
+    position: float;
+    float: right;
+    color: #134B5F;
+    font-size: 2em;
+    text-align: center;
+    font-family: TitleFont;
+		width: 100%;
+    height: 10%
+}
+#subtitle{
+    position: float;
+    float: right;
+    color: #134B5F;
+    font-size: 1em;
+    text-align: center;
+    font-family: HeaderFont;
+    width: 100%;
+    height: 10%
+}
+#attContainer {
+    height: 75%;
+    width: 365px;
+    border:2px solid #E6F2DE;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    position: fixed;
+    bottom: 0;
+    color:#E6F2DE;
+		font-family: 'trebuchet ms';
+    border-radius: 5px;
+    opacity: .9;
+}
+#attHeaderRect {
+    fill: none;
+    stroke: #E6F2DE;
+}
+
+
+
+
+
 .backButton1,
 .clickButton1,
 .backButton2,
@@ -47,17 +97,6 @@
     fill: none;
 
 }
-
-@font-face {
-  font-family: TitleFont;
-  src: url(../font/NexaShadow.otf);
-}
-
-@font-face {
-  font-family: HeaderFont;
-  src: url(../font/NexaSans.otf);
-}
-
 .infoClick {
     opacity: 0;
     pointer-events: all;
@@ -68,7 +107,6 @@
     rx: 3px;
     ry: 3px;
 }
-
 .infoBack {
   fill: #888;
   width: 12px;
@@ -76,33 +114,45 @@
   rx: 3px;
   ry: 3px;
 }
-
 #infoText {
   font-size: 12px;
   font-weight: bold;
   fill: #eee;
 }
-
-#title{
-    position: float;
-    float: right;
-    color: #134B5F;
-    font-size: 2em;
-    text-align: center;
-    font-family: TitleFont;
-		width: 100%;
-    height: 10%
+#headerMost,
+#headerLeast {
+    font-size: 0.7em;
 }
-#subtitle{
-    position: float;
-    float: right;
-    color: #134B5F;
-    font-size: 1em;
-    text-align: center;
+#attTitleRect {
+    fill: #038090;
+}
+.attTitle {
+    fill: #E6F2DE;
+    font-size: 1.25em;
     font-family: HeaderFont;
-    width: 100%;
-    height: 10%
+
 }
+.attHeader{
+  fill: #E6F2DE;
+}
+.attSvg {
+		background: #134B5F;
+}
+.attText {
+    fill: #E6F2DE;
+    font-size: 1em;
+}
+.variableRect {
+		fill: none;
+}
+.checkbox {
+		cursor: pointer;
+}
+#checkAll  {
+    cursor: pointer;
+}
+
+
 
 #mapContainer {
 	float: right;
@@ -121,60 +171,7 @@
     cursor: pointer;
     fill: none;
 }
-#attContainer {
-    height: 75%;
-    width: 365px;
-    border:2px solid #E6F2DE;
-    overflow-y: scroll;
-    overflow-x: scroll;
-    position: fixed;
-    bottom: 0;
-    color:#E6F2DE;
-		font-family: 'trebuchet ms';
-    border-radius: 5px;
-    opacity: .9;
-}
 
-#attHeaderRect {
-    fill: none;
-    stroke: #E6F2DE;
-
-}
-.filtersHeader {
-  fill: #038090;
-}
-
-#headerMost,
-#headerLeast {
-    font-size: 0.7em;
-}
-#attTitleRect {
-    fill: #038090;
-}
-.attTitle {
-    fill: #E6F2DE;
-    font-size: 1.25em;
-    font-family: HeaderFont;
-
-}
-
-.attHeader{
-  fill: #E6F2DE;
-}
-
-.attSvg {
-		background: #134B5F;
-}
-.attText {
-    fill: #E6F2DE;
-    font-size: 1em;
-    /*opacity: 0.15;*/
-}
-
-.variableRect {
-		/*stroke: #aaa;*/
-		fill: none;
-}
 
 #searchDiv {
 		padding-left: 5px;
@@ -202,14 +199,6 @@
 }
 
 
-.checkbox {
-		cursor: pointer;
-}
-
-
-#checkAll  {
-    cursor: pointer;
-}
 
 
 #cityTitleRect {
@@ -257,18 +246,10 @@
     font-weight: bold;
 }
 
-.attRect1,
-.attRect2,
-.attRect3 {
-	cursor: pointer;
-	stroke: black;
-	fill:#eee
-}
-
 
 .us_states {
 	fill: #FCFCFC;
-	stroke: #000;
+	stroke: #134B5F;
 	stroke-width: 0.5px;
   opacity: 0.5;
 }
@@ -314,7 +295,7 @@
 
 .infolabel {
     position: absolute;
-    /*height: 50px;*/
+    font-family: "trebuchet ms";
     min-width: 100px;
     color: #E6F2DE;
     background-color: #038090;
@@ -387,4 +368,19 @@
 
 .ui-state-default .ui-icon {
     background-image: url("../img/ui-icons_444444_256x240.png")
+}
+
+.authors {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background-color: white;
+    opacity: 0.5;
+    height: 50px;
+    width: 100px;
+    padding-top: 5px;
+    padding-left: 2px;
+    line-height: 0.1em;
+    font-family: "trebuchet ms";
+    font-size: 0.8em;
 }
