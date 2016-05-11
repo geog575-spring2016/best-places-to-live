@@ -346,9 +346,9 @@
 
 .attLabel {
     position: absolute;
-    /*height: 250px;*/
+    font-family: "trebuchet ms";
     min-width: 100px;
-    color: #fff;
+    color: #E6F2DE;
     background-color: #038090;
     border: solid thin #fff;
     padding: 5px 10px;
@@ -359,9 +359,9 @@
     background-color: inherit;
     padding: 5px 10px;
     top: -75px;
-		/*z-index: ;*/
-		color: #fff;
+		color: #E6F2DE;
 		border: solid thin #fff;
+    font-family: "trebuchet ms";
 
 }
 
