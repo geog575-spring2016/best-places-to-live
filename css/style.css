@@ -378,9 +378,11 @@
 }
 
 #helpText {
-    color: white;
-    position: absolute;
-}
+    color: #E6F2DE;
+    position: relative;
+    bottom: 1500px;
+    left: 5px;
+  }
 
 
 .ui-state-default .ui-icon {

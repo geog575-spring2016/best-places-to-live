@@ -74,13 +74,11 @@ function callback(error, statesData, citiesData, attData, sources){
 
 
 
-
     createAttPanel(attData, cities, states, sources);
 
 }
 
 function createSourceDivs(sources){
-
     d3.select("#attContainer")
         .data(sources)
         .enter()
@@ -468,7 +466,7 @@ function createAttPanel(attData, cities, states, sources) {
               //changes click to back in ID string so we can change fill
               var dialogID = "#" + attID.replace("infoClick", "dialog")
 
-
+              console.log(dialogID);
               // sourcePopup(d, attID, attribute);
               $(dialogID).dialog( "open" );
           })
@@ -1465,7 +1463,7 @@ function createCitiesPanel(){
       if (checkedAtts.length == 0) {
           var helpText = cityContainer.append("text")
               .attr("id", "helpText")
-              .text("Select attributes to calculate a city score.")
+              .text("   Select attributes to calculate a city score.")
       } else {
 
           d3.select("#helpText").remove()
@@ -1587,9 +1585,20 @@ function createCitiesPanel(){
 function populateCityPanel(data){
 
     d3.selectAll(".cities").remove();
-    var citySvg = d3.select(".citySvg");
-    var selectedCities = [];
-    var buttonTextSelect = d3.select("#buttonText")[0][0].innerHTML
+    var cityContainer = d3.select(".cityContainer")
+    //conditional to accont for no attributes being selected; display message
+    if (checkedAtts.length == 0) {
+        var helpText = cityContainer.append("text")
+            .attr("id", "helpText")
+            .text("Select attributes to calculate a city score.")
+    } else {
+
+        d3.select("#helpText").remove()
+
+        var citySvg = d3.select(".citySvg");
+        var selectedCities = [];
+        var buttonTextSelect = d3.select("#buttonText")[0][0].innerHTML
+
         if (buttonTextSelect == "Show All Cities"){
             var selectedCities = [];
             citiesArray.map(function(d){
@@ -1602,102 +1611,101 @@ function populateCityPanel(data){
 
             selectedCities = citiesArray
         };
-        console.log(selectedCities);
 
-            var rectHeight = 31;
-            // creates a group for each rectangle and offsets each by same amount
-            var cities = citySvg.selectAll('.cities')
-                .data(selectedCities)
-                .enter()
-              .append("g")
-                .attr("class", "cities")
-                .attr("id", function(d){
-                    return d.City + "_group"
-                })
-                .attr("transform", function(d, i) {            // console.log(offset);
-                    var horz = 10; //x value for g translate
-                    var vert = i * 28; //y value for g translate
-                    return 'translate(' + horz + ',' + vert + ')';
-                });
-
-
-            var cityRect = cities.append("rect")
-                .attr("class", "cityRect")
-                .attr("id", function(d){
-                    var cityID = d.City.replace(/ /g,"_");
-                    cityID = cityID.replace(/\./g,"");
-                    return cityID + "_rect";
-                })
-                // .attr("id", "selectable")
-                // .attr("x", cityMargin)
-                .attr("width", "100%")
-                .attr("height", (rectHeight / 3) * 2)
-                .attr("y", 90)
-                .attr("x", -10)
-                .on("click", function(d){
-                  selectCity(d.City);
-                })
-                .style("fill", function(d){
-                    if (d.Selected == true){
-                        var index = d["Color Index"]
-                        return colorArray[index]
-                    }
-                })
-                .on("mouseover",function(d){
-                  highlightCity(d, false)
-                })
-                .on("mouseout", function(d){
-                  dehighlightCity(d)
-                });
-
-            //used to place checkbox relative to attText labels
-            var rectY = +d3.select(".cityRect").attr("y") + 15
+        var rectHeight = 31;
+        // creates a group for each rectangle and offsets each by same amount
+        var cities = citySvg.selectAll('.cities')
+            .data(selectedCities)
+            .enter()
+          .append("g")
+            .attr("class", "cities")
+            .attr("id", function(d){
+                return d.City + "_group"
+            })
+            .attr("transform", function(d, i) {            // console.log(offset);
+                var horz = 10; //x value for g translate
+                var vert = i * 28; //y value for g translate
+                return 'translate(' + horz + ',' + vert + ')';
+            });
 
 
-            //adds text to attribute g
-            var cityRank = cities.append('text')
-                .attr("class", "cityRank")
-                // .attr("x", attWidth / 5.8)
-                .attr("x", 3)
-                .attr("y", rectY)
-                .text(function(d, i) {return i + 1})
-            //adds text to attribute g
-            var cityText = cities.append('text')
-                .attr("class", "cityText")
-                // .attr("x", attWidth / 5.8)
-                .attr("x", 40)
-                .attr("y", rectY)
-                .text(function(d ) { ;return d.City })
-                .on("click", function(d){
-                  selectCity(d.City);
-                })
-                .on("mouseover",function(d){
-                  highlightCity(d, false)
-                })
-                .on("mouseout", function(d){
-                  dehighlightCity(d)
-                });
-                // .attr("id", function(d) {
-                //     var attribute = createAttID(d, rankData)
-                //
-                //     return attribute;
-                // });
+        var cityRect = cities.append("rect")
+            .attr("class", "cityRect")
+            .attr("id", function(d){
+                var cityID = d.City.replace(/ /g,"_");
+                cityID = cityID.replace(/\./g,"");
+                return cityID + "_rect";
+            })
+            // .attr("id", "selectable")
+            // .attr("x", cityMargin)
+            .attr("width", "100%")
+            .attr("height", (rectHeight / 3) * 2)
+            .attr("y", 90)
+            .attr("x", -10)
+            .on("click", function(d){
+              selectCity(d.City);
+            })
+            .style("fill", function(d){
+                if (d.Selected == true){
+                    var index = d["Color Index"]
+                    return colorArray[index]
+                }
+            })
+            .on("mouseover",function(d){
+              highlightCity(d, false)
+            })
+            .on("mouseout", function(d){
+              dehighlightCity(d)
+            });
+
+      //used to place checkbox relative to attText labels
+      var rectY = +d3.select(".cityRect").attr("y") + 15
 
 
-            //adds text to attribute g
-            var cityScore = cities.append('text')
-                .attr("class", "cityScore")
-                // .attr("x", attWidth / 5.8)
-                .attr("x", 170)
-                .attr("y", rectY)
-                .text(function(d) {console.log(d.Score);return String(d.Score)})
-                // .attr("id", function(d) {
-                //     var attribute = createAttID(d, rankData)
-                //
-                //     return attribute;
-                // });
-        }
+      //adds text to attribute g
+      var cityRank = cities.append('text')
+          .attr("class", "cityRank")
+          // .attr("x", attWidth / 5.8)
+          .attr("x", 3)
+          .attr("y", rectY)
+          .text(function(d, i) {return i + 1})
+      //adds text to attribute g
+      var cityText = cities.append('text')
+          .attr("class", "cityText")
+          // .attr("x", attWidth / 5.8)
+          .attr("x", 40)
+          .attr("y", rectY)
+          .text(function(d ) { ;return d.City })
+          .on("click", function(d){
+            selectCity(d.City);
+          })
+          .on("mouseover",function(d){
+            highlightCity(d, false)
+          })
+          .on("mouseout", function(d){
+            dehighlightCity(d)
+          });
+          // .attr("id", function(d) {
+          //     var attribute = createAttID(d, rankData)
+          //
+          //     return attribute;
+          // });
 
+
+        //adds text to attribute g
+        var cityScore = cities.append('text')
+            .attr("class", "cityScore")
+            // .attr("x", attWidth / 5.8)
+            .attr("x", 170)
+            .attr("y", rectY)
+            .text(function(d) {return String(d.Score)})
+            // .attr("id", function(d) {
+            //     var attribute = createAttID(d, rankData)
+            //
+            //     return attribute;
+            // });
+    }
+}
 
 //changes city panel after button is clicked for displaying selected cities
 function selectCities(){
@@ -2323,12 +2331,12 @@ function moveLabel(){
     var x1 = d3.event.clientX + 10,
         y1 = d3.event.clientY - 75,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY + 25;
+        y2 = d3.event.clientY - 250;
 
     //horizontal label coordinate, testing for overflow
     var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
     //vertical label coordinate, testing for overflow
-    var y = d3.event.clientY < 75 ? y2 : y1;
+    var y = d3.event.clientY > 245 ? y2 : y1;
 
     d3.select(".infolabel")
         .style({
