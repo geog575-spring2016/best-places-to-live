@@ -975,12 +975,13 @@ function checkedAttributes(attData, attObjArray){
     //create array to hold attributes that are checked
     checkedAtts = [];
     //loop through each attribute object and add all that are checked to checkedAtts array
-    attObjArray.forEach(function(d, i){
+    attObjArray.forEach(function(d){
         //if attribute is checked, push it's "Attribute" property to array
         if (d.Checked == 1){
             checkedAtts.push(d.Attribute);
         };
     });
+
     return checkedAtts;
 };
 
@@ -2158,4 +2159,16 @@ function setButtonColor(attribute, weight){
 //checks attribute whe ranking button is clicked
 function checkThisAtt(checkID){
     d3.select(checkID).property("checked", true)
+
+    var attribute = checkID.slice(0, -6)
+    attribute = attribute.slice(1)
+
+    attObjArray.forEach(function(d){
+        //if attribute is checked, push it's "Attribute" property to array
+        if (d.Attribute == attribute){
+            d.Checked = 1
+        };
+    });
+
+
 };
