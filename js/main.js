@@ -116,7 +116,7 @@ function createAttPanel(attData, cities, states, sources) {
     //sets att title
     var attTitle = attSvg.append("text")
         .attr("class", "attTitle")
-        .attr("x", 2)
+        .attr("x",-3)
         .attr("y", attMargin.top - 5)
         .text("What Do You Care About?")
     //creates checkAll functionality
@@ -1256,7 +1256,6 @@ function createCitiesPanel(){
               .attr("height", rectHeight)
               .attr("width", "100%")
               .attr("x", -5)
-
 
           //used to place checkbox relative to attText labels
           var titleHeight = +d3.select("#cityTitleRect").attr("height") / 2,
